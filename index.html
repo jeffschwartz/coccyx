@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test history.pushState</title>
+</head>
+<style>
+    body{
+        margin: 20px;
+    }
+</style>
+<body>
+    <h1>Test history.pushState</h1>
+    <a href="/invoices">click me for /</a><br>
+    <a href="/invoices/2">click me for /:id</a><br>
+    <a href="/invoices/total/something/somewhere/somehow">click me for /total/*</a><br>
+    <a href="/bills">click me for /</a><br>
+    <a href="/bills/99">click me for /:id</a><br>
+    <a href="/bills/total/something/somewhere/somehow">click me for /total/*</a>
+
+
+    <script src="javascripts/libs/jquery.js"></script>
+    <script src="javascripts/router.js"></script>
+    <script src="javascripts/history.js"></script>
+    <script src="javascripts/helpers.js"></script>
+    <script src="javascripts/frontendcontroller.js"></script>
+    <script>
+        var cx = window.Coccyx;
+        console.log(cx);
+        cx.controllers.registerController({
+            doSomethingWithId: function(id){
+                alert("invoices/id called. id = " + id);
+            },
+            doSomethingWithPath: function(path){
+                alert("invoices/total called with path = " + path);
+            },
+            name: "invoices",
+            routes: {
+                "/": function(){
+                    alert("invoices called");
+                },
+                "/:id": function(id){
+                    this.doSomethingWithId(id);
+                },
+                "/total/*": function(path){
+                    this.doSomethingWithPath(path);
+                }
+            }
+        });
+        cx.controllers.registerController({
+            doSomethingWithId: function(id){
+                alert("bills/id called. id = " + id);
+            },
+            doSomethingWithPath: function(path){
+                alert("bills/total called with path = " + path);
+            },
+            name: "bills",
+            routes: {
+                "/": function(){
+                    alert("bills called");
+                },
+                "/:id": function(id){
+                    this.doSomethingWithId(id);
+                },
+                "/total/*": function(path){
+                    this.doSomethingWithPath(path);
+                }
+            }
+        });
+        cx.history.start(false);
+    </script>
+</body>
+</html>
