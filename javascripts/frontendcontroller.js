@@ -1,9 +1,11 @@
 /**
  * Front-End controller - it routes paths to the appropriate controller
  */
- (function(){
+ (function($){
+    "use strict";
+
     var Coccyx = window.Coccyx = window.Coccyx || {},
-    controllers = {};
+    controllers = {},
     routes = {};
 
     /**
@@ -14,6 +16,7 @@
 
      function registerController(){
         if(arguments.length !== 1 && !(arguments[0] instanceof Array) && !(arguments[0] instanceof Object)){
+            // TODO Not sure if I should be throwing here. Think about it!!!
             throw new Error("registerController missing or invalid param. Expection an [] or {}.");
         }
         if(arguments[0] instanceof Array){
@@ -30,6 +33,8 @@
     function loadRoutesFromController(controller){
         var tmp = "/" + controller.name,
             namedRoute;
+        // controller's local $
+        controller.$ = $;
         // Add controller to controllers array.
         controllers[controller.name] = controller;
         // Add each route to routes array.
@@ -60,4 +65,4 @@
         getController: getController
     };
 
-}());
+}(jQuery));

@@ -65,22 +65,13 @@
                         for(ii = i, relUrl = ""; ii < a.length; ii++){
                             relUrl += ("/" + a[ii]);
                         }
+                        // controller name, function to call, function arguments to call with...
                         return {controllerName: b[0], fn: routes[route], params: [relUrl]};
                     }
                 }
             }
         }
     }
-
-    // function isRelativeRoute(segments){
-    //     segments.forEach(function(segment){
-    //         console.log("segment =", segment);
-    //         if(Coccyx.helpers.contains(segment, "*")){
-    //             return true;
-    //         }
-    //     });
-    //     return false;
-    // }
 
     function routeFound(route){
         // TODO  What context should the route callback function be called with????
