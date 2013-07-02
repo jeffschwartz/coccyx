@@ -1,25 +1,142 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Test history.pushState</title>
-</head>
-<style>
-    body{
-        margin: 20px;
-    }
-</style>
-<body>
-    <h1>Test history.pushState</h1>
-    <a href="/invoices">click me for /</a><br>
-    <a href="/invoices/2">click me for /:id</a><br>
-    <a href="/invoices/total/something/somewhere/somehow">click me for /total/*</a><br>
-    <a href="/bills">click me for /</a><br>
-    <a href="/bills/99">click me for /:id</a><br>
-    <a href="/bills/total/something/somewhere/somehow">click me for /total/*</a>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>template &middot; bootstrap</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
+    <!-- le styles -->
+    <link href="javascripts/libs/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 60px;
+      }
+
+      /* custom container */
+      .container {
+        margin: 0 auto;
+        max-width: 1000px;
+      }
+      .container > hr {
+        margin: 60px 0;
+      }
+
+      /* main marketing message and sign up button */
+      .jumbotron {
+        margin: 80px 0;
+        text-align: center;
+      }
+      .jumbotron h1 {
+        font-size: 100px;
+        line-height: 1;
+      }
+      .jumbotron .lead {
+        font-size: 24px;
+        line-height: 1.25;
+      }
+      .jumbotron .btn {
+        font-size: 21px;
+        padding: 14px 24px;
+      }
+
+      /* supporting marketing content */
+      .marketing {
+        margin: 60px 0;
+      }
+      .marketing p + h4 {
+        margin-top: 28px;
+      }
+
+
+    </style>
+    <link href="javascripts/libs/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- html5 shim, for ie6-8 support of html5 elements -->
+    <!--[if lt ie 9]>
+      <script src="../assets/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <!-- fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
+    <link rel="shortcut icon" href="../assets/ico/favicon.png">
+</head>
+
+  <body>
+
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="#">Project name</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <li class="active"><a href="#">Home</a></li>
+              <li><a href="#about">Examples</a></li>
+              <li><a href="#about">Documentation</a></li>
+              <li><a href="#about">About</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+    <div class="container">
+
+      <!-- jumbotron -->
+      <div class="jumbotron">
+        <h1>Coccyx MVC</h1>
+        <p class="lead">A tiny, slightly opinionated client-side mvc library that promotes ease of use, modern work flow and best practices.</p>
+        <a class="btn btn-large btn-primary" href="#">Download Coccyx</a>
+      </div>
+
+      <hr>
+
+      <!-- example row of columns -->
+      <div class="row-fluid">
+        <div class="span4">
+          <h2>heading</h2>
+          <p>donec id elit non mi porta gravida at eget metus. fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. etiam porta sem malesuada magna mollis euismod. donec sed odio dui. </p>
+          <p><a class="btn" href="#">view details &raquo;</a></p>
+        </div>
+        <div class="span4">
+          <h2>heading</h2>
+          <p>donec id elit non mi porta gravida at eget metus. fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. etiam porta sem malesuada magna mollis euismod. donec sed odio dui. </p>
+          <p><a class="btn" href="#">view details &raquo;</a></p>
+       </div>
+        <div class="span4">
+          <h2>heading</h2>
+          <p>donec sed odio dui. cras justo odio, dapibus ac facilisis in, egestas eget quam. vestibulum id ligula porta felis euismod semper. fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa.</p>
+          <p><a class="btn" href="#">view details &raquo;</a></p>
+        </div>
+      </div>
+
+      <hr>
+
+      <div class="footer">
+        <p>&copy; Coccyx MVC 2013</p>
+      </div>
+
+    </div> <!-- /container -->
+
+    <!-- le javascript
+    ================================================== -->
+    <!-- placed at the end of the document so the pages load faster -->
+    <script src="javascripts/libs/jquery.js"></script>
+    <script src="javascripts/libs/bootstrap/js/bootstrap.js"></script>
     <script src="javascripts/libs/coccyx.js"></script>
-    <script src="javascripts/controllers/bills_controller.js"></script>
-    <script src="javascripts/controllers/invoices_controller.js"></script>
+    <script src="javascripts/controllers/index_controller.js"></script>
     <script src="javascripts/demoapp.js"></script>
-</body>
+
+  </body>
 </html>
