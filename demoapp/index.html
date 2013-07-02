@@ -24,51 +24,10 @@
     <!-- // <script src="javascripts/helpers.js"></script> -->
     <!-- // <script src="javascripts/frontendcontroller.js"></script> -->
     <!-- // <script src="javascripts/models.js"></script> -->
+    <script src="javascripts/libs/coccyx.js"></script>
     <script src="javascripts/coccyx.js"></script>
 
     <script>
-        var cx = window.Coccyx;
-        console.log(cx);
-        cx.controllers.registerController({
-            doSomethingWithId: function(id){
-                alert("invoices/id called. id = " + id);
-            },
-            doSomethingWithPath: function(path){
-                alert("invoices/total called with path = " + path);
-            },
-            name: "invoices",
-            routes: {
-                "/": function(){
-                    alert("invoices called");
-                },
-                "/:id": function(id){
-                    this.doSomethingWithId(id);
-                },
-                "/total/*": function(path){
-                    this.doSomethingWithPath(path);
-                }
-            }
-        });
-        cx.controllers.registerController({
-            doSomethingWithId: function(id){
-                alert("bills/id called. id = " + id);
-            },
-            doSomethingWithPath: function(path){
-                alert("bills/total called with path = " + path);
-            },
-            name: "bills",
-            routes: {
-                "/": function(){
-                    alert("bills called");
-                },
-                "/:id": function(id){
-                    this.doSomethingWithId(id);
-                },
-                "/total/*": function(path){
-                    this.doSomethingWithPath(path);
-                }
-            }
-        });
         cx.history.start(false);
     </script>
 </body>

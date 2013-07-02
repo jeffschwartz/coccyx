@@ -29,7 +29,7 @@ module.exports = function ( grunt ) {
                     'javascripts/router.js',
                     'javascripts/view.js'
                     ],
-                dest : 'demoapp/javascripts/coccyx.js'
+                dest : 'demoapp/javascripts/libs/coccyx.js'
             }
         },
         watch  : {
