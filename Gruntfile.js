@@ -34,7 +34,7 @@ module.exports = function ( grunt ) {
         },
         watch  : {
             scripts : {
-                files   : '**/*.js',
+                files   : 'javascripts/**/*.js',
                 tasks   : ['concat'],
                 options : {
                     interrupt : true
