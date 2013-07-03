@@ -1,0 +1,13 @@
+.jumbotron-links {
+    list-style: none;
+    margin: 20px 0 0 0;
+}
+
+.jumbotron-links li {
+    display: inline;
+    margin-left: 60px;
+}
+
+.jumbotron-links li:first-child {
+    margin-left: 0;
+}

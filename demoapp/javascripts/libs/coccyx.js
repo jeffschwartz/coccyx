@@ -8956,7 +8956,7 @@ if ( typeof window === "object" && typeof window.document === "object" ) {
         var triggerPopState = trigger;
         historyStarted = true;
         // Delegate click events on anchor tags to the body element and assign an event handler
-        $("a","body").on("click", function(event){
+        $("body").on("click", "a", function(event){
             /**
              * We don't want to block external links or those to our domain which we don't want to process
              * via ajax, so this code checks for that by checking the first character in the href.
