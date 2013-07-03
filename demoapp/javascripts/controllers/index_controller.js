@@ -47,6 +47,7 @@
 
     function showIndexPage(){
         alert("show index page called");
+        console.log(this.$("body").length);
     }
 
     cx.controllers.registerController({

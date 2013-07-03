@@ -4,12 +4,12 @@
     var Coccyx = window.Coccyx = window.Coccyx || {};
 
 
-    function modelFactory(metaModel){
+    function registerModel(model){
 
     }
 
     Coccyx.models = {
-        factory: modelFactory
+        registerModel: registerModel
     };
 
 }(jQuery));
