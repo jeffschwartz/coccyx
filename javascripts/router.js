@@ -88,7 +88,7 @@
     function routeNotFound(url){
         console.log("router::routeNotFound called with route = " + url);
         // Show a Coccyx 404 error.
-        $("body").html("<div><p style=\"font-size:68px;margin:0;\">Coccyx 404</p><p style=\"font-size:68px;\">" + url + " Not Found.</p></div>");
+        $("body").html('<div style="font-size:68px;"><p style="margin:auto !important;line-height:80px;">Coccyx 404</p><p style="margin:auto !important;line-height:80px;">' + url + ' Not Found.</p></div>');
     }
 
     Coccyx.router = {

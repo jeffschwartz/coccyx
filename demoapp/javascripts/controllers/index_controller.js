@@ -44,15 +44,15 @@
      * and within router callback functions you can reference them using the
      * "this" keyword.
      */
+
+    function showIndexPage(){
+        alert("show index page called");
+    }
+
     cx.controllers.registerController({
-        indexPageSayHi: function(){
-            alert("Index Pages Say's, \"Hi!!!!!!!!\"");
-        },
         name: "",
         routes: {
-            "/": function(){
-                this.indexPageSayHi();
-            }
+            "/": showIndexPage
         }
     });
 }(window.Coccyx));
