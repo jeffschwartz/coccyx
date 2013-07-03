@@ -49,7 +49,7 @@
         // Render the index page which is purely static, no dynamic
         // content at all, so no need to use any kind of templating.
         var indexPage = this.$("#index-page").html();
-        this.$("body").html(indexPage);
+        this.$("#content").html(indexPage);
     };
 
     cx.controllers.registerController({
