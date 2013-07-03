@@ -11,5 +11,4 @@
     Coccyx.models = {
         registerModel: registerModel
     };
-
-}(jQuery));
+ }(jQuery));

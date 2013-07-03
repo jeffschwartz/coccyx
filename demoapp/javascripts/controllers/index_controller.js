@@ -45,10 +45,11 @@
      * "this" keyword.
      */
 
-    function showIndexPage(){
+    var showIndexPage = function(){
         alert("show index page called");
-        console.log(this.$("body").length);
-    }
+        // Render the view
+        this.$("body").html("Hello, World!");
+    };
 
     cx.controllers.registerController({
         name: "",

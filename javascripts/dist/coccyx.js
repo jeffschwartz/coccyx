@@ -8874,11 +8874,12 @@ if ( typeof window === "object" && typeof window.document === "object" ) {
     function loadRoutesFromController(controller){
         var tmp = "/" + controller.name,
             namedRoute;
+        console.log("Registering controller '" + controller.name + "'");
         // controller's local $
         controller.$ = $;
-        // Add controller to controllers array.
+        // Maintain list of controllers for when we need to bind them to route function callbacks.
         controllers[controller.name] = controller;
-        // Add each route to routes array.
+        // Build the routes array.
         for(var route in controller.routes){
             if(controller.routes.hasOwnProperty(route)){
                 if(route === "/"){
@@ -9002,8 +9003,7 @@ if ( typeof window === "object" && typeof window.document === "object" ) {
     Coccyx.models = {
         registerModel: registerModel
     };
-
-}(jQuery));;/**
+ }(jQuery));;/**
  * Router routes urls to their controllers
  */
  (function($){
