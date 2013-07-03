@@ -2,6 +2,6 @@
     "use strict";
 
     // Call history.start only after all your controllers have been loaded.
-    cx.history.start(false);
+    cx.history.start(true);
 
 }(window.Coccyx));

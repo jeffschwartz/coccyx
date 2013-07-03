@@ -46,9 +46,10 @@
      */
 
     var showIndexPage = function(){
-        alert("show index page called");
-        // Render the view
-        this.$("body").html("Hello, World!");
+        // Render the index page which is purely static, no dynamic
+        // content at all, so no need to use any kind of templating.
+        var indexPage = this.$("#index-page").html();
+        this.$("body").html(indexPage);
     };
 
     cx.controllers.registerController({
