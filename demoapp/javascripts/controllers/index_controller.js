@@ -48,14 +48,33 @@
     var showIndexPage = function(){
         // Render the index page which is purely static, no dynamic
         // content at all, so no need to use any kind of templating.
-        var indexPage = this.$("#index-page").html();
-        this.$("#content").html(indexPage);
+        var html = this.$("#index-page").html();
+        this.$("#content").html(html);
+    };
+
+    var showTinyAndSimpePage = function(){
+        var html = this.$("#tiny-and-simple-page").html();
+        var c = this.$("#content").length;
+        this.$("#content").html(html);
+    };
+
+    var showModernPage = function(){
+        var html = this.$("#tiny-and-simple-page").html();
+        this.$("#content").html(html);
+    };
+
+    var showBestPracticesPage = function(){
+        var html = this.$("#tiny-and-simple-page").html();
+        this.$("#content").html(html);
     };
 
     cx.controllers.registerController({
         name: "",
         routes: {
-            "/": showIndexPage
+            "/": showIndexPage,
+            "tinysimple": showTinyAndSimpePage,
+            "modern": showModernPage,
+            "bestpractices": showBestPracticesPage
         }
     });
 }(window.Coccyx));

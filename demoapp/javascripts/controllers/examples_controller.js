@@ -2,8 +2,7 @@
     "use strict";
 
     var showExamplesPage = function(){
-        alert("showExamplesPage called!");
-        this.$("body").html("");
+        this.$("#content").html("");
     };
 
     cx.controllers.registerController({

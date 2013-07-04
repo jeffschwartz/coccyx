@@ -58,7 +58,7 @@
                     // The route matches the url so attach the params (it could be empty) to the route and return the route.
                     if(eq){
                         // controller name, function to call, function arguments to call with...
-                        return {controllerName: b[0], fn: routes[route], params: params};
+                        return {controllerName: /*b[0]*/ routes[route][0], fn: routes[route][1], params: params};
                     }
                     if(rel){
                         // controller name, function to call, function arguments to call with...
@@ -66,7 +66,7 @@
                             relUrl += ("/" + a[ii]);
                         }
                         // controller name, function to call, function arguments to call with...
-                        return {controllerName: b[0], fn: routes[route], params: [relUrl]};
+                        return {controllerName: /*b[0]*/ routes[route][0], fn: routes[route][1], params: [relUrl]};
                     }
                 }
             }

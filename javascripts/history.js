@@ -29,7 +29,7 @@
         var triggerPopState = trigger;
         historyStarted = true;
         // Delegate click events on anchor tags to the body element and assign an event handler
-        $("body").on("click", "a", function(event){
+        $(document).on("click", "a", function(event){
             /**
              * We don't want to block external links or those to our domain which we don't want to process
              * via ajax, so this code checks for that by checking the first character in the href.
@@ -41,8 +41,9 @@
                 var pathName = event.target.pathname;
                 console.log("The url's path = ", "'" + pathName+"'");
                 console.log(event);
-                history.pushState({},"Some Place",event.target.href);
-                Coccyx.router.route(window.location.pathname);
+                // history.pushState({},"Some Place",event.target.href);
+                // Coccyx.router.route(window.location.pathname);
+                Coccyx.router.route(pathName);
              }
         });
         $(window).on("popstate", function(){

@@ -46,7 +46,7 @@
                 }else{
                     namedRoute = tmp + route;
                 }
-                routes[namedRoute] = controller.routes[route];
+                routes[namedRoute] = [controller.name,controller.routes[route]];
             }
         }
     }

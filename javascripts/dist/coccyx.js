@@ -8887,7 +8887,7 @@ if ( typeof window === "object" && typeof window.document === "object" ) {
                 }else{
                     namedRoute = tmp + route;
                 }
-                routes[namedRoute] = controller.routes[route];
+                routes[namedRoute] = [controller.name,controller.routes[route]];
             }
         }
     }
@@ -8956,7 +8956,7 @@ if ( typeof window === "object" && typeof window.document === "object" ) {
         var triggerPopState = trigger;
         historyStarted = true;
         // Delegate click events on anchor tags to the body element and assign an event handler
-        $("body").on("click", "a", function(event){
+        $(document).on("click", "a", function(event){
             /**
              * We don't want to block external links or those to our domain which we don't want to process
              * via ajax, so this code checks for that by checking the first character in the href.
@@ -8968,8 +8968,9 @@ if ( typeof window === "object" && typeof window.document === "object" ) {
                 var pathName = event.target.pathname;
                 console.log("The url's path = ", "'" + pathName+"'");
                 console.log(event);
-                history.pushState({},"Some Place",event.target.href);
-                Coccyx.router.route(window.location.pathname);
+                // history.pushState({},"Some Place",event.target.href);
+                // Coccyx.router.route(window.location.pathname);
+                Coccyx.router.route(pathName);
              }
         });
         $(window).on("popstate", function(){
@@ -9063,7 +9064,7 @@ if ( typeof window === "object" && typeof window.document === "object" ) {
                     // The route matches the url so attach the params (it could be empty) to the route and return the route.
                     if(eq){
                         // controller name, function to call, function arguments to call with...
-                        return {controllerName: b[0], fn: routes[route], params: params};
+                        return {controllerName: /*b[0]*/ routes[route][0], fn: routes[route][1], params: params};
                     }
                     if(rel){
                         // controller name, function to call, function arguments to call with...
@@ -9071,7 +9072,7 @@ if ( typeof window === "object" && typeof window.document === "object" ) {
                             relUrl += ("/" + a[ii]);
                         }
                         // controller name, function to call, function arguments to call with...
-                        return {controllerName: b[0], fn: routes[route], params: [relUrl]};
+                        return {controllerName: /*b[0]*/ routes[route][0], fn: routes[route][1], params: [relUrl]};
                     }
                 }
             }
