@@ -8925,7 +8925,7 @@ if ( typeof window === "object" && typeof window.document === "object" ) {
             return false;
         }
     }
-}());;(function(){
+}());;(function($){
     "use strict";
 
     if(!history.pushState){
@@ -8939,58 +8939,54 @@ if ( typeof window === "object" && typeof window.document === "object" ) {
     var Coccyx = window.Coccyx = window.Coccyx || {},
         historyStarted = false;
 
+    // Event handler for click event on anchor tags. Ignores those
+    // where the href path doesn't start with a "/" character. This
+    // prevents handling external links, allowing those events
+    // to bubble up as normal.
+    $(document).on("click", "a", function(event){
+        if($(this).attr("href").indexOf("/") === 0){
+            event.preventDefault();
+            var pathName = event.target.pathname;
+            console.log("The url's path = ", "'" + pathName+"'");
+            console.log(event);
+            // Coccyx.router.route(window.location.pathname);
+            Coccyx.router.route(pathName);
+            history.pushState(null, null, event.target.href);
+        }
+    });
+
+    $(window).on("popstate", function(event){
+        // Normalize browser differences for onpageload handling.
+        // Safari & Chrome fire popstate events on page load while
+        // Firefox doesn't. We only want to respond to popstate
+        // events that are results of our pushing to history.
+        // If it isn't ours then just ignore it.
+        if(started()){
+            Coccyx.router.route(window.location.pathname);
+        }
+    });
+
     function started(){
         return historyStarted;
     }
 
-    // Call to push a url to change the browser location, which you
-    // might need to do to when processing your route events.
-    // Pass true for trigger if you want to trigger the history event.
-    function push(url, trigger){
-        history.pushState();
-    }
-
-    // When called starts listening for "popstate" events which are raised when the
-    // user uses the browser's back and forward buttons to navigate.
+    // Call Coccyx.history.start only after all your controllers have been
+    // registered (by calling Coccyx.controllers.registerController).
+    // When called starts responding to "popstate" events which are raised when the
+    // user uses the browser's back and forward buttons to navigate. Pass true for
+    // trigger if you want the route function to be called.
     function start(trigger){
-        var triggerPopState = trigger;
         historyStarted = true;
-        // Delegate click events on anchor tags to the body element and assign an event handler
-        $(document).on("click", "a", function(event){
-            /**
-             * We don't want to block external links or those to our domain which we don't want to process
-             * via ajax, so this code checks for that by checking the first character in the href.
-             * If the first character is "/" then we block its default behavior, otherwsie we let the event
-             * bubble as normal.
-             */
-             if($(this).attr("href").indexOf("/") === 0){
-                event.preventDefault();
-                var pathName = event.target.pathname;
-                console.log("The url's path = ", "'" + pathName+"'");
-                console.log(event);
-                // history.pushState({},"Some Place",event.target.href);
-                // Coccyx.router.route(window.location.pathname);
-                Coccyx.router.route(pathName);
-             }
-        });
-        $(window).on("popstate", function(){
-            // trigger 1st time only if user passed true to start
-            if(started() && triggerPopState){
-                //alert("popstate event fired!");
-                Coccyx.router.route(window.location.pathname);
-            }
-            // Insure that all future popstate events will now be handled - see trigger.
-            triggerPopState = true;
-        });
+        if(trigger){
+            Coccyx.router.route(window.location.pathname);
+        }
     }
 
     Coccyx.history = {
-        start: start,
-        started: started,
-        push: push
+        start: start
     };
 
-}());
+}(jQuery));
 ;(function($){
     "use strict";
 
@@ -9091,6 +9087,30 @@ if ( typeof window === "object" && typeof window.document === "object" ) {
         }
     }
 
+    // A wrapper for the browser's history.pushState and history.replaceState.
+    // Mimic Backbone's History.navigate method.
+    // "Whenever you reach a point in your application that you'd like to save as a URL,
+    // call navigate in order to update the URL. If you wish to also call the route function,
+    // set the trigger option to true. To update the URL without creating an entry in the
+    // browser's history, set the replace option to true."
+    // Pass true for trigger if you want the route function to be called.
+    // Pass true for replace if you only want to replace the current history entry and not
+    // push a new one onto the browser's history stack.
+    // function navigate(state, title, url, trigger, replace){
+    function navigate(options){
+        options = options || {};
+        options.state = options.state || null;
+        options.state.coccyxUrl = options.url || null;
+        options.title = options.title || document.title;
+        options.url = options.url || window.location.pathname;
+        options.trigger = options.trigger || false;
+        options.replace = options.replace || false;
+        window.history[options.replace ? "replaceState" : "pushState"](options.state, options.title, options.url);
+        if(options.trigger){
+            route(options.url);
+        }
+    }
+
     function routeNotFound(url){
         console.log("router::routeNotFound called with route = " + url);
         // Show a Coccyx 404 error.
@@ -9098,7 +9118,8 @@ if ( typeof window === "object" && typeof window.document === "object" ) {
     }
 
     Coccyx.router = {
-        route: route
+        route: route,
+        navigate: navigate
     };
 
  }(jQuery));;(function($){

@@ -50,22 +50,25 @@
         // content at all, so no need to use any kind of templating.
         var html = this.$("#index-page").html();
         this.$("#content").html(html);
+        // cx.router.navigate();
     };
 
     var showTinyAndSimpePage = function(){
         var html = this.$("#tiny-and-simple-page").html();
-        var c = this.$("#content").length;
         this.$("#content").html(html);
+        // cx.router.navigate();
     };
 
     var showModernPage = function(){
         var html = this.$("#tiny-and-simple-page").html();
         this.$("#content").html(html);
+        // cx.router.navigate();
     };
 
     var showBestPracticesPage = function(){
         var html = this.$("#tiny-and-simple-page").html();
         this.$("#content").html(html);
+        // cx.router.navigate();
     };
 
     cx.controllers.registerController({
