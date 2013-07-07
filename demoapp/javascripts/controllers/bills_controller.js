@@ -1,4 +1,4 @@
-(function(cx){
+define(["coccyx"], function(cx){
     "use strict";
 
     cx.controllers.registerController({
@@ -21,4 +21,4 @@
             }
         }
     });
-}(window.Coccyx));
+});

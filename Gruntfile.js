@@ -9,27 +9,39 @@ module.exports = function ( grunt ) {
             },
             dist    : {
                 src  : [
-                    'javascripts/libs/jquery.js',
                     'javascripts/frontendcontroller.js',
                     'javascripts/helpers.js',
                     'javascripts/history.js',
                     'javascripts/model.js',
                     'javascripts/router.js',
-                    'javascripts/view.js'
+                    'javascripts/view.js',
+                    'javascripts/amd.js'
                     ],
                 dest : 'javascripts/dist/coccyx.js'
             },
             demoapp : {
                 src  : [
-                    'javascripts/libs/jquery.js',
                     'javascripts/frontendcontroller.js',
                     'javascripts/helpers.js',
                     'javascripts/history.js',
                     'javascripts/model.js',
                     'javascripts/router.js',
-                    'javascripts/view.js'
+                    'javascripts/view.js',
+                    'javascripts/amd.js'
                     ],
                 dest : 'demoapp/javascripts/libs/coccyx.js'
+            },
+            testapp : {
+                src  : [
+                    'javascripts/frontendcontroller.js',
+                    'javascripts/helpers.js',
+                    'javascripts/history.js',
+                    'javascripts/model.js',
+                    'javascripts/router.js',
+                    'javascripts/view.js',
+                    'javascripts/amd.js'
+                    ],
+                dest : 'testapp/javascripts/libs/coccyx.js'
             }
         },
         watch  : {

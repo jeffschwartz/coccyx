@@ -17,7 +17,7 @@
      function registerController(){
         if(arguments.length !== 1 && !(arguments[0] instanceof Array) && !(arguments[0] instanceof Object)){
             // TODO Not sure if I should be throwing here. Think about it!!!
-            throw new Error("registerController missing or invalid param. Expection an [] or {}.");
+            throw new Error("registerController missing or invalid param. Expected an [] or {}.");
         }
         if(arguments[0] instanceof Array){
             // An array of hashes.
@@ -56,10 +56,19 @@
     }
 
     function getController(name){
-        var ctlr = controllers[name];
-        return ctlr;
+        return controllers[name];
     }
 
+    // Provide jQuery in the Coccyx name space.
+    Coccyx.$ = $;
+
+    // Provide a bucket for end-user application stuff.
+    Coccyx.userspace = Coccyx.userspace || {};
+
+    // Provide a bucket for Coccyx library plug-ins.
+    Coccyx.plugins = Coccyx.plugins || {};
+
+    // Define what a controller is.
     Coccyx.controllers = {
         registerController : registerController,
         getRoutes: getRoutes,

@@ -1,4 +1,4 @@
-(function(cx){
+define(["common","coccyx"], function(common, Coccyx) {
     "use strict";
 
     /**
@@ -48,36 +48,35 @@
     var showIndexPage = function(){
         // Render the index page which is purely static, no dynamic
         // content at all, so no need to use any kind of templating.
-        var html = this.$("#index-page").html();
+        var html = this.$("#index-page").html(),
+            common = Coccyx.userspace.common;
+        common.setMenuItemActive("/");
         this.$("#content").html(html);
-        // cx.router.navigate();
     };
 
-    var showTinyAndSimpePage = function(){
+    var showTinyAndSimplePage = function(){
         var html = this.$("#tiny-and-simple-page").html();
         this.$("#content").html(html);
-        // cx.router.navigate();
     };
 
     var showModernPage = function(){
         var html = this.$("#tiny-and-simple-page").html();
         this.$("#content").html(html);
-        // cx.router.navigate();
     };
 
     var showBestPracticesPage = function(){
         var html = this.$("#tiny-and-simple-page").html();
         this.$("#content").html(html);
-        // cx.router.navigate();
     };
 
-    cx.controllers.registerController({
+    Coccyx.controllers.registerController({
         name: "",
         routes: {
             "/": showIndexPage,
-            "tinysimple": showTinyAndSimpePage,
+            "tinysimple": showTinyAndSimplePage,
             "modern": showModernPage,
             "bestpractices": showBestPracticesPage
         }
     });
-}(window.Coccyx));
+
+});
