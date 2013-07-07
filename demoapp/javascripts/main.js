@@ -11,16 +11,15 @@ require.config({
 
 require([
     "coccyx",
+    "demoapp",
+    "indexController",
     "jquery",
     "common",
-    "bootstrap",
-    "indexController"
+    "bootstrap"
     ],
-    function(Coccyx){
+    function(Coccyx, demoapp, indexController){
         "use strict";
 
-        // Call history.start only after all your controllers have been
-        // registered (by calling Coccyx.controllers.registerController).
-        Coccyx.history.start(true);
+        demoapp.start(indexController);
     }
 );

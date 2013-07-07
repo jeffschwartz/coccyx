@@ -69,7 +69,7 @@ define(["common","coccyx"], function(common, Coccyx) {
         this.$("#content").html(html);
     };
 
-    Coccyx.controllers.registerController({
+    return {
         name: "",
         routes: {
             "/": showIndexPage,
@@ -77,6 +77,6 @@ define(["common","coccyx"], function(common, Coccyx) {
             "modern": showModernPage,
             "bestpractices": showBestPracticesPage
         }
-    });
+    };
 
 });

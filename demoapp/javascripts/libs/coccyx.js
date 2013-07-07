@@ -14,7 +14,7 @@
      * so if the pathanme of the url is "/controller/noun" then root = controller.
      */
 
-     function registerController(){
+     function registerControllers(){
         if(arguments.length !== 1 && !(arguments[0] instanceof Array) && !(arguments[0] instanceof Object)){
             // TODO Not sure if I should be throwing here. Think about it!!!
             throw new Error("registerController missing or invalid param. Expected an [] or {}.");
@@ -70,7 +70,7 @@
 
     // Define what a controller is.
     Coccyx.controllers = {
-        registerController : registerController,
+        registerControllers : registerControllers,
         getRoutes: getRoutes,
         getController: getController
     };
