@@ -1,17 +1,19 @@
-define(["coccyx"], function (cx) {
+define(["common","coccyx"], function(common, Coccyx) {
     "use strict";
 
     var showExamplesPage = function(){
-        var common = cx.userspace.common;
+        var html = this.$("#examples-page").html(),
+            common = Coccyx.userspace.common;
         common.setMenuItemActive("/examples");
-        this.$("#content").html("");
+        console.log(html);
+        this.$("#content").html(html);
     };
 
-    cx.controllers.registerController({
+    return {
         name: "examples",
         routes: {
             "/": showExamplesPage
         }
-    });
+    };
 
 });
