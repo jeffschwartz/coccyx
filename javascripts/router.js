@@ -31,10 +31,10 @@
         for(route in routes){
             if(routes.hasOwnProperty(route)){
                 // Get the "veb".
-                v = route.substring(0, route.indexOf(" "))
+                v = route.substring(0, route.indexOf(" "));
                 // Get the url.
-                b = route.substring(1).split("/");
-                if((a.length === b.length) || Coccyx.helpers.contains(route, "*")){
+                b = route.substring(route.indexOf("/") + 1).split("/");
+                if(verb === v && (a.length === b.length || Coccyx.helpers.contains(route, "*"))){
                     eq = true;
                     // The url and the route have the same number of segments so the route
                     // can be either static or it could contain parameterized segments.

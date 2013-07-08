@@ -28,10 +28,10 @@ define(["common","coccyx"], function(common, Coccyx) {
     return {
         name: "",
         routes: {
-            "/": showIndexPage,
-            "tinysimple": showTinyAndSimplePage,
-            "modern": showModernPage,
-            "bestpractices": showBestPracticesPage
+            "get /": showIndexPage,
+            "get tinysimple": showTinyAndSimplePage,
+            "get modern": showModernPage,
+            "get bestpractices": showBestPracticesPage
         }
     };
 

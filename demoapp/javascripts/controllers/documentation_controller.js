@@ -13,7 +13,7 @@ define(["common","coccyx"], function(common, Coccyx){
     return {
         name: "documentation",
         routes: {
-            "/": showDocumentationPage
+            "get /": showDocumentationPage
         }
     };
 

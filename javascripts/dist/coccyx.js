@@ -41,10 +41,10 @@
         // Build the routes array.
         for(var route in controller.routes){
             if(controller.routes.hasOwnProperty(route)){
-                if(route === "/"){
-                    namedRoute = tmp;
+                if(route.substring(route.indexOf(" ") + 1) === "/"){
+                    namedRoute = route.substring(0, route.indexOf(" ") + 1) + tmp;
                 }else{
-                    namedRoute = tmp + route;
+                    namedRoute = route.substring(0, route.indexOf(" ") + 1) + tmp + route.substring(route.indexOf(" ") + 1);
                 }
                 routes[namedRoute] = [controller.name,controller.routes[route]];
             }
@@ -207,10 +207,10 @@
         for(route in routes){
             if(routes.hasOwnProperty(route)){
                 // Get the "veb".
-                v = route.substring(0, route.indexOf(" "))
+                v = route.substring(0, route.indexOf(" "));
                 // Get the url.
-                b = route.substring(1).split("/");
-                if((a.length === b.length) || Coccyx.helpers.contains(route, "*")){
+                b = route.substring(route.indexOf("/") + 1).split("/");
+                if(verb === v && (a.length === b.length || Coccyx.helpers.contains(route, "*"))){
                     eq = true;
                     // The url and the route have the same number of segments so the route
                     // can be either static or it could contain parameterized segments.

@@ -41,10 +41,10 @@
         // Build the routes array.
         for(var route in controller.routes){
             if(controller.routes.hasOwnProperty(route)){
-                if(route === "/"){
-                    namedRoute = tmp;
+                if(route.substring(route.indexOf(" ") + 1) === "/"){
+                    namedRoute = route.substring(0, route.indexOf(" ") + 1) + tmp;
                 }else{
-                    namedRoute = tmp + route;
+                    namedRoute = route.substring(0, route.indexOf(" ") + 1) + tmp + route.substring(route.indexOf(" ") + 1);
                 }
                 routes[namedRoute] = [controller.name,controller.routes[route]];
             }

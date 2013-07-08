@@ -5,14 +5,13 @@ define(["common","coccyx"], function(common, Coccyx) {
         var html = this.$("#examples-page").html(),
             common = Coccyx.userspace.common;
         common.setMenuItemActive("/examples");
-        console.log(html);
         this.$("#content").html(html);
     };
 
     return {
         name: "examples",
         routes: {
-            "/": showExamplesPage
+            "get /": showExamplesPage
         }
     };
 

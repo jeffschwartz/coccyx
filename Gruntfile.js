@@ -30,7 +30,8 @@ module.exports = function ( grunt ) {
                     'javascripts/amd.js'
                     ],
                 dest : 'demoapp/javascripts/libs/coccyx.js'
-            },
+            }
+        },
         watch  : {
             scripts : {
                 files   : 'javascripts/**/*.js',
