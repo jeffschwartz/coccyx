@@ -1,14 +1,14 @@
 (function($){
     "use strict";
 
+    // Verify browser supports pushstate.
     if(!history.pushState){
-        // TODO - I don't think throwing an error is a good idea here.
-        // Perhaps it is best leaving it up to the user to decide what
-        // to do.
-        throw new Error("history.pushState is not supported in your browser!");
+        console.log("history pushstate is not supported in your browser");
+        throw new Error("history pushstate not supported");
     }
     console.log("history pushState is supported in your browser");
 
+    // The "one" global variable.
     var Coccyx = window.Coccyx = window.Coccyx || {},
         historyStarted = false;
 
@@ -20,22 +20,27 @@
         if($(this).attr("href").indexOf("/") === 0){
             event.preventDefault();
             var pathName = event.target.pathname;
-            console.log("The url's path = ", "'" + pathName+"'");
-            console.log(event);
-            // Coccyx.router.route(window.location.pathname);
-            Coccyx.router.route(pathName);
-            history.pushState(null, null, event.target.href);
+            // console.log("The url's path = ", "'" + pathName+"'");
+            // console.log(event);
+            // The "verb" for routes on anchors is always "get".
+            Coccyx.router.route("get", pathName);
+            history.pushState({verb: "get"}, null, event.target.href);
         }
     });
 
+    // TODO Needs to be implemnted, an event handler for forms.
+    // 'Verb' should be set to whatever the form's 'method' attribute
+    // is set to. If 'method' attribute doesn' exist, then 'verb'
+    // defaults to get.
+    $(document).on("submit", "form", function(/*event*/){
+        alert("form submit event caught by router *** needs to be implemented ***");
+    });
+
+    // Event handler for popstate event.
     $(window).on("popstate", function(event){
-        // Normalize browser differences for onpageload handling.
-        // Safari & Chrome fire popstate events on page load while
-        // Firefox doesn't. We only want to respond to popstate
-        // events that are results of our pushing to history.
-        // If it isn't ours then just ignore it.
+        // Ignore "popstate" events until history.start is called.
         if(started()){
-            Coccyx.router.route(window.location.pathname);
+            Coccyx.router.route(event.originalEvent.state? event.originalEvent.state: "get", window.location.pathname);
         }
     });
 
@@ -51,7 +56,7 @@
     function start(trigger){
         historyStarted = true;
         if(trigger){
-            Coccyx.router.route(window.location.pathname);
+            Coccyx.router.route("get", window.location.pathname);
         }
     }
 

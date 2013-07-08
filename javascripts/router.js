@@ -6,16 +6,16 @@
 
     var Coccyx = window.Coccyx = window.Coccyx || {};
 
-    function route(url){
-        var rt = getRoute(url);
+    function route(verb, url){
+        var rt = getRoute(verb, url);
         if(rt){
             routeFound(rt);
         }else{
-            routeNotFound(url);
+            routeNotFound(verb, url);
         }
     }
 
-    function getRoute(url){
+    function getRoute(verb, url){
         var routes = Coccyx.controllers.getRoutes(),
             a = url.substring(1).split("/"),
             route,
@@ -26,9 +26,13 @@
             eq,
             params = [],
             rel = false,
-            relUrl;
+            relUrl,
+            v;
         for(route in routes){
             if(routes.hasOwnProperty(route)){
+                // Get the "veb".
+                v = route.substring(0, route.indexOf(" "))
+                // Get the url.
                 b = route.substring(1).split("/");
                 if((a.length === b.length) || Coccyx.helpers.contains(route, "*")){
                     eq = true;

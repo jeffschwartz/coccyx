@@ -31,19 +31,6 @@ module.exports = function ( grunt ) {
                     ],
                 dest : 'demoapp/javascripts/libs/coccyx.js'
             },
-            testapp : {
-                src  : [
-                    'javascripts/frontendcontroller.js',
-                    'javascripts/helpers.js',
-                    'javascripts/history.js',
-                    'javascripts/model.js',
-                    'javascripts/router.js',
-                    'javascripts/view.js',
-                    'javascripts/amd.js'
-                    ],
-                dest : 'testapp/javascripts/libs/coccyx.js'
-            }
-        },
         watch  : {
             scripts : {
                 files   : 'javascripts/**/*.js',
