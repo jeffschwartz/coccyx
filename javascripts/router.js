@@ -74,10 +74,7 @@
     }
 
     function routeFound(route){
-        // TODO  What context should the route callback function be called with????
-        // The whole idea is that user might add their own methods to their controllers
-        // and like to be able to call them from inside the route callback method.
-        // this needs to be thought out more...
+        // Route callbacks are bound (their contexts (their 'this')) to their controllers.
         if(route.params.length){
             route.fn.apply(Coccyx.controllers.getController(route.controllerName), route.params);
         }else{
