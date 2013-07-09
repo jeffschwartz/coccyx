@@ -7,6 +7,11 @@ require.config({
         "contactController": "controllers/contact_controller",
         "documentationController": "controllers/documentation_controller",
         "examplesController": "controllers/examples_controller",
+        "indexPageView": "views/index_view",
+        "examplesPageView": "views/examples_view",
+        "documentationPageView": "views/documentation_view",
+        "contactPageView": "views/contact_view",
+        "aboutPageView": "views/about_view",
         "bootstrap": "libs/bootstrap/js/bootstrap",
         "common": "common"
     }
@@ -14,20 +19,24 @@ require.config({
 });
 
 require([
-    "coccyx",
     "demoapp",
     "indexController",
     "aboutController",
     "examplesController",
     "contactController",
     "documentationController",
-    "jquery",
-    "common",
-    "bootstrap"
+    "indexPageView",
+    "examplesPageView",
+    "documentationPageView",
+    "contactPageView",
+    "aboutPageView"
     ],
-    function(Coccyx, demoapp, indexController, aboutController, examplesController, contactController, documentationController){
+    function(demoapp, indexController, aboutController, examplesController, contactController, documentationController, indexPageView, examplesPageView, documentationPageView, contactPageView, aboutPageView){
         "use strict";
 
-        demoapp.start([indexController, aboutController, examplesController, contactController, documentationController]);
+        demoapp.start(
+            [indexController, aboutController, examplesController, contactController, documentationController],
+            [indexPageView, examplesPageView,documentationPageView, contactPageView, aboutPageView]
+        );
     }
 );

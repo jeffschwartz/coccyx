@@ -1,11 +1,8 @@
-define(["common","coccyx"], function(common, Coccyx) {
+define(["coccyx"], function(Coccyx) {
     "use strict";
 
     var showExamplesPage = function(){
-        var html = this.$("#examples-page").html(),
-            common = Coccyx.userspace.common;
-        common.setMenuItemActive("/examples");
-        this.$("#content").html(html);
+        Coccyx.views.render("examplesView");
     };
 
     return {

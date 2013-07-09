@@ -1,4 +1,4 @@
-**
+/**
  * Front-End controller - it routes paths to the appropriate controller
  */
  (function($){
@@ -47,6 +47,7 @@
                     namedRoute = route.substring(0, route.indexOf(" ") + 1) + tmp + route.substring(route.indexOf(" ") + 1);
                 }
                 routes[namedRoute] = [controller.name,controller.routes[route]];
+                console.log("Registering route '" + namedRoute + "'");
             }
         }
     }
@@ -59,6 +60,7 @@
         return controllers[name];
     }
 
+    // TODO should I be doing this?????
     // Provide jQuery in the Coccyx name space.
     Coccyx.$ = $;
 

@@ -40,7 +40,7 @@
     $(window).on("popstate", function(event){
         // Ignore "popstate" events until history.start is called.
         if(started()){
-            Coccyx.router.route(event.originalEvent.state? event.originalEvent.state: "get", window.location.pathname);
+            Coccyx.router.route(event.originalEvent.state? event.originalEvent.state.verb : "get", window.location.pathname);
         }
     });
 

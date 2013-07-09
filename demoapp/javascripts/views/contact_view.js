@@ -2,10 +2,10 @@ define(["coccyx", "common"], function(Coccyx){
     "use strict";
 
     return {
-        name: "indexView",
-        template: "#index-page",
+        name: "contactView",
+        template: "#contact-page",
         domTarget: "#content",
-        activeMenu: "/",
+        activeMenu: "/contact",
         render: function(){
             var html = this.$(this.template).html();
             Coccyx.userspace.common.setMenuItemActive(this.activeMenu);
