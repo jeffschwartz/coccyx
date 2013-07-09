@@ -1,8 +1,9 @@
-/**
- * Router routes urls to their controllers
- */
  (function($){
     "use strict";
+
+    /**
+     * Router routes urls to their controllers
+     */
 
     var Coccyx = window.Coccyx = window.Coccyx || {};
 

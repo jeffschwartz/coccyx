@@ -95,7 +95,7 @@
             }
             return false;
         }
-    }
+    };
 }());;(function($){
     "use strict";
 
@@ -176,11 +176,12 @@
     Coccyx.models = {
         registerModel: registerModel
     };
- }(jQuery));;/**
- * Router routes urls to their controllers
- */
- (function($){
+ }(jQuery));; (function($){
     "use strict";
+
+    /**
+     * Router routes urls to their controllers
+     */
 
     var Coccyx = window.Coccyx = window.Coccyx || {};
 
