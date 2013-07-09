@@ -1,12 +1,12 @@
-/**
+**
  * Front-End controller - it routes paths to the appropriate controller
  */
  (function($){
     "use strict";
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
-    controllers = {},
-    routes = {};
+        controllers = {},
+        routes = {};
 
     /**
      * Controller
@@ -17,7 +17,7 @@
      function registerControllers(){
         if(arguments.length !== 1 && !(arguments[0] instanceof Array) && !(arguments[0] instanceof Object)){
             // TODO Not sure if I should be throwing here. Think about it!!!
-            throw new Error("registerController missing or invalid param. Expected an [] or {}.");
+            throw new Error("registerControllers missing or invalid param. Expected an [] or {}.");
         }
         if(arguments[0] instanceof Array){
             // An array of hashes.
@@ -262,6 +262,12 @@
         }
     }
 
+    function routeNotFound(url){
+        console.log("router::routeNotFound called with route = " + url);
+        // Show a Coccyx 404 error.
+        $("body").html('<div style="font-size:68px;"><p style="margin:auto !important;line-height:80px;">Coccyx 404</p><p style="margin:auto !important;line-height:80px;">' + url + ' Not Found.</p><p style="margin:auto !important;line-height:80px;"> Did you forget to call Coccyx.controllers.registerController to register your controller?</p></div>');
+    }
+
     // A wrapper for the browser's history.pushState and history.replaceState.
     // Mimic Backbone's History.navigate method.
     // "Whenever you reach a point in your application that you'd like to save as a URL,
@@ -286,27 +292,12 @@
         }
     }
 
-    function routeNotFound(url){
-        console.log("router::routeNotFound called with route = " + url);
-        // Show a Coccyx 404 error.
-        $("body").html('<div style="font-size:68px;"><p style="margin:auto !important;line-height:80px;">Coccyx 404</p><p style="margin:auto !important;line-height:80px;">' + url + ' Not Found.</p><p style="margin:auto !important;line-height:80px;"> Did you forget to call Coccyx.controllers.registerController to register your controller?</p></div>');
-    }
-
     Coccyx.router = {
         route: route,
         navigate: navigate
     };
 
- }(jQuery));;(function($){
-    "use strict";
-
-    var Coccyx = window.Coccyx = window.Coccyx || {};
-
-
-    Coccyx.views = {
-    };
-
-}(jQuery));;(function(){
+ }(jQuery));;(function(){
     "use strict";
     if ( typeof define === "function" && define.amd ) {
         define("coccyx", ["jquery"], function () { return window.Coccyx; } );

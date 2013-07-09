@@ -4,6 +4,7 @@ define(["common","coccyx"], function(common, Coccyx) {
     var showIndexPage = function(){
         // Render the index page which is purely static, no dynamic
         // content at all, so no need to use any kind of templating.
+        // Coccyx.getView("indexPage").render();
         var html = this.$("#index-page").html(),
             common = Coccyx.userspace.common;
         common.setMenuItemActive("/");

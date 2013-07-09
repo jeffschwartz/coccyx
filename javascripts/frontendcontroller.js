@@ -1,12 +1,12 @@
-/**
+**
  * Front-End controller - it routes paths to the appropriate controller
  */
  (function($){
     "use strict";
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
-    controllers = {},
-    routes = {};
+        controllers = {},
+        routes = {};
 
     /**
      * Controller
@@ -17,7 +17,7 @@
      function registerControllers(){
         if(arguments.length !== 1 && !(arguments[0] instanceof Array) && !(arguments[0] instanceof Object)){
             // TODO Not sure if I should be throwing here. Think about it!!!
-            throw new Error("registerController missing or invalid param. Expected an [] or {}.");
+            throw new Error("registerControllers missing or invalid param. Expected an [] or {}.");
         }
         if(arguments[0] instanceof Array){
             // An array of hashes.
