@@ -13,7 +13,15 @@ require.config({
         "contactPageView": "views/contact_view",
         "aboutPageView": "views/about_view",
         "bootstrap": "libs/bootstrap/js/bootstrap",
+        "handlebars": "libs/handlebars",
+        "templates": "templates/hb",
         "common": "common"
+    },
+    shim: {
+        "templates": ["handlebars"],
+        "handlebars": {
+            exports: "Handlebars"
+        }
     }
 
 });

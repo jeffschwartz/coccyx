@@ -1,15 +1,14 @@
-define(["coccyx", "common"], function(Coccyx){
+define(["coccyx", "templates", "common"], function(Coccyx){
     "use strict";
 
     return {
         name: "contactView",
-        template: "#contact-page",
+        template: Handlebars.templates["contactpage.tmpl"],
         domTarget: "#content",
         activeMenu: "/contact",
         render: function(){
-            var html = this.$(this.template).html();
             Coccyx.userspace.common.setMenuItemActive(this.activeMenu);
-            this.$(this.domTarget).html(html);
+            this.$(this.domTarget).html(this.template());
         }
     };
 });
