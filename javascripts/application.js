@@ -1,6 +1,3 @@
-/**
- * Front-End controller - it routes paths to the appropriate controller
- */
  (function($){
     "use strict";
 

@@ -9,7 +9,7 @@ module.exports = function ( grunt ) {
             },
             dist    : {
                 src  : [
-                    'javascripts/frontendcontroller.js',
+                    'javascripts/application.js',
                     'javascripts/helpers.js',
                     'javascripts/history.js',
                     'javascripts/model.js',
@@ -21,7 +21,7 @@ module.exports = function ( grunt ) {
             },
             demoapp : {
                 src  : [
-                    'javascripts/frontendcontroller.js',
+                    'javascripts/application.js',
                     'javascripts/helpers.js',
                     'javascripts/history.js',
                     'javascripts/model.js',
