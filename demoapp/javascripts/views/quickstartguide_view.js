@@ -2,8 +2,8 @@ define(["coccyx", "templates", "common", "bootstrap"], function(Coccyx){
     "use strict";
 
     return {
-        name: "documentationView",
-        template: Handlebars.templates["documentationpage.tmpl"],
+        name: "quickStartGuideView",
+        template: Handlebars.templates["quickstartguidepage.tmpl"],
         domTarget: "#content",
         activeMenu: "/documentation",
         render: function(){

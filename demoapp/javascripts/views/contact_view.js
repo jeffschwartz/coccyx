@@ -1,4 +1,4 @@
-define(["coccyx", "templates", "common"], function(Coccyx){
+define(["coccyx", "templates", "common", "bootstrap"], function(Coccyx){
     "use strict";
 
     return {

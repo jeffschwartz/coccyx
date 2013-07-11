@@ -41,7 +41,7 @@
                 if(route.substring(route.indexOf(" ") + 1) === "/"){
                     namedRoute = route.substring(0, route.indexOf(" ") + 1) + tmp;
                 }else{
-                    namedRoute = route.substring(0, route.indexOf(" ") + 1) + tmp + route.substring(route.indexOf(" ") + 1);
+                    namedRoute = route.substring(0, route.indexOf(" ") + 1) + tmp + "/" + route.substring(route.indexOf(" ") + 1);
                 }
                 routes[namedRoute] = [controller.name,controller.routes[route]];
                 console.log("Registering route '" + namedRoute + "'");

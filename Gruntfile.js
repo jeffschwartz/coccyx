@@ -35,15 +35,15 @@ module.exports = function ( grunt ) {
         handlebars: {
             compile: {
                 options: {
-                    namespace: "Handlebars.templates",
+                    namespace: 'Handlebars.templates',
                     // Use only the template name as the key for the precompiled template object
                     processName: function(filePath) { // input:  templates/_header.hbs
-                        var pieces = filePath.split("/");
+                        var pieces = filePath.split('/');
                         return pieces[pieces.length - 1]; // output: _header.hbs
                     }
                 },
                 files: {
-                    "demoapp/javascripts/templates/hb.js": "demoapp/javascripts/templates/*.tmpl"
+                    'demoapp/javascripts/templates/hb.js': 'demoapp/javascripts/templates/*.tmpl'
                 }
             }
         },
