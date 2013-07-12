@@ -2,7 +2,7 @@ define(["coccyx", "templates", "common", "bootstrap"], function(Coccyx){
     "use strict";
 
     return {
-        name: "quickStartGuideView",
+        name: "quickstartguide",
         template: Handlebars.templates["quickstartguidepage.tmpl"],
         domTarget: "#content",
         activeMenu: "/documentation",

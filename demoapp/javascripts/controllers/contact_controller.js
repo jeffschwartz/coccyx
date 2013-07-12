@@ -2,7 +2,7 @@ define(["coccyx"], function(Coccyx){
     "use strict";
 
     var showContactPage = function(){
-        Coccyx.views.render("contactView");
+        Coccyx.views.render("contact");
     };
 
     return {

@@ -2,7 +2,7 @@ define(["coccyx"], function(Coccyx){
     "use strict";
 
     var showBlogPage = function(){
-        Coccyx.views.render("blogView");
+        Coccyx.views.render("blog");
     };
 
     return {

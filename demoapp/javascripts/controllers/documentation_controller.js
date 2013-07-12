@@ -2,16 +2,16 @@ define(["coccyx"], function(Coccyx){
     "use strict";
 
     var showDocumentationPage = function(){
-        Coccyx.views.render("documentationView");
+        Coccyx.views.render("documentation");
     };
 
     var showQuickStartGuidePage = function(){
-        Coccyx.views.render("quickStartGuideView");
+        Coccyx.views.render("quickstartguide");
 
     };
 
     var showApiRefferencePage = function(){
-        Coccyx.views.render("apiRefferenceView");
+        Coccyx.views.render("apirefference");
 
     };
 

@@ -2,7 +2,7 @@ define(["coccyx", "templates", "common", "bootstrap"], function(Coccyx){
     "use strict";
 
     return {
-        name: "contactView",
+        name: "contact",
         template: Handlebars.templates["contactpage.tmpl"],
         domTarget: "#content",
         activeMenu: "/contact",

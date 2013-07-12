@@ -2,7 +2,7 @@ define(["coccyx", "templates", "common", "bootstrap"], function(Coccyx){
     "use strict";
 
     return {
-        name: "apiRefferenceView",
+        name: "apirefference",
         template: Handlebars.templates["apirefference.tmpl"],
         domTarget: "#content",
         activeMenu: "/documentation",

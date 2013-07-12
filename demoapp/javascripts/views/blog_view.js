@@ -2,7 +2,7 @@ define(["coccyx", "templates", "common", "bootstrap"], function(Coccyx){
     "use strict";
 
     return {
-        name: "blogView",
+        name: "blog",
         template: Handlebars.templates["blogpage.tmpl"],
         domTarget: "#content",
         activeMenu: "/blog",
