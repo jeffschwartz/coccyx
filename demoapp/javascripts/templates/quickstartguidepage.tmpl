@@ -1,1 +1,24 @@
+<ul class="breadcrumb">
+  <li><a href="/documentation">Documentation</a> <span class="divider">/</span></li>
+  <li class="active">Quick Start Guide</li>
+</ul>
 <h1>Quick Start Guide</h1>
+<div class="well">
+    <h2>Dependencies</h2>
+    <ul>
+        <li><a href="http://requirejs.org" target="_blank">RrequireJs</a></li>
+        <li><a href="http://jquery.com" target="_blank">jQuery v1.9+ or v2+</a></li>
+    </ul>
+    <p>CoccyxJS is RequireJS/AMD compliant. Its module name is "coccyx". CoccyxJS is itself dependent upon jQuery. jQuery must be loaded prior to loading CoccyxJS or bad things will most definitely happen.</p>
+    <p>It is  recommended that you concatenate the development versions of RequireJS and jQuery together into one file. If you prefer not to concatenate them you can have RequireJS load jQuery, which exposes itself as a RequireJS/AMD module under the named of 'jquery'.</p>
+    <p>Concatenating these 2 files together "kills two birds with one stone", so to speak, and just tends to make this part of the dependency graph easier to manage.</p>
+    <h2>Hello, World!, CoccyxJS style</h2>
+    <p>To introduce the basic concepts of building a single page Web application (SPA) using CoccyxJs, we'll develop a very simple "Hello, World!" application which will server to demonstrate the following:</p>
+    <ul>
+        <li>Including RequireJS in your Web page markup to load the application's main script file.</li>
+        <li>Calling both require.config and require methods in your main script file.</li>
+        <li>Defining modules for the controller and for the view.</li>
+        <li>Registering a JavaScript object literal as a controller which has a single route handler.</li>
+        <li>Registering a JavaScript object literal as a view that the controller's route handler will use to display the default page in the browser.</li>
+    </ul>
+</div>

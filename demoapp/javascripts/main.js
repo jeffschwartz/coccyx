@@ -3,7 +3,7 @@ require.config({
     paths: {
         "coccyx": "libs/coccyx",
         "indexController": "controllers/index_controller",
-        "aboutController": "controllers/about_controller",
+        "blogController": "controllers/blog_controller",
         "contactController": "controllers/contact_controller",
         "documentationController": "controllers/documentation_controller",
         "examplesController": "controllers/examples_controller",
@@ -13,7 +13,7 @@ require.config({
         "examplesPageView": "views/examples_view",
         "documentationPageView": "views/documentation_view",
         "contactPageView": "views/contact_view",
-        "aboutPageView": "views/about_view",
+        "blogPageView": "views/blog_view",
         "quickstartguideView": "views/quickstartguide_view",
         "apirefferenceView": "views/apirefference_view",
         "bootstrap": "libs/bootstrap/js/bootstrap",
@@ -33,7 +33,7 @@ require.config({
 require([
     "demoapp",
     "indexController",
-    "aboutController",
+    "blogController",
     "examplesController",
     "contactController",
     "documentationController",
@@ -43,16 +43,16 @@ require([
     "examplesPageView",
     "documentationPageView",
     "contactPageView",
-    "aboutPageView",
+    "blogPageView",
     "quickstartguideView",
     "apirefferenceView"
     ],
-    function(demoapp, indexController, aboutController, examplesController, contactController, documentationController, quickstartguideController, apirefferenceController, indexPageView, examplesPageView, documentationPageView, contactPageView, aboutPageView, quickstartguideView, apirefferenceView){
+    function(demoapp, indexController, blogController, examplesController, contactController, documentationController, quickstartguideController, apirefferenceController, indexPageView, examplesPageView, documentationPageView, contactPageView, blogPageView, quickstartguideView, apirefferenceView){
         "use strict";
 
         demoapp.start(
-            [indexController, aboutController, examplesController, contactController, documentationController, quickstartguideController, apirefferenceController],
-            [indexPageView, examplesPageView,documentationPageView, contactPageView, aboutPageView, quickstartguideView, apirefferenceView]
+            [indexController, blogController, examplesController, contactController, documentationController, quickstartguideController, apirefferenceController],
+            [indexPageView, examplesPageView,documentationPageView, contactPageView, blogPageView, quickstartguideView, apirefferenceView]
         );
     }
 );
