@@ -3,7 +3,7 @@ define(["coccyx", "handlebars", "templates", "common", "bootstrap"], function(Co
 
     return {
         name: "quickstartguide",
-        template: Handlebars.templates["quickstartguidepage.tmpl"],
+        template: Handlebars.templates["quickstartguide.tmpl"],
         domTarget: "#content",
         activeMenu: "/documentation",
         render: function(){

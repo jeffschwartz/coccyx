@@ -3,7 +3,7 @@ define(["coccyx", "handlebars", "templates", "common", "bootstrap"], function(Co
 
     return {
         name: "examples",
-        template: Handlebars.templates["examplespage.tmpl"],
+        template: Handlebars.templates["examples.tmpl"],
         domTarget: "#content",
         activeMenu: "/examples",
         render: function(){
