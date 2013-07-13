@@ -5,10 +5,15 @@ define(["coccyx"], function(Coccyx) {
         Coccyx.views.render("examples");
     };
 
+    var postFormExample = function(formValuesHash){
+         alert(JSON.stringify(formValuesHash));
+    };
+
     return {
         name: "examples",
         routes: {
-            "get /": showExamplesPage
+            "get /": showExamplesPage,
+            "post form": postFormExample
         }
     };
 

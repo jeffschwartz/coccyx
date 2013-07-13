@@ -7,10 +7,10 @@
 
     var Coccyx = window.Coccyx = window.Coccyx || {};
 
-    function route(verb, url){
+    function route(verb, url, valuesHash){
         var rt = getRoute(verb, url);
         if(rt){
-            routeFound(rt);
+            routeFound(rt, valuesHash);
         }else{
             routeNotFound(verb, url);
         }
@@ -78,9 +78,11 @@
         }
     }
 
-    function routeFound(route){
+    function routeFound(route, valuesHash){
         // Route callbacks are bound (their contexts (their 'this')) to their controllers.
-        if(route.params.length){
+        if(valuesHash){
+            route.fn.call(Coccyx.controllers.getController(route.controllerName), valuesHash);
+        }else if(route.params.length){
             route.fn.apply(Coccyx.controllers.getController(route.controllerName), route.params);
         }else{
             route.fn.call(Coccyx.controllers.getController(route.controllerName));

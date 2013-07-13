@@ -32,8 +32,18 @@
     // 'Verb' should be set to whatever the form's 'method' attribute
     // is set to. If 'method' attribute doesn' exist, then 'verb'
     // defaults to get.
-    $(document).on("submit", "form", function(/*event*/){
-        alert("form submit event caught by router *** needs to be implemented ***");
+    $(document).on("submit", "form", function(event){
+        var $form = $(this),
+            action = $form.attr("action"),
+            method,
+            valuesHash;
+        console.log(event);
+        if(action.indexOf("/") === 0){
+            event.preventDefault();
+            method = $form.attr("method");
+            valuesHash = valuesHashFromSerializedArray($form.serializeArray());
+            Coccyx.router.route(method, action, valuesHash);
+        }
     });
 
     // Event handler for popstate event.
@@ -43,6 +53,17 @@
             Coccyx.router.route(event.originalEvent.state? event.originalEvent.state.verb : "get", window.location.pathname);
         }
     });
+
+    // Creates a hash from an array whose elements are hashes whose properties are "name" and "value".
+    function valuesHashFromSerializedArray(valuesArray){
+        var len = valuesArray.length,
+            i,
+            valuesHash = {};
+        for(i = 0; i < len; i++){
+            valuesHash[valuesArray[i].name] = valuesArray[i].value;
+        }
+        return valuesHash;
+    }
 
     function started(){
         return historyStarted;
