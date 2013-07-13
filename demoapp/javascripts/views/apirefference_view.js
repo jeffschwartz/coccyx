@@ -1,4 +1,4 @@
-define(["coccyx", "templates", "common", "bootstrap"], function(Coccyx){
+define(["coccyx", "handlebars", "templates", "common", "bootstrap"], function(Coccyx, Handlebars){
     "use strict";
 
     return {
