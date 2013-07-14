@@ -280,6 +280,8 @@
             this.changedData[propertyName] = deepCopy(data);
             this.data[propertyName] = data;
             this.dirty = true;
+        }else{
+            console.log("Warning! Coccyx.model::setProperty called on read only model.");
         }
         // For chaining.
         return this;

@@ -17,7 +17,8 @@ define(["coccyx"], function(Coccyx) {
             hash.rememberme = formValuesHash.rememberme.length ? true : false;
             model.setData(hash);
             model.setProperty("email", "js@wtf.com");
-            model.setData(hash, {empty:true});
+            model.setData(hash, {empty:true, readOnly:true});
+            model.setProperty("email", "js@wtf.com");
         }
     };
 
