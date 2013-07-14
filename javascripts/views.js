@@ -13,15 +13,15 @@
         if(arguments[0] instanceof Array){
             // An array of hashes.
             arguments[0].forEach(function(view){
-                loadViews(view);
+                loadView(view);
             });
         }else{
             // A single hash.
-            loadViews(arguments[0]);
+            loadView(arguments[0]);
         }
     }
 
-    function loadViews(view){
+    function loadView(view){
         view.$ = $;
         views[view.name] = view;
         console.log("Registering view '" + view.name + "'");
@@ -42,12 +42,12 @@
         }
     }
 
-    // Call the view's render method with the view as its context.
+    // Call the view's render method.
     function viewFound(view, args){
         if(args && args.length){
-            view.render.appy(view, args);
+            view.render(view, args);
         }else{
-            view.render.call(view);
+            view.render(view);
         }
     }
 

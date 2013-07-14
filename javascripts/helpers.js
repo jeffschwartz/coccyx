@@ -14,6 +14,9 @@
                 }
             }
             return false;
+        },
+        deepCopy: function(o){
+            return JSON.parse(JSON.stringify(o));
         }
     };
 }());

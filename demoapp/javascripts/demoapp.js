@@ -5,9 +5,11 @@ define(["coccyx"], function(Coccyx){
      * @param controllers - either an array of or a single controller.
      * @param views - either an array of or a single view.
      */
-    function start(controllers, views){
+    function start(views, models, controllers){
         // Register views.
         Coccyx.views.registerViews(views);
+        // Register models.
+        Coccyx.models.registerModels(models)
         // Register controllers.
         Coccyx.controllers.registerControllers(controllers);
         // Call history.start only after all your controllers have been

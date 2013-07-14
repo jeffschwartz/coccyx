@@ -19,6 +19,7 @@ require.config({
         'bootstrap': 'libs/bootstrap/js/bootstrap',
         'handlebars': 'libs/handlebars',
         'templates': 'templates/hb',
+        'userModel': 'models/user_model',
         'common': 'common'
     },
     shim: {
@@ -46,14 +47,16 @@ require([
     'contactPageView',
     'blogPageView',
     'quickstartguideView',
-    'apirefferenceView'
+    'apirefferenceView',
+    'userModel'
     ],
-    function(demoapp, indexController, blogController, examplesController, contactController, documentationController, quickstartguideController, apirefferenceController, indexPageView, examplesPageView, documentationPageView, contactPageView, blogPageView, quickstartguideView, apirefferenceView){
+    function(demoapp, indexController, blogController, examplesController, contactController, documentationController, quickstartguideController, apirefferenceController, indexPageView, examplesPageView, documentationPageView, contactPageView, blogPageView, quickstartguideView, apirefferenceView, userModel){
         'use strict';
 
         demoapp.start(
-            [indexController, blogController, examplesController, contactController, documentationController, quickstartguideController, apirefferenceController],
-            [indexPageView, examplesPageView,documentationPageView, contactPageView, blogPageView, quickstartguideView, apirefferenceView]
+            [indexPageView, examplesPageView,documentationPageView, contactPageView, blogPageView, quickstartguideView, apirefferenceView],
+            [userModel],
+            [indexController, blogController, examplesController, contactController, documentationController, quickstartguideController, apirefferenceController]
         );
     }
 );
