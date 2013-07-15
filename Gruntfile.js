@@ -15,6 +15,7 @@ module.exports = function ( grunt ) {
                     'javascripts/model.js',
                     'javascripts/router.js',
                     'javascripts/views.js',
+                    'javascripts/pubsub.js',
                     'javascripts/amd.js'
                     ],
                 dest : 'javascripts/dist/coccyx.js'
@@ -27,6 +28,7 @@ module.exports = function ( grunt ) {
                     'javascripts/model.js',
                     'javascripts/router.js',
                     'javascripts/views.js',
+                    'javascripts/pubsub.js',
                     'javascripts/amd.js'
                     ],
                 dest : 'demoapp/javascripts/libs/coccyx.js'

@@ -20,7 +20,8 @@ require.config({
         'handlebars': 'libs/handlebars',
         'templates': 'templates/hb',
         'userModel': 'models/user_model',
-        'common': 'common'
+        'common': 'common',
+        'messagesRegistry': 'pubsub/messages_registry'
     },
     shim: {
         'templates': {
