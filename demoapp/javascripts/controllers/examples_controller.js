@@ -19,6 +19,7 @@ define(["coccyx"], function(Coccyx) {
             model.setProperty("email", "js@wtf.com");
             model.setData(hash, {empty:true, readOnly:true});
             model.setProperty("email", "js@wtf.com");
+            Coccyx.router.navigate({url:"/", trigger:true});
         }
     };
 

@@ -180,7 +180,8 @@
     }
 
     Coccyx.history = {
-        start: start
+        start: start,
+        started: started
     };
 
 }(jQuery));
@@ -400,16 +401,18 @@
     // push a new one onto the browser's history stack.
     // function navigate(state, title, url, trigger, replace){
     function navigate(options){
-        options = options || {};
-        options.state = options.state || null;
-        options.state.coccyxUrl = options.url || null;
-        options.title = options.title || document.title;
-        options.url = options.url || window.location.pathname;
-        options.trigger = options.trigger || false;
-        options.replace = options.replace || false;
-        window.history[options.replace ? "replaceState" : "pushState"](options.state, options.title, options.url);
-        if(options.trigger){
-            route(options.url);
+        if(Coccyx.history.started()){
+            options = options || {};
+            options.state = options.state || null;
+            options.title = options.title || document.title;
+            options.method = options.method || "get";
+            options.url = options.url || window.location.pathname;
+            options.trigger = options.trigger || false;
+            options.replace = options.replace || false;
+            window.history[options.replace ? "replaceState" : "pushState"](options.state, options.title, options.url);
+            if(options.trigger){
+                route(options.method, options.url);
+            }
         }
     }
 

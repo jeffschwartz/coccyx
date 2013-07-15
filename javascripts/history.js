@@ -82,7 +82,8 @@
     }
 
     Coccyx.history = {
-        start: start
+        start: start,
+        started: started
     };
 
 }(jQuery));
