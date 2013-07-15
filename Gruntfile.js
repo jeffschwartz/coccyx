@@ -31,28 +31,13 @@ module.exports = function ( grunt ) {
                     'javascripts/pubsub.js',
                     'javascripts/amd.js'
                     ],
-                dest : 'demoapp/javascripts/libs/coccyx.js'
-            }
-        },
-        handlebars: {
-            compile: {
-                options: {
-                    namespace: 'Handlebars.templates',
-                    // Use only the template name as the key for the precompiled template object
-                    processName: function(filePath) { // input:  templates/_header.hbs
-                        var pieces = filePath.split('/');
-                        return pieces[pieces.length - 1]; // output: _header.hbs
-                    }
-                },
-                files: {
-                    'demoapp/javascripts/templates/hb.js': 'demoapp/javascripts/templates/*.tmpl'
-                }
+                dest : '../demoapp/javascripts/libs/coccyx.js'
             }
         },
         watch  : {
             scripts : {
                 files   : ['demoapp/javascripts/templates/*.tmpl','javascripts/**/*.js'],
-                tasks   : ['handlebars', 'concat'],
+                tasks   : ['concat'],
                 options : {
                     interrupt : true
                 }
@@ -63,7 +48,6 @@ module.exports = function ( grunt ) {
     // Load the plugins
     grunt.loadNpmTasks( 'grunt-contrib-watch' );
     grunt.loadNpmTasks( 'grunt-contrib-concat' );
-    grunt.loadNpmTasks('grunt-contrib-handlebars');
 
     // Default task(s).
     grunt.registerTask( 'default', ['concat'] );
