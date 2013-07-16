@@ -31,12 +31,12 @@ module.exports = function ( grunt ) {
                     'javascripts/pubsub.js',
                     'javascripts/amd.js'
                     ],
-                dest : '../demoapp/javascripts/libs/coccyx.js'
+                dest : '../demoapp/public/javascripts/libs/coccyx.js'
             }
         },
         watch  : {
             scripts : {
-                files   : ['demoapp/javascripts/templates/*.tmpl','javascripts/**/*.js'],
+                files   : ['javascripts/**/*.js'],
                 tasks   : ['concat'],
                 options : {
                     interrupt : true

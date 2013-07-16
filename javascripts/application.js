@@ -28,8 +28,7 @@
     }
 
     function loadRoutesFromController(controller){
-        var tmp = "/" + controller.name,
-            namedRoute;
+        var namedRoute;
         console.log("Registering controller '" + controller.name + "'");
         // controller's local $
         controller.$ = $;
@@ -38,11 +37,12 @@
         // Build the routes array.
         for(var route in controller.routes){
             if(controller.routes.hasOwnProperty(route)){
-                if(route.substring(route.indexOf(" ") + 1) === "/"){
-                    namedRoute = route.substring(0, route.indexOf(" ") + 1) + tmp;
-                }else{
-                    namedRoute = route.substring(0, route.indexOf(" ") + 1) + tmp + "/" + route.substring(route.indexOf(" ") + 1);
-                }
+                // Verb + " /".
+                namedRoute = route.substring(0, route.indexOf(" ") + 1) + "/";
+                // Controller name (the root segment).
+                namedRoute += controller.name;
+                // Remaining path.
+                namedRoute += (route.substring(route.indexOf(" ") + 1) === "/" ? "" : controller.name === "" ? route.substring(route.indexOf(" ") + 1) : "/" + route.substring(route.indexOf(" ") + 1));
                 routes[namedRoute] = [controller.name,controller.routes[route]];
                 console.log("Registering route '" + namedRoute + "'");
             }
