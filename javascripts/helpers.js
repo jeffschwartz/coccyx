@@ -1,4 +1,4 @@
-(function(){
+define("helpers", [], function(){
     "use strict";
 
     var Coccyx = window.Coccyx = window.Coccyx || {};
@@ -19,4 +19,5 @@
             return JSON.parse(JSON.stringify(o));
         }
     };
-}());
+
+});

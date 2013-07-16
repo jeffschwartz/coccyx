@@ -1,4 +1,4 @@
- (function($){
+define("router", ["jquery"], function($) {
     "use strict";
 
     /**
@@ -126,4 +126,4 @@
         navigate: navigate
     };
 
- }(jQuery));
+});

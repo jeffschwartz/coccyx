@@ -1,4 +1,4 @@
- (function($){
+define("application", ["jquery"], function($){
     "use strict";
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
@@ -74,4 +74,4 @@
         getController: getController
     };
 
-}(jQuery));
+});

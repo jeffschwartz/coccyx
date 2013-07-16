@@ -1,7 +1,4 @@
-(function(){
+define("coccyx", ["application", "helpers", "history", "models", "router", "views", "pubsub"], function () {
     "use strict";
-    if ( typeof define === "function" && define.amd ) {
-        define("coccyx", ["jquery"], function () { return window.Coccyx; } );
-    }
-
-}());
+    return window.Coccyx;
+});

@@ -1,4 +1,4 @@
-(function($){
+define("history", ["jquery"], function($) {
     "use strict";
 
     // Verify browser supports pushstate.
@@ -86,4 +86,4 @@
         started: started
     };
 
-}(jQuery));
+});

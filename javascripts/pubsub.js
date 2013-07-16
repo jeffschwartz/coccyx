@@ -1,4 +1,4 @@
-(function(){
+define("pubsub", [], function(){
     /**
      * A purely hash-based pubsub implementation.
      */
@@ -69,4 +69,5 @@
         unsubscribe: unsubscribe,
         publish: publish
     };
-}());
+
+});

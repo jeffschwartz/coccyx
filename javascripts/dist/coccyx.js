@@ -1,4 +1,4 @@
- (function($){
+define("application", ["jquery"], function($){
     "use strict";
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
@@ -43,12 +43,6 @@
                 namedRoute += controller.name;
                 // Remaining path.
                 namedRoute += (route.substring(route.indexOf(" ") + 1) === "/" ? "" : controller.name === "" ? route.substring(route.indexOf(" ") + 1) : "/" + route.substring(route.indexOf(" ") + 1));
-                // "/" + route.substring(route.indexOf(" ") + 1));
-                // if(route.substring(route.indexOf(" ") + 1) === "/"){
-                //     namedRoute = route.substring(0, route.indexOf(" ") + 1) + tmp;
-                // }else{
-                //     namedRoute = route.substring(0, route.indexOf(" ") + 1) + tmp + "/" + route.substring(route.indexOf(" ") + 1);
-                // }
                 routes[namedRoute] = [controller.name,controller.routes[route]];
                 console.log("Registering route '" + namedRoute + "'");
             }
@@ -80,8 +74,9 @@
         getController: getController
     };
 
-}(jQuery));
-;(function(){
+});
+
+;define("helpers", [], function(){
     "use strict";
 
     var Coccyx = window.Coccyx = window.Coccyx || {};
@@ -102,7 +97,10 @@
             return JSON.parse(JSON.stringify(o));
         }
     };
-}());;(function($){
+
+});
+
+;define("history", ["jquery"], function($) {
     "use strict";
 
     // Verify browser supports pushstate.
@@ -190,8 +188,9 @@
         started: started
     };
 
-}(jQuery));
-;(function(){
+});
+
+;define("models", [], function(){
     "use strict";
 
     /**
@@ -299,7 +298,9 @@
         getModel: getModel
     };
 
-}());; (function($){
+});
+
+;define("router", ["jquery"], function($) {
     "use strict";
 
     /**
@@ -427,7 +428,9 @@
         navigate: navigate
     };
 
- }(jQuery));;(function($){
+});
+
+;define("views", ["jquery"], function($){
     "use strict";
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
@@ -490,7 +493,9 @@
         render: render
     };
 
-}(jQuery));;(function(){
+});
+
+;define("pubsub", [], function(){
     /**
      * A purely hash-based pubsub implementation.
      */
@@ -561,10 +566,10 @@
         unsubscribe: unsubscribe,
         publish: publish
     };
-}());;(function(){
-    "use strict";
-    if ( typeof define === "function" && define.amd ) {
-        define("coccyx", ["jquery"], function () { return window.Coccyx; } );
-    }
 
-}());
+});
+
+;define("coccyx", ["application", "helpers", "history", "models", "router", "views", "pubsub"], function () {
+    "use strict";
+    return window.Coccyx;
+});

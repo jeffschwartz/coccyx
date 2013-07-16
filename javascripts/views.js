@@ -1,4 +1,4 @@
-(function($){
+define("views", ["jquery"], function($){
     "use strict";
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
@@ -61,4 +61,4 @@
         render: render
     };
 
-}(jQuery));
+});

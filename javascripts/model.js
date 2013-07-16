@@ -1,4 +1,4 @@
-(function(){
+define("models", [], function(){
     "use strict";
 
     /**
@@ -106,4 +106,4 @@
         getModel: getModel
     };
 
-}());
+});
