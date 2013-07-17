@@ -2,4 +2,4 @@
 // (c) 2013 Jeffrey Schwartz
 // Coccyx.js may be freely distributed under the MIT license.
 // For all details and documentation:
-// http://tobenamed.org
+// http://coccyxjs.jitsu.com
