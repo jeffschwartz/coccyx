@@ -26,7 +26,7 @@ Coccyx.js is somewhat opinionated! Before a single line of code was written, a v
 
 Though still a pre releasee, Coccyx.js is stable enough for you to begin using it now -- though not yet for production. So, if you are in the early stages of your development, by all means, feel free to begin using it now.
 
-The absence of thorough documentation shouldn't prevent early adoption. If you are fluent in JavaScript then a quick study of the source code should suffice until the documentation page on this site is completed. Speaking of which, creating a kick-ass documentation page with meaningful examples as well will be the next highest priority.
+The absence of thorough documentation shouldn't prevent early adoption. If you are fluent in JavaScript then a quick study of the source code should suffice until the documentation page on http://coccyxjs.jitsu.com is completed. Speaking of which, creating a kick-ass documentation page with meaningful examples as well will be the next highest priority.
 
 Good Enough Now To Eat Our Own Dog Food!
 ***
@@ -37,4 +37,4 @@ Community Support Is Imperative!
 Please support the effort by providing bug reports, feedback, and enhancement requests here on GitHub. Great software can never be developed in a vacuum.
 
 ***
-Coccyx.js Is Distributed Under The MIT Software License!
+Coccyx.js Is Distributed Under The MIT Software License.
