@@ -2,7 +2,7 @@ Coccyx.js is a tiny, simple and somewhat opinionated HTML5 and RequireJS/AMD com
 
 Coccyx.js is tiny!. How tiny, you ask? Well, the development version of Coccyx.js is currently 20kb and less than 600 lines of uncompressed, commented JavaScript and the production version is 6kb uglified and 2kb gzipped. And while it is expected to grow somewhat prior to its official release, the goal is to keep it tiny.
 
-Coccyx.js may be tiny in size but when it comes to features, it has everything you need to create fast mobile and desktop browser applications:Coccyx.js may be tiny in size but when it comes to features it has everything you need to create fast mobile and desktop browser applications:
+Coccyx.js may be tiny in size but when it comes to features, it has everything you need to create fast mobile and desktop browser applications:
 
 + HTML5 History Based Push And Pop State.
 + REST Based Routing Including Full Verb Support (get, post, put, delete).
@@ -10,7 +10,7 @@ Coccyx.js may be tiny in size but when it comes to features, it has everything y
 + Smart Models And Views.
 + PubSub.
 
-Coccyx.js Is Somewhat Opinionated!
+Coccyx.js Is Somewhat Opinionated! Before a single line of code was written, a vision had been crafted around what would set Coccyx.js apart from the rest. Here are some of those visions:
 
 + It must be tiny without sacrificing features and usability.
 + It must be attractive for mobile development where fast load times are critical.
