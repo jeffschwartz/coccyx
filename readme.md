@@ -1,5 +1,3 @@
-Coccyx.js
-***
 Coccyx.js is a tiny, simple and somewhat opinionated HTML5 and RequireJS/AMD compliant MVC library.
 
 Tiny!
