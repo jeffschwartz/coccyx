@@ -10,7 +10,7 @@ Coccyx.js may be tiny in size but when it comes to features, it has everything y
 + Smart Models And Views.
 + PubSub.
 
-Coccyx.js Is Somewhat Opinionated! Before a single line of code was written, a vision had been crafted around what would set Coccyx.js apart from the rest. Here are some of those visions:
+Coccyx.js is somewhat opinionated! Before a single line of code was written, a vision had been crafted around what would set Coccyx.js apart from the rest. Here are some of those visions:
 
 + It must be tiny without sacrificing features and usability.
 + It must be attractive for mobile development where fast load times are critical.
