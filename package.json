@@ -1,12 +1,14 @@
 {
   "name": "coccyx",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "mvc for the client",
   "author": "Jeff Schwartz",
   "license": "MIT",
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib-watch": "~0.4.4",
-    "grunt-contrib-concat": "~0.3.0"
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-uglify": "~0.2.2",
+    "grunt-contrib-compress": "~0.5.2"
   }
 }
