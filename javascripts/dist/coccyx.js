@@ -467,7 +467,7 @@
     function render(name){
         var view = getView(name);
         if(view){
-            viewFound(view, arguments.length > 0 ? Array.prototype.slice.call(arguments).slice(1) : null);
+            viewFound(view, arguments.length > 0 ? Array.prototype.slice.call(arguments, 1) : null);
         }else{
             viewNotFound(name);
         }

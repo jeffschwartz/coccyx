@@ -49,15 +49,13 @@ module.exports = function ( grunt ) {
                   mode: 'gzip'
                 },
                 expand: true,
-                cwd: 'javascripts/dist/',
-                src: ['coccyx.min.js'],
-                dest: '.',
+                src: ['javascripts/dist/coccyx.min.js'],
                 ext: '.gz.js'
             }
         },
         watch  : {
             scripts : {
-                files   : ['javascripts/**/*.js'],
+                files   : ['javascripts/*.js'],
                 tasks   : ['concat', 'uglify', 'compress'],
                 options : {
                     interrupt : true
