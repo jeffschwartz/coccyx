@@ -63,6 +63,14 @@ define("models", [], function(){
         setData: function setData (dataHash, options) {
             var o = {empty:false, readOnly:false, dirty:false},
                 prop;
+            // If there is a validate method and it return false, set valid to
+            // false and return false.
+            // If there is a validate method and it returns true, set valid to true
+            // and proceed with setting data.
+            this.valid = this.validate ? this.validate(dataHash) : true;
+            if(!this.valid){
+                return false;
+            }
             // Merge default options with passed in options.
             if(options){
                 for(prop in o){
@@ -79,6 +87,7 @@ define("models", [], function(){
             this.data = deepCopy(dataHash);
             this.changedData = {};
             this.set = true;
+            return true;
         },
         getData: function getData(){
             return deepCopy(this.data);

@@ -278,6 +278,14 @@
         setData: function setData (dataHash, options) {
             var o = {empty:false, readOnly:false, dirty:false},
                 prop;
+            // If there is a validate method and it return false, set valid to
+            // false and return false.
+            // If there is a validate method and it returns true, set valid to true
+            // and proceed with setting data.
+            this.valid = this.validate ? this.validate(dataHash) : true;
+            if(!this.valid){
+                return false;
+            }
             // Merge default options with passed in options.
             if(options){
                 for(prop in o){
@@ -294,6 +302,7 @@
             this.data = deepCopy(dataHash);
             this.changedData = {};
             this.set = true;
+            return true;
         },
         getData: function getData(){
             return deepCopy(this.data);
@@ -486,7 +495,20 @@
     function render(name){
         var view = getView(name);
         if(view){
-            viewFound(view, arguments.length > 1 ? Array.prototype.slice.call(arguments, 1) : null);
+            if(view.render){
+                viewRender(view, arguments.length > 1 ? Array.prototype.slice.call(arguments, 1) : null);
+            }
+        }else{
+            viewNotFound(name);
+        }
+    }
+
+    function remove(name){
+        var view = getView(name);
+        if(view){
+            if(view.remove){
+                view.remove();
+            }
         }else{
             viewNotFound(name);
         }
@@ -499,7 +521,7 @@
     }
 
     // Call the view's render method.
-    function viewFound(view, args){
+    function viewRender(view, args){
         if(args && args.length){
             view.render.apply(view, args);
         }else{
@@ -514,7 +536,8 @@
 
     Coccyx.views = {
         registerViews: registerViews,
-        render: render
+        render: render,
+        remove: remove
     };
 
 });
