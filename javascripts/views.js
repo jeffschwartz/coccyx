@@ -30,7 +30,7 @@ define("views", ["jquery"], function($){
     function render(name){
         var view = getView(name);
         if(view){
-            viewFound(view, arguments.length > 0 ? Array.prototype.slice.call(arguments, 1) : null);
+            viewFound(view, arguments.length > 1 ? Array.prototype.slice.call(arguments, 1) : null);
         }else{
             viewNotFound(name);
         }
@@ -45,9 +45,9 @@ define("views", ["jquery"], function($){
     // Call the view's render method.
     function viewFound(view, args){
         if(args && args.length){
-            view.render(view, args);
+            view.render.apply(view, args);
         }else{
-            view.render(view);
+            view.render.call(view);
         }
     }
 

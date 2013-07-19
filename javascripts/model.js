@@ -42,6 +42,7 @@ define("models", [], function(){
         model.data = {};
         models[model.name] = model;
         model.setData = setData;
+        model.getData = getData;
         model.getProperty = getProperty;
         model.setProperty = setProperty;
         console.log("Registering model '" + model.name + "'");
@@ -52,6 +53,8 @@ define("models", [], function(){
             return models[name];
         }
     }
+
+    // model instance properties...
 
     function setData (dataHash, options) {
         /* jshint validthis:true */
@@ -76,7 +79,10 @@ define("models", [], function(){
         this.set = true;
     }
 
-    // model instance properties...
+    function getData(){
+        /* jshint validthis:true */
+        return deepCopy(this.data);
+    }
 
     function getProperty(propertyName){
         /* jshint validthis:true */

@@ -239,6 +239,7 @@
         model.data = {};
         models[model.name] = model;
         model.setData = setData;
+        model.getData = getData;
         model.getProperty = getProperty;
         model.setProperty = setProperty;
         console.log("Registering model '" + model.name + "'");
@@ -249,6 +250,8 @@
             return models[name];
         }
     }
+
+    // model instance properties...
 
     function setData (dataHash, options) {
         /* jshint validthis:true */
@@ -273,7 +276,10 @@
         this.set = true;
     }
 
-    // model instance properties...
+    function getData(){
+        /* jshint validthis:true */
+        return deepCopy(this.data);
+    }
 
     function getProperty(propertyName){
         /* jshint validthis:true */
@@ -467,7 +473,7 @@
     function render(name){
         var view = getView(name);
         if(view){
-            viewFound(view, arguments.length > 0 ? Array.prototype.slice.call(arguments, 1) : null);
+            viewFound(view, arguments.length > 1 ? Array.prototype.slice.call(arguments, 1) : null);
         }else{
             viewNotFound(name);
         }
@@ -482,9 +488,9 @@
     // Call the view's render method.
     function viewFound(view, args){
         if(args && args.length){
-            view.render(view, args);
+            view.render.apply(view, args);
         }else{
-            view.render(view);
+            view.render.call(view);
         }
     }
 
