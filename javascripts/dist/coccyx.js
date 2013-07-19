@@ -87,6 +87,7 @@
     var Coccyx = window.Coccyx = window.Coccyx || {};
 
     Coccyx.helpers = {
+        // Returns true if s1 contains s2, otherwise returns false.
         contains: function(s1, s2){
             var i, len;
             if(typeof s1 === "string"){
@@ -98,8 +99,25 @@
             }
             return false;
         },
+        // Returns a deep copy object o.
         deepCopy: function(o){
             return JSON.parse(JSON.stringify(o));
+        },
+        // Pass one or more objects as the source objects whose
+        // properties are to be copied to the target object.
+        extend: function(targetObj){
+            var property,
+                i,
+                len = arguments.length - 1;
+            for(i = 1; i <= len; i++){
+                var src = arguments[i];
+                for(property in src){
+                    if(src.hasOwnProperty(property)){
+                        targetObj[property] = src[property];
+                    }
+                }
+            }
+            return targetObj;
         }
     };
 
@@ -211,7 +229,8 @@
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
         models = {},
-        deepCopy = Coccyx.helpers.deepCopy;
+        deepCopy = Coccyx.helpers.deepCopy,
+        proto;
 
     function registerModels(){
 
@@ -231,78 +250,72 @@
     }
 
     function loadModel(model){
-        model.set = false;
-        model.readOnly = false;
-        model.dirty = false;
-        model.originalData = {};
-        model.changedData = {};
-        model.data = {};
-        models[model.name] = model;
-        model.setData = setData;
-        model.getData = getData;
-        model.getProperty = getProperty;
-        model.setProperty = setProperty;
+        // Create a new object based on proto and extend
+        // that with the model and save it in the hash.
+        var obj =  Coccyx.helpers.extend(Object.create(proto), model);
+        models[model.name] = obj;
         console.log("Registering model '" + model.name + "'");
     }
 
     function getModel(name){
+        var obj;
         if(models.hasOwnProperty(name)){
-            return models[name];
+            // Create a new object using the model as the prototype.
+            obj = Object.create(models[name]);
+            // Decorate the new object with its own properties.
+            obj.set = false;
+            obj.readOnly = false;
+            obj.dirty = false;
+            obj.originalData = {};
+            obj.changedData = {};
+            obj.data = {};
+            return obj;
         }
     }
 
-    // model instance properties...
-
-    function setData (dataHash, options) {
-        /* jshint validthis:true */
-
-        var o = {empty:false, readOnly:false, dirty:false},
-            prop;
-        // Merge default options with passed in options.
-        if(options){
-            for(prop in o){
-                if(o.hasOwnProperty(prop) && options.hasOwnProperty(prop)){
-                    o[prop] = options[prop];
+    // model prototype properties...
+    proto = {
+        setData: function setData (dataHash, options) {
+            var o = {empty:false, readOnly:false, dirty:false},
+                prop;
+            // Merge default options with passed in options.
+            if(options){
+                for(prop in o){
+                    if(o.hasOwnProperty(prop) && options.hasOwnProperty(prop)){
+                        o[prop] = options[prop];
+                    }
                 }
             }
+            // Deep copy.
+            this.originalData = o.empty ? {} : deepCopy(dataHash);
+            this.readOnly = o.readOnly;
+            this.dirty = o.dirty;
+            // Deep copy.
+            this.data = deepCopy(dataHash);
+            this.changedData = {};
+            this.set = true;
+        },
+        getData: function getData(){
+            return deepCopy(this.data);
+        },
+        getProperty: function getProperty(propertyName){
+            return this.data[propertyName];
+        },
+        setProperty: function setProperty(propertyName, data){
+            // A model's data properties cannot be written to if the model
+            // hasn't been set yet or if the model is read only.
+            if(this.set && !this.readOnly){
+                // Deep copy, maintain the changedValues hash.
+                this.changedData[propertyName] = deepCopy(data);
+                this.data[propertyName] = data;
+                this.dirty = true;
+            }else{
+                console.log("Warning! Coccyx.model::setProperty called on read only model.");
+            }
+            // For chaining.
+            return this;
         }
-        // Deep copy.
-        this.originalData = o.empty ? {} : deepCopy(dataHash);
-        this.readOnly = o.readOnly;
-        this.dirty = o.dirty;
-        // Deep copy.
-        this.data = deepCopy(dataHash);
-        this.changedData = {};
-        this.set = true;
-    }
-
-    function getData(){
-        /* jshint validthis:true */
-        return deepCopy(this.data);
-    }
-
-    function getProperty(propertyName){
-        /* jshint validthis:true */
-
-        return this.data[propertyName];
-    }
-
-    function setProperty(propertyName, data){
-        /* jshint validthis:true */
-
-        // A model's data properties cannot be written to if the model
-        // hasn't been set yet or if the model is read only.
-        if(this.set && !this.readOnly){
-            // Deep copy, maintain the changedValues hash.
-            this.changedData[propertyName] = deepCopy(data);
-            this.data[propertyName] = data;
-            this.dirty = true;
-        }else{
-            console.log("Warning! Coccyx.model::setProperty called on read only model.");
-        }
-        // For chaining.
-        return this;
-    }
+    };
 
     Coccyx.models = {
         registerModels: registerModels,
