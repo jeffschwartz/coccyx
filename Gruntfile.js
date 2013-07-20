@@ -71,7 +71,7 @@ module.exports = function ( grunt ) {
     grunt.loadNpmTasks( 'grunt-contrib-watch' );
 
     // Default task(s).
-    grunt.registerTask( 'default', ['concat'] );
+    grunt.registerTask( 'default', ['watch'] );
 
     // Alias Tasks
     grunt.registerTask( 'dev', 'Running Grunt dev task', ['concat:dist'] );
