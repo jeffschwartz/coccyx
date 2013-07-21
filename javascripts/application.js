@@ -3,7 +3,8 @@ define('application', ['jquery'], function($){
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
         controllers = {},
-        routes = {};
+        routes = {},
+        version;
 
     /**
      * Controller
@@ -68,7 +69,10 @@ define('application', ['jquery'], function($){
     Coccyx.plugins = Coccyx.plugins || {};
 
     // Version stamp
-    Coccyx.version = '0.2.1';
+    version = '0.2.2';
+    Coccyx.getVersion = function(){
+        return version;
+    };
 
     // Define what a controller is.
     Coccyx.controllers = {

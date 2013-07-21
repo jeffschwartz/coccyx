@@ -1,4 +1,4 @@
-// Coccyx.js 0.2.1
+// Coccyx.js 0.2.2
 // (c) 2013 Jeffrey Schwartz
 // Coccyx.js may be freely distributed under the MIT license.
 // For all details and documentation:
@@ -8,7 +8,8 @@
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
         controllers = {},
-        routes = {};
+        routes = {},
+        version;
 
     /**
      * Controller
@@ -73,7 +74,10 @@
     Coccyx.plugins = Coccyx.plugins || {};
 
     // Version stamp
-    Coccyx.version = '0.2.1';
+    version = '0.2.2';
+    Coccyx.getVersion = function(){
+        return version;
+    };
 
     // Define what a controller is.
     Coccyx.controllers = {
