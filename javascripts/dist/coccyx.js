@@ -3,8 +3,8 @@
 // Coccyx.js may be freely distributed under the MIT license.
 // For all details and documentation:
 // http://coccyxjs.jitsu.com
-;define("application", ["jquery"], function($){
-    "use strict";
+;define('application', ['jquery'], function($){
+    'use strict';
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
         controllers = {},
@@ -13,13 +13,13 @@
     /**
      * Controller
      * {name: root} - the root refers to the 1st segment of the pathname of the url
-     * so if the pathanme of the url is "/controller/noun" then root = controller.
+     * so if the pathanme of the url is '/controller/noun' then root = controller.
      */
 
      function registerControllers(){
         if(arguments.length !== 1 && !(arguments[0] instanceof Array) && !(arguments[0] instanceof Object)){
             // TODO Not sure if I should be throwing here. Think about it!!!
-            throw new Error("registerControllers missing or invalid param. Expected an [] or {}.");
+            throw new Error('registerControllers missing or invalid param. Expected an [] or {}.');
         }
         if(arguments[0] instanceof Array){
             // An array of hashes.
@@ -34,7 +34,7 @@
 
     function loadRoutesFromController(controller){
         var namedRoute;
-        console.log("Registering controller '" + controller.name + "'");
+        console.log('Registering controller \'' + controller.name + '\'');
         // controller's local $
         controller.$ = $;
         // Maintain list of controllers for when we need to bind them to route function callbacks.
@@ -42,14 +42,14 @@
         // Build the routes array.
         for(var route in controller.routes){
             if(controller.routes.hasOwnProperty(route)){
-                // Verb + " /".
-                namedRoute = route.substring(0, route.indexOf(" ") + 1) + "/";
+                // Verb + ' /'.
+                namedRoute = route.substring(0, route.indexOf(' ') + 1) + '/';
                 // Controller name (the root segment).
                 namedRoute += controller.name;
                 // Remaining path.
-                namedRoute += (route.substring(route.indexOf(" ") + 1) === "/" ? "" : controller.name === "" ? route.substring(route.indexOf(" ") + 1) : "/" + route.substring(route.indexOf(" ") + 1));
+                namedRoute += (route.substring(route.indexOf(' ') + 1) === '/' ? '' : controller.name === '' ? route.substring(route.indexOf(' ') + 1) : '/' + route.substring(route.indexOf(' ') + 1));
                 routes[namedRoute] = [controller.name,controller.routes[route]];
-                console.log("Registering route '" + namedRoute + "'");
+                console.log('Registering route \'' + namedRoute + '\'');
             }
         }
     }
@@ -72,6 +72,9 @@
     // Provide a bucket for Coccyx library plug-ins.
     Coccyx.plugins = Coccyx.plugins || {};
 
+    // Version stamp
+    Coccyx.version = '0.2.1';
+
     // Define what a controller is.
     Coccyx.controllers = {
         registerControllers : registerControllers,
@@ -81,8 +84,8 @@
 
 });
 
-;define("helpers", [], function(){
-    "use strict";
+;define('helpers', [], function(){
+    'use strict';
 
     var Coccyx = window.Coccyx = window.Coccyx || {};
 
@@ -90,7 +93,7 @@
         // Returns true if s1 contains s2, otherwise returns false.
         contains: function(s1, s2){
             var i, len;
-            if(typeof s1 === "string"){
+            if(typeof s1 === 'string'){
                 for(i = 0, len = s1.length; i < len; i++){
                     if(s1[i] === s2) {
                         return true;
@@ -123,33 +126,33 @@
 
 });
 
-;define("history", ["jquery"], function($) {
-    "use strict";
+;define('history', ['jquery'], function($) {
+    'use strict';
 
     // Verify browser supports pushstate.
     if(!history.pushState){
-        console.log("history pushstate is not supported in your browser");
-        throw new Error("history pushstate not supported");
+        console.log('history pushstate is not supported in your browser');
+        throw new Error('history pushstate not supported');
     }
-    console.log("history pushState is supported in your browser");
+    console.log('history pushState is supported in your browser');
 
-    // The "one" global variable.
+    // The 'one' global variable.
     var Coccyx = window.Coccyx = window.Coccyx || {},
         historyStarted = false;
 
     // Event handler for click event on anchor tags. Ignores those
-    // where the href path doesn't start with a "/" character. This
+    // where the href path doesn't start with a '/' character. This
     // prevents handling external links, allowing those events
     // to bubble up as normal.
-    $(document).on("click", "a", function(event){
-        if($(this).attr("href").indexOf("/") === 0){
+    $(document).on('click', 'a', function(event){
+        if($(this).attr('href').indexOf('/') === 0){
             event.preventDefault();
             var pathName = event.target.pathname;
-            // console.log("The url's path = ", "'" + pathName+"'");
+            // console.log('The url's path = ', ''' + pathName+''');
             // console.log(event);
-            // The "verb" for routes on anchors is always "get".
-            Coccyx.router.route("get", pathName);
-            history.pushState({verb: "get"}, null, event.target.href);
+            // The 'verb' for routes on anchors is always 'get'.
+            Coccyx.router.route('get', pathName);
+            history.pushState({verb: 'get'}, null, event.target.href);
         }
     });
 
@@ -157,29 +160,29 @@
     // 'Verb' should be set to whatever the form's 'method' attribute
     // is set to. If 'method' attribute doesn' exist, then 'verb'
     // defaults to get.
-    $(document).on("submit", "form", function(event){
+    $(document).on('submit', 'form', function(event){
         var $form = $(this),
-            action = $form.attr("action"),
+            action = $form.attr('action'),
             method,
             valuesHash;
         console.log(event);
-        if(action.indexOf("/") === 0){
+        if(action.indexOf('/') === 0){
             event.preventDefault();
-            method = $form.attr("method");
+            method = $form.attr('method');
             valuesHash = valuesHashFromSerializedArray($form.serializeArray());
             Coccyx.router.route(method, action, valuesHash);
         }
     });
 
     // Event handler for popstate event.
-    $(window).on("popstate", function(event){
-        // Ignore "popstate" events until history.start is called.
+    $(window).on('popstate', function(event){
+        // Ignore 'popstate' events until history.start is called.
         if(started()){
-            Coccyx.router.route(event.originalEvent.state? event.originalEvent.state.verb : "get", window.location.pathname);
+            Coccyx.router.route(event.originalEvent.state? event.originalEvent.state.verb : 'get', window.location.pathname);
         }
     });
 
-    // Creates a hash from an array whose elements are hashes whose properties are "name" and "value".
+    // Creates a hash from an array whose elements are hashes whose properties are 'name' and 'value'.
     function valuesHashFromSerializedArray(valuesArray){
         var len = valuesArray.length,
             i,
@@ -196,13 +199,13 @@
 
     // Call Coccyx.history.start only after all your controllers have been
     // registered (by calling Coccyx.controllers.registerController).
-    // When called starts responding to "popstate" events which are raised when the
+    // When called starts responding to 'popstate' events which are raised when the
     // user uses the browser's back and forward buttons to navigate. Pass true for
     // trigger if you want the route function to be called.
     function start(trigger){
         historyStarted = true;
         if(trigger){
-            Coccyx.router.route("get", window.location.pathname);
+            Coccyx.router.route('get', window.location.pathname);
         }
     }
 
@@ -213,8 +216,8 @@
 
 });
 
-;define("models", [], function(){
-    "use strict";
+;define('models', [], function(){
+    'use strict';
 
     /**
      * Model
@@ -236,7 +239,7 @@
 
         if(arguments.length !== 1 && !(arguments[0] instanceof Array) && !(arguments[0] instanceof Object)){
             // TODO Not sure if I should be throwing here. Think about it!!!
-            throw new Error("registerModels missing or invalid param. Expected an [] or {}.");
+            throw new Error('registerModels missing or invalid param. Expected an [] or {}.');
         }
         if(arguments[0] instanceof Array){
             // An array of hashes.
@@ -254,7 +257,7 @@
         // that with the model and save it in the hash.
         var obj =  Coccyx.helpers.extend(Object.create(proto), model);
         models[model.name] = obj;
-        console.log("Registering model '" + model.name + "'");
+        console.log('Registering model \'' + model.name + '\'');
     }
 
     function getModel(name){
@@ -324,10 +327,10 @@
                     this.data[propertyName] = data;
                     this.dirty = true;
                 }else{
-                    console.log("Warning! Coccyx.model::setProperty called on read only model.");
+                    console.log('Warning! Coccyx.model::setProperty called on read only model.');
                 }
             }else{
-                console.log("Warning! Coccyx.model::setProperty called on model before model::set was called.");
+                console.log('Warning! Coccyx.model::setProperty called on model before model::set was called.');
             }
             // For chaining.
             return this;
@@ -341,8 +344,8 @@
 
 });
 
-;define("router", ["jquery"], function($) {
-    "use strict";
+;define('router', ['jquery'], function($) {
+    'use strict';
 
     /**
      * Router routes urls to their controllers
@@ -361,7 +364,7 @@
 
     function getRoute(verb, url){
         var routes = Coccyx.controllers.getRoutes(),
-            a = url.substring(1).split("/"),
+            a = url.substring(1).split('/'),
             route,
             b,
             i,
@@ -374,11 +377,11 @@
             v;
         for(route in routes){
             if(routes.hasOwnProperty(route)){
-                // Get the "veb".
-                v = route.substring(0, route.indexOf(" "));
+                // Get the 'veb'.
+                v = route.substring(0, route.indexOf(' '));
                 // Get the url.
-                b = route.substring(route.indexOf("/") + 1).split("/");
-                if(verb === v && (a.length === b.length || Coccyx.helpers.contains(route, "*"))){
+                b = route.substring(route.indexOf('/') + 1).split('/');
+                if(verb === v && (a.length === b.length || Coccyx.helpers.contains(route, '*'))){
                     eq = true;
                     // The url and the route have the same number of segments so the route
                     // can be either static or it could contain parameterized segments.
@@ -388,13 +391,13 @@
                             continue;
                         }
                         // If the route segment is parameterized then save the parameter and continue looping.
-                        if(b[i].charAt(0) === ":"){
+                        if(b[i].charAt(0) === ':'){
                             //params.push({segmentNumber: i, value: a[i]});
                             params.push(a[i]);
                             continue;
                         }
                         // If the route is a relative route, push it onto the array and break out of the loop.
-                        if(Coccyx.helpers.contains(b[i], "*")){
+                        if(Coccyx.helpers.contains(b[i], '*')){
                             rel = true;
                             eq = false;
                             break;
@@ -410,8 +413,8 @@
                     }
                     if(rel){
                         // controller name, function to call, function arguments to call with...
-                        for(ii = i, relUrl = ""; ii < a.length; ii++){
-                            relUrl += ("/" + a[ii]);
+                        for(ii = i, relUrl = ''; ii < a.length; ii++){
+                            relUrl += ('/' + a[ii]);
                         }
                         // controller name, function to call, function arguments to call with...
                         return {controllerName: /*b[0]*/ routes[route][0], fn: routes[route][1], params: [relUrl]};
@@ -433,9 +436,9 @@
     }
 
     function routeNotFound(url){
-        console.log("router::routeNotFound called with route = " + url);
+        console.log('router::routeNotFound called with route = ' + url);
         // Show a Coccyx 404 error.
-        $("body").html('<div style="font-size:68px;"><p style="margin:auto !important;line-height:80px;">Coccyx 404</p><p style="margin:auto !important;line-height:80px;">' + url + ' Not Found.</p><p style="margin:auto !important;line-height:80px;"> Did you forget to call Coccyx.controllers.registerController to register your controller?</p></div>');
+        $('body').html('<div style="font-size:68px;"><p style="margin:auto !important;line-height:80px;">Coccyx 404</p><p style="margin:auto !important;line-height:80px;">' + url + ' Not Found.</p><p style="margin:auto !important;line-height:80px;"> Did you forget to call Coccyx.controllers.registerController to register your controller?</p></div>');
     }
 
     // A wrapper for the browser's history.pushState and history.replaceState.
@@ -452,11 +455,11 @@
             options = options || {};
             options.state = options.state || null;
             options.title = options.title || document.title;
-            options.method = options.method || "get";
+            options.method = options.method || 'get';
             options.url = options.url || window.location.pathname;
             options.trigger = options.trigger || false;
             options.replace = options.replace || false;
-            window.history[options.replace ? "replaceState" : "pushState"](options.state, options.title, options.url);
+            window.history[options.replace ? 'replaceState' : 'pushState'](options.state, options.title, options.url);
             if(options.trigger){
                 route(options.method, options.url);
             }
@@ -470,8 +473,8 @@
 
 });
 
-;define("views", ["jquery"], function($){
-    "use strict";
+;define('views', ['jquery'], function($){
+    'use strict';
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
         views = {};
@@ -480,7 +483,7 @@
 
         if(arguments.length !== 1 && !(arguments[0] instanceof Array) && !(arguments[0] instanceof Object)){
             // TODO Not sure if I should be throwing here. Think about it!!!
-            throw new Error("registerViews missing or invalid param. Expected an [] or {}.");
+            throw new Error('registerViews missing or invalid param. Expected an [] or {}.');
         }
         if(arguments[0] instanceof Array){
             // An array of hashes.
@@ -496,7 +499,7 @@
     function loadView(view){
         view.$ = $;
         views[view.name] = view;
-        console.log("Registering view '" + view.name + "'");
+        console.log('Registering view \'' + view.name + '\'');
     }
 
     function render(name){
@@ -538,7 +541,7 @@
 
     function viewNotFound(name){
         // TODO: Is logging to the console required? Is it enough? Etc...
-        console.log("views::viewNotFound called with view name = " + name);
+        console.log('views::viewNotFound called with view name = ' + name);
     }
 
     Coccyx.views = {
@@ -549,11 +552,11 @@
 
 });
 
-;define("pubsub", [], function(){
+;define('pubsub', [], function(){
     /**
      * A purely hash-based pubsub implementation.
      */
-    "use strict";
+    'use strict';
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
         subscribers = {},
@@ -562,9 +565,9 @@
     /*
         subscribers is a hash of hashes
         {
-            "some topic": {
-                "some token": callbackfunction,
-                "some token": callbackfunction,
+            'some topic': {
+                'some token': callbackfunction,
+                'some token': callbackfunction,
                 . etc.
             },
             . etc
@@ -623,7 +626,7 @@
 
 });
 
-;define("coccyx", ["application", "helpers", "history", "models", "router", "views", "pubsub"], function () {
-    "use strict";
+;define('coccyx', ['application', 'helpers', 'history', 'models', 'router', 'views', 'pubsub'], function () {
+    'use strict';
     return window.Coccyx;
 });

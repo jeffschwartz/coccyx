@@ -70,5 +70,6 @@ module.exports = function ( grunt ) {
     // Alias Tasks
     grunt.registerTask( 'dev', 'Running Grunt dev task', ['copy:todev'] );
     grunt.registerTask( 'prod', 'Running Grunt prod task', ['concat:dist', 'uglify', 'compress'] );
+    grunt.registerTask( 'prod_and_dev', 'Running Grunt prod_and_dev task', ['prod', 'dev'] );
 
 };
