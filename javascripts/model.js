@@ -1,5 +1,5 @@
-define("models", [], function(){
-    "use strict";
+define('models', [], function(){
+    'use strict';
 
     /**
      * Model
@@ -21,7 +21,7 @@ define("models", [], function(){
 
         if(arguments.length !== 1 && !(arguments[0] instanceof Array) && !(arguments[0] instanceof Object)){
             // TODO Not sure if I should be throwing here. Think about it!!!
-            throw new Error("registerModels missing or invalid param. Expected an [] or {}.");
+            throw new Error('registerModels missing or invalid param. Expected an [] or {}.');
         }
         if(arguments[0] instanceof Array){
             // An array of hashes.
@@ -39,7 +39,7 @@ define("models", [], function(){
         // that with the model and save it in the hash.
         var obj =  Coccyx.helpers.extend(Object.create(proto), model);
         models[model.name] = obj;
-        console.log("Registering model '" + model.name + "'");
+        console.log('Registering model \'' + model.name + '\'');
     }
 
     function getModel(name){
@@ -109,10 +109,10 @@ define("models", [], function(){
                     this.data[propertyName] = data;
                     this.dirty = true;
                 }else{
-                    console.log("Warning! Coccyx.model::setProperty called on read only model.");
+                    console.log('Warning! Coccyx.model::setProperty called on read only model.');
                 }
             }else{
-                console.log("Warning! Coccyx.model::setProperty called on model before model::set was called.");
+                console.log('Warning! Coccyx.model::setProperty called on model before model::set was called.');
             }
             // For chaining.
             return this;

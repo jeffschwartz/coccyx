@@ -1,5 +1,5 @@
-define("views", ["jquery"], function($){
-    "use strict";
+define('views', ['jquery'], function($){
+    'use strict';
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
         views = {};
@@ -8,7 +8,7 @@ define("views", ["jquery"], function($){
 
         if(arguments.length !== 1 && !(arguments[0] instanceof Array) && !(arguments[0] instanceof Object)){
             // TODO Not sure if I should be throwing here. Think about it!!!
-            throw new Error("registerViews missing or invalid param. Expected an [] or {}.");
+            throw new Error('registerViews missing or invalid param. Expected an [] or {}.');
         }
         if(arguments[0] instanceof Array){
             // An array of hashes.
@@ -24,7 +24,7 @@ define("views", ["jquery"], function($){
     function loadView(view){
         view.$ = $;
         views[view.name] = view;
-        console.log("Registering view '" + view.name + "'");
+        console.log('Registering view \'' + view.name + '\'');
     }
 
     function render(name){
@@ -66,7 +66,7 @@ define("views", ["jquery"], function($){
 
     function viewNotFound(name){
         // TODO: Is logging to the console required? Is it enough? Etc...
-        console.log("views::viewNotFound called with view name = " + name);
+        console.log('views::viewNotFound called with view name = ' + name);
     }
 
     Coccyx.views = {

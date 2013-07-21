@@ -1,5 +1,5 @@
-define("router", ["jquery"], function($) {
-    "use strict";
+define('router', ['jquery'], function($) {
+    'use strict';
 
     /**
      * Router routes urls to their controllers
@@ -18,7 +18,7 @@ define("router", ["jquery"], function($) {
 
     function getRoute(verb, url){
         var routes = Coccyx.controllers.getRoutes(),
-            a = url.substring(1).split("/"),
+            a = url.substring(1).split('/'),
             route,
             b,
             i,
@@ -31,11 +31,11 @@ define("router", ["jquery"], function($) {
             v;
         for(route in routes){
             if(routes.hasOwnProperty(route)){
-                // Get the "veb".
-                v = route.substring(0, route.indexOf(" "));
+                // Get the 'veb'.
+                v = route.substring(0, route.indexOf(' '));
                 // Get the url.
-                b = route.substring(route.indexOf("/") + 1).split("/");
-                if(verb === v && (a.length === b.length || Coccyx.helpers.contains(route, "*"))){
+                b = route.substring(route.indexOf('/') + 1).split('/');
+                if(verb === v && (a.length === b.length || Coccyx.helpers.contains(route, '*'))){
                     eq = true;
                     // The url and the route have the same number of segments so the route
                     // can be either static or it could contain parameterized segments.
@@ -45,13 +45,13 @@ define("router", ["jquery"], function($) {
                             continue;
                         }
                         // If the route segment is parameterized then save the parameter and continue looping.
-                        if(b[i].charAt(0) === ":"){
+                        if(b[i].charAt(0) === ':'){
                             //params.push({segmentNumber: i, value: a[i]});
                             params.push(a[i]);
                             continue;
                         }
                         // If the route is a relative route, push it onto the array and break out of the loop.
-                        if(Coccyx.helpers.contains(b[i], "*")){
+                        if(Coccyx.helpers.contains(b[i], '*')){
                             rel = true;
                             eq = false;
                             break;
@@ -67,8 +67,8 @@ define("router", ["jquery"], function($) {
                     }
                     if(rel){
                         // controller name, function to call, function arguments to call with...
-                        for(ii = i, relUrl = ""; ii < a.length; ii++){
-                            relUrl += ("/" + a[ii]);
+                        for(ii = i, relUrl = ''; ii < a.length; ii++){
+                            relUrl += ('/' + a[ii]);
                         }
                         // controller name, function to call, function arguments to call with...
                         return {controllerName: /*b[0]*/ routes[route][0], fn: routes[route][1], params: [relUrl]};
@@ -90,9 +90,9 @@ define("router", ["jquery"], function($) {
     }
 
     function routeNotFound(url){
-        console.log("router::routeNotFound called with route = " + url);
+        console.log('router::routeNotFound called with route = ' + url);
         // Show a Coccyx 404 error.
-        $("body").html('<div style="font-size:68px;"><p style="margin:auto !important;line-height:80px;">Coccyx 404</p><p style="margin:auto !important;line-height:80px;">' + url + ' Not Found.</p><p style="margin:auto !important;line-height:80px;"> Did you forget to call Coccyx.controllers.registerController to register your controller?</p></div>');
+        $('body').html('<div style="font-size:68px;"><p style="margin:auto !important;line-height:80px;">Coccyx 404</p><p style="margin:auto !important;line-height:80px;">' + url + ' Not Found.</p><p style="margin:auto !important;line-height:80px;"> Did you forget to call Coccyx.controllers.registerController to register your controller?</p></div>');
     }
 
     // A wrapper for the browser's history.pushState and history.replaceState.
@@ -109,11 +109,11 @@ define("router", ["jquery"], function($) {
             options = options || {};
             options.state = options.state || null;
             options.title = options.title || document.title;
-            options.method = options.method || "get";
+            options.method = options.method || 'get';
             options.url = options.url || window.location.pathname;
             options.trigger = options.trigger || false;
             options.replace = options.replace || false;
-            window.history[options.replace ? "replaceState" : "pushState"](options.state, options.title, options.url);
+            window.history[options.replace ? 'replaceState' : 'pushState'](options.state, options.title, options.url);
             if(options.trigger){
                 route(options.method, options.url);
             }

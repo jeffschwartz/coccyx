@@ -1,8 +1,8 @@
-define("pubsub", [], function(){
+define('pubsub', [], function(){
     /**
      * A purely hash-based pubsub implementation.
      */
-    "use strict";
+    'use strict';
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
         subscribers = {},
@@ -11,9 +11,9 @@ define("pubsub", [], function(){
     /*
         subscribers is a hash of hashes
         {
-            "some topic": {
-                "some token": callbackfunction,
-                "some token": callbackfunction,
+            'some topic': {
+                'some token': callbackfunction,
+                'some token': callbackfunction,
                 . etc.
             },
             . etc
