@@ -63,10 +63,10 @@ define("models", [], function(){
         setData: function setData (dataHash, options) {
             var o = {empty:false, readOnly:false, dirty:false},
                 prop;
-            // If there is a validate method and it return false, set valid to
-            // false and return false.
-            // If there is a validate method and it returns true, set valid to true
-            // and proceed with setting data.
+            // If there is a validate method and it returns false, sets valid to
+            // false and returns false.
+            // If there is a validate method and it returns true, sets valid to true
+            // and proceeds with setting data.
             this.valid = this.validate ? this.validate(dataHash) : true;
             if(!this.valid){
                 return false;
