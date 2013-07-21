@@ -96,11 +96,10 @@ define("router", ["jquery"], function($) {
     }
 
     // A wrapper for the browser's history.pushState and history.replaceState.
-    // Mimic Backbone's History.navigate method.
-    // "Whenever you reach a point in your application that you'd like to save as a URL,
+    // Whenever you reach a point in your application that you'd like to save as a URL,
     // call navigate in order to update the URL. If you wish to also call the route function,
     // set the trigger option to true. To update the URL without creating an entry in the
-    // browser's history, set the replace option to true."
+    // browser's history, set the replace option to true.
     // Pass true for trigger if you want the route function to be called.
     // Pass true for replace if you only want to replace the current history entry and not
     // push a new one onto the browser's history stack.

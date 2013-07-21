@@ -92,19 +92,27 @@ define("models", [], function(){
         getData: function getData(){
             return deepCopy(this.data);
         },
+        // Returns data[propertyName] or null.
         getProperty: function getProperty(propertyName){
-            return this.data[propertyName];
+            if (this.data.hasOwnProperty(propertyName)) {
+                return this.data[propertyName];
+            }
         },
+        // Sets the data[propertyName]'s value.
         setProperty: function setProperty(propertyName, data){
             // A model's data properties cannot be written to if the model
             // hasn't been set yet or if the model is read only.
-            if(this.set && !this.readOnly){
-                // Deep copy, maintain the changedValues hash.
-                this.changedData[propertyName] = deepCopy(data);
-                this.data[propertyName] = data;
-                this.dirty = true;
+            if(this.set){
+                if(!this.readOnly){
+                    // Deep copy, maintain the changedValues hash.
+                    this.changedData[propertyName] = deepCopy(data);
+                    this.data[propertyName] = data;
+                    this.dirty = true;
+                }else{
+                    console.log("Warning! Coccyx.model::setProperty called on read only model.");
+                }
             }else{
-                console.log("Warning! Coccyx.model::setProperty called on read only model.");
+                console.log("Warning! Coccyx.model::setProperty called on model before model::set was called.");
             }
             // For chaining.
             return this;
