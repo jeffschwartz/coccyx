@@ -20,20 +20,6 @@ module.exports = function ( grunt ) {
                     'javascripts/amd.js'
                     ],
                 dest : 'javascripts/dist/coccyx.js'
-            },
-            demoapp : {
-                src  : [
-                    'javascripts/banner.js',
-                    'javascripts/application.js',
-                    'javascripts/helpers.js',
-                    'javascripts/history.js',
-                    'javascripts/model.js',
-                    'javascripts/router.js',
-                    'javascripts/views.js',
-                    'javascripts/pubsub.js',
-                    'javascripts/amd.js'
-                    ],
-                dest : '../demoapp/public/javascripts/libs/coccyx.js'
             }
         },
         uglify: {
@@ -53,10 +39,17 @@ module.exports = function ( grunt ) {
                 ext: '.gz.js'
             }
         },
+        copy: {
+            todev: {
+                files: [
+                    {src: ['javascripts/dist/coccyx.js'], dest: '../demoapp/public/javascripts/libs/coccyx.js'}
+                ]
+            }
+        },
         watch  : {
             scripts : {
                 files   : ['javascripts/*.js'],
-                tasks   : ['concat', 'uglify', 'compress'],
+                tasks   : ['prod'],
                 options : {
                     interrupt : true
                 }
@@ -69,12 +62,13 @@ module.exports = function ( grunt ) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-compress');
     grunt.loadNpmTasks( 'grunt-contrib-watch' );
+    grunt.loadNpmTasks('grunt-contrib-copy');
 
     // Default task(s).
     grunt.registerTask( 'default', ['watch'] );
 
     // Alias Tasks
-    grunt.registerTask( 'dev', 'Running Grunt dev task', ['concat:dist'] );
+    grunt.registerTask( 'dev', 'Running Grunt dev task', ['copy:todev'] );
     grunt.registerTask( 'prod', 'Running Grunt prod task', ['concat:dist', 'uglify', 'compress'] );
 
 };

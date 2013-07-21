@@ -1,4 +1,4 @@
-// Coccyx.js 0.2.0
+// Coccyx.js 0.2.1
 // (c) 2013 Jeffrey Schwartz
 // Coccyx.js may be freely distributed under the MIT license.
 // For all details and documentation:
@@ -278,10 +278,10 @@
         setData: function setData (dataHash, options) {
             var o = {empty:false, readOnly:false, dirty:false},
                 prop;
-            // If there is a validate method and it return false, set valid to
-            // false and return false.
-            // If there is a validate method and it returns true, set valid to true
-            // and proceed with setting data.
+            // If there is a validate method and it returns false, sets valid to
+            // false and returns false.
+            // If there is a validate method and it returns true, sets valid to true
+            // and proceeds with setting data.
             this.valid = this.validate ? this.validate(dataHash) : true;
             if(!this.valid){
                 return false;
@@ -307,19 +307,27 @@
         getData: function getData(){
             return deepCopy(this.data);
         },
+        // Returns data[propertyName] or null.
         getProperty: function getProperty(propertyName){
-            return this.data[propertyName];
+            if (this.data.hasOwnProperty(propertyName)) {
+                return this.data[propertyName];
+            }
         },
+        // Sets the data[propertyName]'s value.
         setProperty: function setProperty(propertyName, data){
             // A model's data properties cannot be written to if the model
             // hasn't been set yet or if the model is read only.
-            if(this.set && !this.readOnly){
-                // Deep copy, maintain the changedValues hash.
-                this.changedData[propertyName] = deepCopy(data);
-                this.data[propertyName] = data;
-                this.dirty = true;
+            if(this.set){
+                if(!this.readOnly){
+                    // Deep copy, maintain the changedValues hash.
+                    this.changedData[propertyName] = deepCopy(data);
+                    this.data[propertyName] = data;
+                    this.dirty = true;
+                }else{
+                    console.log("Warning! Coccyx.model::setProperty called on read only model.");
+                }
             }else{
-                console.log("Warning! Coccyx.model::setProperty called on read only model.");
+                console.log("Warning! Coccyx.model::setProperty called on model before model::set was called.");
             }
             // For chaining.
             return this;
@@ -431,11 +439,10 @@
     }
 
     // A wrapper for the browser's history.pushState and history.replaceState.
-    // Mimic Backbone's History.navigate method.
-    // "Whenever you reach a point in your application that you'd like to save as a URL,
+    // Whenever you reach a point in your application that you'd like to save as a URL,
     // call navigate in order to update the URL. If you wish to also call the route function,
     // set the trigger option to true. To update the URL without creating an entry in the
-    // browser's history, set the replace option to true."
+    // browser's history, set the replace option to true.
     // Pass true for trigger if you want the route function to be called.
     // Pass true for replace if you only want to replace the current history entry and not
     // push a new one onto the browser's history stack.
