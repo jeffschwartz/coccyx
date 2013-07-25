@@ -116,7 +116,7 @@ define('models', [], function(){
             }
             // For chaining.
             return this;
-        }
+       }
     };
 
     Coccyx.models = {
