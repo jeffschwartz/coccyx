@@ -48,9 +48,9 @@ define('history', ['jquery'], function($) {
 
     // Event handler for popstate event.
     $(window).on('popstate', function(event){
-        // Ignore 'popstate' events until history.start is called.
-        if(started()){
-            Coccyx.router.route(event.originalEvent.state? event.originalEvent.state.verb : 'get', window.location.pathname);
+        // Ignore 'popstate' events without state and until history.start is called.
+        if(event.originalEvent.state && started()){
+            Coccyx.router.route(event.originalEvent.state.verb , window.location.pathname);
         }
     });
 
@@ -77,6 +77,7 @@ define('history', ['jquery'], function($) {
     function start(trigger){
         historyStarted = true;
         if(trigger){
+            history.replaceState({verb: 'get'}, null, window.location.pathname);
             Coccyx.router.route('get', window.location.pathname);
         }
     }
