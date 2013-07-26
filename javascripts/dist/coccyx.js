@@ -1,4 +1,4 @@
-// Coccyx.js 0.2.3
+// Coccyx.js 0.3.0
 // (c) 2013 Jeffrey Schwartz
 // Coccyx.js may be freely distributed under the MIT license.
 // For all details and documentation:
@@ -74,7 +74,7 @@
     Coccyx.plugins = Coccyx.plugins || {};
 
     // Version stamp
-    version = '0.2.2';
+    version = '0.3.0';
     Coccyx.getVersion = function(){
         return version;
     };
@@ -130,7 +130,7 @@
 
 });
 
-;define('history', ['jquery'], function($) {
+;define('history', ['jquery', 'router'], function($) {
     'use strict';
 
     // Verify browser supports pushstate.
@@ -214,9 +214,35 @@
         }
     }
 
+    // A wrapper for the browser's history.pushState and history.replaceState.
+    // Whenever you reach a point in your application that you'd like to save as a URL,
+    // call navigate in order to update the URL. If you wish to also call the route function,
+    // set the trigger option to true. To update the URL without creating an entry in the
+    // browser's history, set the replace option to true.
+    // Pass true for trigger if you want the route function to be called.
+    // Pass true for replace if you only want to replace the current history entry and not
+    // push a new one onto the browser's history stack.
+    // function navigate(state, title, url, trigger, replace){
+    function navigate(options){
+        if(Coccyx.history.started()){
+            options = options || {};
+            options.state = options.state || null;
+            options.title = options.title || document.title;
+            options.method = options.method || 'get';
+            options.url = options.url || window.location.pathname;
+            options.trigger = options.trigger || false;
+            options.replace = options.replace || false;
+            window.history[options.replace ? 'replaceState' : 'pushState'](options.state, options.title, options.url);
+            if(options.trigger){
+                Coccyx.router.route(options.method, options.url);
+            }
+        }
+    }
+
     Coccyx.history = {
         start: start,
-        started: started
+        started: started,
+        navigate: navigate
     };
 
 });
@@ -316,6 +342,14 @@
         },
         getData: function getData(){
             return deepCopy(this.data);
+        },
+        // Returns deep copy of originalData
+        getOriginalData: function getOriginalData(){
+            return deepCopy(this.originalData);
+        },
+        // Returns deep copy of changedData
+        getChangedData: function getChangedData(){
+            return deepCopy(this.changedData);
         },
         // Returns data[propertyName] or null.
         getProperty: function getProperty(propertyName){
@@ -452,34 +486,8 @@
         $('body').html('<div style="font-size:68px;"><p style="margin:auto !important;line-height:80px;">Coccyx 404</p><p style="margin:auto !important;line-height:80px;">' + url + ' Not Found.</p><p style="margin:auto !important;line-height:80px;"> Did you forget to call Coccyx.controllers.registerController to register your controller?</p></div>');
     }
 
-    // A wrapper for the browser's history.pushState and history.replaceState.
-    // Whenever you reach a point in your application that you'd like to save as a URL,
-    // call navigate in order to update the URL. If you wish to also call the route function,
-    // set the trigger option to true. To update the URL without creating an entry in the
-    // browser's history, set the replace option to true.
-    // Pass true for trigger if you want the route function to be called.
-    // Pass true for replace if you only want to replace the current history entry and not
-    // push a new one onto the browser's history stack.
-    // function navigate(state, title, url, trigger, replace){
-    function navigate(options){
-        if(Coccyx.history.started()){
-            options = options || {};
-            options.state = options.state || null;
-            options.title = options.title || document.title;
-            options.method = options.method || 'get';
-            options.url = options.url || window.location.pathname;
-            options.trigger = options.trigger || false;
-            options.replace = options.replace || false;
-            window.history[options.replace ? 'replaceState' : 'pushState'](options.state, options.title, options.url);
-            if(options.trigger){
-                route(options.method, options.url);
-            }
-        }
-    }
-
     Coccyx.router = {
-        route: route,
-        navigate: navigate
+        route: route
     };
 
 });

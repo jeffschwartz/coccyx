@@ -69,7 +69,7 @@ define('application', ['jquery'], function($){
     Coccyx.plugins = Coccyx.plugins || {};
 
     // Version stamp
-    version = '0.2.2';
+    version = '0.3.0';
     Coccyx.getVersion = function(){
         return version;
     };

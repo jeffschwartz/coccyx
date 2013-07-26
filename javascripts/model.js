@@ -94,6 +94,14 @@ define('models', [], function(){
         getData: function getData(){
             return deepCopy(this.data);
         },
+        // Returns deep copy of originalData
+        getOriginalData: function getOriginalData(){
+            return deepCopy(this.originalData);
+        },
+        // Returns deep copy of changedData
+        getChangedData: function getChangedData(){
+            return deepCopy(this.changedData);
+        },
         // Returns data[propertyName] or null.
         getProperty: function getProperty(propertyName){
             if (this.data.hasOwnProperty(propertyName)) {
