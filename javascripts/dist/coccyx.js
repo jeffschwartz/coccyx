@@ -1,4 +1,4 @@
-// Coccyx.js 0.2.2
+// Coccyx.js 0.2.3
 // (c) 2013 Jeffrey Schwartz
 // Coccyx.js may be freely distributed under the MIT license.
 // For all details and documentation:
