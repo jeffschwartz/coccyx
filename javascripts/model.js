@@ -61,16 +61,8 @@ define('models', [], function(){
     // model prototype properties...
     proto = {
         setData: function setData (dataHash, options) {
-            var o = {empty:false, readOnly:false, dirty:false},
+            var o = {empty:false, readOnly:false, dirty:false, validate: false},
                 prop;
-            // If there is a validate method and it returns false, sets valid to
-            // false and returns false.
-            // If there is a validate method and it returns true, sets valid to true
-            // and proceeds with setting data.
-            this.valid = this.validate ? this.validate(dataHash) : true;
-            if(!this.valid){
-                return false;
-            }
             // Merge default options with passed in options.
             if(options){
                 for(prop in o){
@@ -78,6 +70,16 @@ define('models', [], function(){
                         o[prop] = options[prop];
                     }
                 }
+            }
+            // If options validate is true and there is a validate method and
+            // it returns false, sets valid to false and returns false.
+            // If options validate is true and there is a validate method and
+            // it returns true, sets valid to true and proceeds with setting data.
+            // If options validate is false or there isn't a validate method
+            // set valid to true.
+            this.valid = o.validate && this.validate ? this.validate(dataHash) : true;
+            if(!this.valid){
+                return false;
             }
             // Deep copy.
             this.originalData = o.empty ? {} : deepCopy(dataHash);
@@ -95,7 +97,9 @@ define('models', [], function(){
         // Returns data[propertyName] or null.
         getProperty: function getProperty(propertyName){
             if (this.data.hasOwnProperty(propertyName)) {
-                return this.data[propertyName];
+                // Deep copy if property is typeof 'object'.
+                return typeof this.data[propertyName] === 'object' ?
+                deepCopy(this.data[propertyName]) : this.data[propertyName];
             }
         },
         // Sets the data[propertyName]'s value.
@@ -106,7 +110,9 @@ define('models', [], function(){
                 if(!this.readOnly){
                     // Deep copy, maintain the changedValues hash.
                     this.changedData[propertyName] = deepCopy(data);
-                    this.data[propertyName] = data;
+                    // Deep copy if property is typeof 'object'.
+                    this.data[propertyName] = typeof data === 'object' ?
+                    deepCopy(data) : data;
                     this.dirty = true;
                 }else{
                     console.log('Warning! Coccyx.model::setProperty called on read only model.');
