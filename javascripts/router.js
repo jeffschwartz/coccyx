@@ -21,6 +21,7 @@ define('router', ['jquery'], function($) {
             a = url.substring(1).split('/'),
             route,
             b,
+            c,
             i,
             ii,
             len,
@@ -45,9 +46,16 @@ define('router', ['jquery'], function($) {
                             continue;
                         }
                         // If the route segment is parameterized then save the parameter and continue looping.
-                        if(b[i].charAt(0) === ':'){
-                            //params.push({segmentNumber: i, value: a[i]});
-                            params.push(a[i]);
+                        if(Coccyx.helpers.contains(b[i],':')){
+                            // 0.4.0 - checking for 'some:thing'
+                            c = b[i].split(':');
+                            if(c.length === 2){
+                                if(a[i].substr(0, c[0].length) === c[0]){
+                                    params.push(a[i].substr(c[0].length));
+                                }
+                            }else{
+                                params.push(a[i]);
+                            }
                             continue;
                         }
                         // If the route is a relative route, push it onto the array and break out of the loop.
