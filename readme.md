@@ -1,6 +1,6 @@
 Coccyx.js is a tiny, simple and somewhat opinionated HTML5 and RequireJS/AMD compliant MVC library.
 
-Coccyx.js is tiny!. How tiny, you ask? Well, the development version of Coccyx.js is currently 20kb and less than 600 lines of uncompressed, commented JavaScript and the production version is 6kb uglified and 2kb gzipped. And while it is expected to grow somewhat prior to its official release, the goal is to keep it tiny.
+Coccyx.js is tiny!. How tiny, you ask? Well, the development version of Coccyx.js is currently 24kb and less than 700 lines of uncompressed, commented JavaScript and the production version is 7kb uglified and 3kb gzipped. And while it is expected to grow somewhat prior to its official release, the goal is to keep it tiny.
 
 Coccyx.js may be tiny in size but when it comes to features, it has everything you need to create fast mobile and desktop browser applications:
 
@@ -25,8 +25,6 @@ Coccyx.js is somewhat opinionated! Before a single line of code was written, a v
 + It must target Ecmascript5 strict mode and must pass JSHint... except for the rare exception, emphasis on "rare"!
 
 Though still a pre releasee, Coccyx.js is stable enough for you to begin using it now -- though not yet for production. So, if you are in the early stages of your development, by all means, feel free to begin using it now.
-
-The absence of thorough documentation shouldn't prevent early adoption. If you are fluent in JavaScript then a quick study of the source code should suffice until the documentation page on http://coccyxjs.jitsu.com is completed. Speaking of which, creating a kick-ass documentation page with meaningful examples as well will be the next highest priority.
 
 Good Enough Now To Eat Our Own Dog Food!
 ***
