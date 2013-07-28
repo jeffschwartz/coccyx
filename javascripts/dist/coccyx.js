@@ -212,16 +212,8 @@
     }
 
     // 0.5.0
-    function registerObjects(mvc){
-        if(mvc.hasOwnProperty('controllers')){
-            Coccyx.controllers.registerControllers(mvc.controllers);
-        }
-        if(mvc.hasOwnProperty('views')){
-            Coccyx.views.registerViews(mvc.views);
-        }
-        if(mvc.hasOwnProperty('models')){
-            Coccyx.models.registerModels(mvc.models);
-        }
+    function registerControllers(controllers){
+        Coccyx.controllers.registerControllers(controllers);
     }
 
     // Call Coccyx.history.start to start your application.
@@ -230,7 +222,7 @@
     // trigger if you want the route function to be called.
     // 0.5.0
     function start(trigger, callback){
-        registerObjects(callback()); // 0.5.0
+        registerControllers(callback()); // 0.5.0
         historyStarted = true;
         if(trigger){
             history.replaceState({verb: 'get'}, null, window.location.pathname);
@@ -315,8 +307,13 @@
         console.log('Registering model \'' + model.name + '\'');
     }
 
-    function getModel(name){
+    function getModel(name, callback){
         var obj;
+        if(!models.hasOwnProperty(name)){
+            registerModels(callback());
+        }
+        // Checks that the model that user returned is named
+        // "name". You can't be too careful, you know!
         if(models.hasOwnProperty(name)){
             // Create a new object using the model as the prototype.
             obj = Object.create(models[name]);
@@ -407,7 +404,6 @@
     };
 
     Coccyx.models = {
-        registerModels: registerModels,
         getModel: getModel
     };
 
@@ -553,8 +549,14 @@
         console.log('Registering view \'' + view.name + '\'');
     }
 
-    function render(name){
-        var view = getView(name);
+    function render(name, callback){
+        var view;
+        if(!views.hasOwnProperty(name)){
+            registerViews(callback());
+        }
+        view = getView(name);
+        // Checks that the view the user returned is named
+        // "name". You can't be too careful, you know!
         if(view){
             if(view.render){
                 viewRender(view, arguments.length > 1 ? Array.prototype.slice.call(arguments, 1) : null);
@@ -596,7 +598,6 @@
     }
 
     Coccyx.views = {
-        registerViews: registerViews,
         render: render,
         remove: remove
     };

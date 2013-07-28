@@ -70,16 +70,8 @@ define('history', ['jquery', 'router'], function($) {
     }
 
     // 0.5.0
-    function registerObjects(mvc){
-        if(mvc.hasOwnProperty('controllers')){
-            Coccyx.controllers.registerControllers(mvc.controllers);
-        }
-        if(mvc.hasOwnProperty('views')){
-            Coccyx.views.registerViews(mvc.views);
-        }
-        if(mvc.hasOwnProperty('models')){
-            Coccyx.models.registerModels(mvc.models);
-        }
+    function registerControllers(controllers){
+        Coccyx.controllers.registerControllers(controllers);
     }
 
     // Call Coccyx.history.start to start your application.
@@ -88,7 +80,7 @@ define('history', ['jquery', 'router'], function($) {
     // trigger if you want the route function to be called.
     // 0.5.0
     function start(trigger, callback){
-        registerObjects(callback()); // 0.5.0
+        registerControllers(callback()); // 0.5.0
         historyStarted = true;
         if(trigger){
             history.replaceState({verb: 'get'}, null, window.location.pathname);
