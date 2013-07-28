@@ -211,18 +211,13 @@
         return historyStarted;
     }
 
-    // 0.5.0
-    function registerControllers(controllers){
-        Coccyx.controllers.registerControllers(controllers);
-    }
-
     // Call Coccyx.history.start to start your application.
     // When called starts responding to 'popstate' events which are raised when the
     // user uses the browser's back and forward buttons to navigate. Pass true for
     // trigger if you want the route function to be called.
     // 0.5.0
-    function start(trigger, callback){
-        registerControllers(callback()); // 0.5.0
+    function start(trigger, controllers){
+        Coccyx.controllers.registerControllers(controllers); // 0.5.0
         historyStarted = true;
         if(trigger){
             history.replaceState({verb: 'get'}, null, window.location.pathname);
