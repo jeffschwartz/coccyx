@@ -42,8 +42,13 @@ define('models', [], function(){
         console.log('Registering model \'' + model.name + '\'');
     }
 
-    function getModel(name){
+    function getModel(name, callback){
         var obj;
+        if(!models.hasOwnProperty(name)){
+            registerModels(callback());
+        }
+        // Checks that the model that user returned is named
+        // "name". You can't be too careful, you know!
         if(models.hasOwnProperty(name)){
             // Create a new object using the model as the prototype.
             obj = Object.create(models[name]);
@@ -134,7 +139,6 @@ define('models', [], function(){
     };
 
     Coccyx.models = {
-        registerModels: registerModels,
         getModel: getModel
     };
 

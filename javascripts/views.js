@@ -27,8 +27,14 @@ define('views', ['jquery'], function($){
         console.log('Registering view \'' + view.name + '\'');
     }
 
-    function render(name){
-        var view = getView(name);
+    function render(name, callback){
+        var view;
+        if(!views.hasOwnProperty(name)){
+            registerViews(callback());
+        }
+        view = getView(name);
+        // Checks that the view the user returned is named
+        // "name". You can't be too careful, you know!
         if(view){
             if(view.render){
                 viewRender(view, arguments.length > 1 ? Array.prototype.slice.call(arguments, 1) : null);
@@ -70,7 +76,6 @@ define('views', ['jquery'], function($){
     }
 
     Coccyx.views = {
-        registerViews: registerViews,
         render: render,
         remove: remove
     };
