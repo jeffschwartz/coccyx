@@ -1,4 +1,4 @@
-// Coccyx.js 0.4.0
+// Coccyx.js 0.5.0
 // (c) 2013 Jeffrey Schwartz
 // Coccyx.js may be freely distributed under the MIT license.
 // For all details and documentation:
@@ -84,7 +84,7 @@
     Coccyx.plugins = Coccyx.plugins || {};
 
     // Version stamp
-    version = '0.4.0';
+    version = '0.5.0';
     Coccyx.getVersion = function(){
         return version;
     };
@@ -211,12 +211,26 @@
         return historyStarted;
     }
 
-    // Call Coccyx.history.start only after all your controllers have been
-    // registered (by calling Coccyx.controllers.registerController).
+    // 0.5.0
+    function registerObjects(mvc){
+        if(mvc.hasOwnProperty('controllers')){
+            Coccyx.controllers.registerControllers(mvc.controllers);
+        }
+        if(mvc.hasOwnProperty('views')){
+            Coccyx.views.registerViews(mvc.views);
+        }
+        if(mvc.hasOwnProperty('models')){
+            Coccyx.models.registerModels(mvc.models);
+        }
+    }
+
+    // Call Coccyx.history.start to start your application.
     // When called starts responding to 'popstate' events which are raised when the
     // user uses the browser's back and forward buttons to navigate. Pass true for
     // trigger if you want the route function to be called.
-    function start(trigger){
+    // 0.5.0
+    function start(trigger, callback){
+        registerObjects(callback()); // 0.5.0
         historyStarted = true;
         if(trigger){
             history.replaceState({verb: 'get'}, null, window.location.pathname);
