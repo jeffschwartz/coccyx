@@ -549,17 +549,17 @@
         console.log('Registering view \'' + view.name + '\'');
     }
 
-    function render(name, callback){
+    function render(name){
         var view;
         if(!views.hasOwnProperty(name)){
-            registerViews(callback());
+            registerViews(arguments[arguments.length - 1]());
         }
         view = getView(name);
         // Checks that the view the user returned is named
         // "name". You can't be too careful, you know!
         if(view){
             if(view.render){
-                viewRender(view, arguments.length > 1 ? Array.prototype.slice.call(arguments, 1) : null);
+                viewRender(view, arguments.length > 2 ? Array.prototype.slice.call(arguments, 1, arguments.length - 1) : null);
             }
         }else{
             viewNotFound(name);
