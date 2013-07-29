@@ -13,54 +13,21 @@ define('models', [], function(){
      */
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
-        models = {},
         deepCopy = Coccyx.helpers.deepCopy,
         proto;
 
-    function registerModels(){
-
-        if(arguments.length !== 1 && !(arguments[0] instanceof Array) && !(arguments[0] instanceof Object)){
-            // TODO Not sure if I should be throwing here. Think about it!!!
-            throw new Error('registerModels missing or invalid param. Expected an [] or {}.');
-        }
-        if(arguments[0] instanceof Array){
-            // An array of hashes.
-            arguments[0].forEach(function(model){
-                loadModel(model);
-            });
-        }else{
-            // A single hash.
-            loadModel(arguments[0]);
-        }
-    }
-
-    function loadModel(model){
-        // Create a new object based on proto and extend
-        // that with the model and save it in the hash.
-        var obj =  Coccyx.helpers.extend(Object.create(proto), model);
-        models[model.name] = obj;
-        console.log('Registering model \'' + model.name + '\'');
-    }
-
-    function getModel(name, callback){
-        var obj;
-        if(!models.hasOwnProperty(name)){
-            registerModels(callback());
-        }
-        // Checks that the model that user returned is named
-        // "name". You can't be too careful, you know!
-        if(models.hasOwnProperty(name)){
-            // Create a new object using the model as the prototype.
-            obj = Object.create(models[name]);
-            // Decorate the new object with its own properties.
-            obj.set = false;
-            obj.readOnly = false;
-            obj.dirty = false;
-            obj.originalData = {};
-            obj.changedData = {};
-            obj.data = {};
-            return obj;
-        }
+    //0.5.0
+    function extend(modelObject){
+        // Create a new object using proto as its prototype and extend that object with modelObject.
+        var obj =  Coccyx.helpers.extend(Object.create(proto), modelObject);
+        // Decorate the new object with additional properties.
+        obj.set = false;
+        obj.readOnly = false;
+        obj.dirty = false;
+        obj.originalData = {};
+        obj.changedData = {};
+        obj.data = {};
+        return obj;
     }
 
     // model prototype properties...
@@ -139,7 +106,7 @@ define('models', [], function(){
     };
 
     Coccyx.models = {
-        getModel: getModel
+        extend: extend
     };
 
 });
