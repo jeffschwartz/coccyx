@@ -19,15 +19,16 @@ define('models', [], function(){
     //0.5.0
     function extend(modelObject){
         // Create a new object using proto as its prototype and extend that object with modelObject.
-        var obj =  Coccyx.helpers.extend(Object.create(proto), modelObject);
+        var obj1 =  Coccyx.helpers.extend(Object.create(proto), modelObject);
+        var obj2 = Object.create(obj1);
         // Decorate the new object with additional properties.
-        obj.set = false;
-        obj.readOnly = false;
-        obj.dirty = false;
-        obj.originalData = {};
-        obj.changedData = {};
-        obj.data = {};
-        return obj;
+        obj2.set = false;
+        obj2.readOnly = false;
+        obj2.dirty = false;
+        obj2.originalData = {};
+        obj2.changedData = {};
+        obj2.data = {};
+        return obj2;
     }
 
     // model prototype properties...
