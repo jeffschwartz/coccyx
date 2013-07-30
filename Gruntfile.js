@@ -14,6 +14,7 @@ module.exports = function ( grunt ) {
                     'javascripts/helpers.js',
                     'javascripts/history.js',
                     'javascripts/model.js',
+                    'javascripts/collection.js',
                     'javascripts/router.js',
                     'javascripts/views.js',
                     'javascripts/pubsub.js',

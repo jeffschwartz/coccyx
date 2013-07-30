@@ -38,11 +38,13 @@ define('models', [], function(){
                 prop;
             // Merge default options with passed in options.
             if(options){
-                for(prop in o){
-                    if(o.hasOwnProperty(prop) && options.hasOwnProperty(prop)){
-                        o[prop] = options[prop];
-                    }
-                }
+                //TODO remove these comments after testing Coccyx.helpers.replace.
+                // for(prop in o){
+                //     if(o.hasOwnProperty(prop) && options.hasOwnProperty(prop)){
+                //         o[prop] = options[prop];
+                //     }
+                // }
+                Coccyx.helpers.replace(o, options);
             }
             // If options validate is true and there is a validate method and
             // it returns false, sets valid to false and returns false.
@@ -103,6 +105,10 @@ define('models', [], function(){
             }
             // For chaining.
             return this;
+       },
+       //0.6.0
+       toJSON: function(){
+            return JSON.stringify(this.data);
        }
     };
 
