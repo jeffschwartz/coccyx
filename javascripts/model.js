@@ -18,8 +18,9 @@ define('models', [], function(){
 
     //0.5.0
     function extend(modelObject){
-        // Create a new object using proto as its prototype and extend that object with modelObject.
-        var obj1 =  Coccyx.helpers.extend(Object.create(proto), modelObject);
+        // Create a new object using proto as its prototype and
+        // extend that object with modelObject if it was supplied.
+        var obj1 =  modelObject ? Coccyx.helpers.extend(Object.create(proto), modelObject) : proto;
         var obj2 = Object.create(obj1);
         // Decorate the new object with additional properties.
         obj2.set = false;
@@ -34,8 +35,8 @@ define('models', [], function(){
     // model prototype properties...
     proto = {
         setData: function setData (dataHash, options) {
-            var o = {empty:false, readOnly:false, dirty:false, validate: false},
-                prop;
+            var o = {empty:false, readOnly:false, dirty:false, validate: false};
+                // ,prop;
             // Merge default options with passed in options.
             if(options){
                 //TODO remove these comments after testing Coccyx.helpers.replace.

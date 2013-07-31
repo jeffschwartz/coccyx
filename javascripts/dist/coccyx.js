@@ -1,4 +1,4 @@
-// Coccyx.js 0.5.0
+// Coccyx.js 0.6.0
 // (c) 2013 Jeffrey Schwartz
 // Coccyx.js may be freely distributed under the MIT license.
 // For all details and documentation:
@@ -84,7 +84,7 @@
     Coccyx.plugins = Coccyx.plugins || {};
 
     // Version stamp
-    version = '0.5.0';
+    version = '0.6.0';
     Coccyx.getVersion = function(){
         return version;
     };
@@ -287,8 +287,9 @@
 
     //0.5.0
     function extend(modelObject){
-        // Create a new object using proto as its prototype and extend that object with modelObject.
-        var obj1 =  Coccyx.helpers.extend(Object.create(proto), modelObject);
+        // Create a new object using proto as its prototype and
+        // extend that object with modelObject if it was supplied.
+        var obj1 =  modelObject ? Coccyx.helpers.extend(Object.create(proto), modelObject) : proto;
         var obj2 = Object.create(obj1);
         // Decorate the new object with additional properties.
         obj2.set = false;
@@ -303,8 +304,8 @@
     // model prototype properties...
     proto = {
         setData: function setData (dataHash, options) {
-            var o = {empty:false, readOnly:false, dirty:false, validate: false},
-                prop;
+            var o = {empty:false, readOnly:false, dirty:false, validate: false};
+                // ,prop;
             // Merge default options with passed in options.
             if(options){
                 //TODO remove these comments after testing Coccyx.helpers.replace.
@@ -391,12 +392,13 @@
     'use strict';
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
-        deepCopy = Coccyx.helpers.deepCopy,
         proto;
 
     //Extend the application's collection object.
     function extend(collectionObject){
-        var obj1 = Coccyx.helpers.extend(Object.create(proto), collectionObject);
+        // Create a new object using proto as its prototype and extend
+        // that object with collectionObject if it was supplied.
+        var obj1 = collectionObject ? Coccyx.helpers.extend(Object.create(proto), collectionObject) : proto;
         var obj2 = Object.create(obj1);
         obj2.readOnly = false;
         obj2.coll = [];
@@ -409,9 +411,19 @@
         var prop;
         for(prop in source){
             if(source.hasOwnProperty(prop) && element.hasOwnProperty(prop)){
-                if(source[prop] !== element[prop]){
+                if(typeof element[prop] === 'object' && typeof source[prop] === 'object'){
+                    if(!isMatch(element[prop], source[prop])){
+                        return false;
+                    }
+                }else if(typeof element[prop] === 'object' || typeof source[prop] === 'object'){
                     return false;
+                }else{
+                    if(source[prop] !== element[prop]){
+                        return false;
+                    }
                 }
+            }else{
+                return false;
             }
         }
         return true;
@@ -419,19 +431,17 @@
 
     //Collection prototype properties...
     proto = {
-        //Sets the collection to a deep copy of [models].
-        set: function set(models, isReadOnly){
-            // Deep copy.
-            this.coll = deepCopy(models);
+        //Sets the collection to [models].
+        setModels: function setModels(models, isReadOnly){
+            this.add(models);
             this.readOnly = !!isReadOnly;
-            return true;
         },
-        //Pushes a deep copy of each element
+        //Push each element
         //in [models] to the collection.
         add: function add(models){
             if(Array.isArray(models)){
                 models.forEach(function(model){
-                    this.coll.push(deepCopy(model));
+                    this.coll.push(model);
                 }, this);
             }else{
                 this.coll.push(models);
@@ -456,11 +466,14 @@
         //match those of matchingPropertiesHash.
         find: function find(matchingPropertiesHash){
             return this.coll.filter(function(el){
-                return isMatch(el, matchingPropertiesHash);
+                return isMatch(el.data, matchingPropertiesHash);
             });
+        },
+        toJSON: function toJSON(){
+            return JSON.stringify(this.coll);
         }
-
     };
+
 
     Coccyx.collections = {
         extend: extend
@@ -673,7 +686,7 @@
 
 });
 
-;define('coccyx', ['application', 'helpers', 'history', 'models', 'router', 'views', 'pubsub'], function () {
+;define('coccyx', ['application', 'helpers', 'history', 'models', 'collections', 'router', 'views', 'pubsub'], function () {
     'use strict';
     return window.Coccyx;
 });
