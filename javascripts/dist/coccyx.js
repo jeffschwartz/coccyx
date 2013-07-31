@@ -135,6 +135,15 @@
                 }
             }
             return targetObj;
+        },
+        //For each matching property name, replaces
+        //target's value with source's value.
+        replace: function(target, source){
+            for(var prop in target){
+                if(target.hasOwnProperty(prop) && source.hasOwnProperty(prop)){
+                    target[prop] = source[prop];
+                }
+            }
         }
     };
 
@@ -298,11 +307,13 @@
                 prop;
             // Merge default options with passed in options.
             if(options){
-                for(prop in o){
-                    if(o.hasOwnProperty(prop) && options.hasOwnProperty(prop)){
-                        o[prop] = options[prop];
-                    }
-                }
+                //TODO remove these comments after testing Coccyx.helpers.replace.
+                // for(prop in o){
+                //     if(o.hasOwnProperty(prop) && options.hasOwnProperty(prop)){
+                //         o[prop] = options[prop];
+                //     }
+                // }
+                Coccyx.helpers.replace(o, options);
             }
             // If options validate is true and there is a validate method and
             // it returns false, sets valid to false and returns false.
@@ -363,10 +374,95 @@
             }
             // For chaining.
             return this;
+       },
+       //0.6.0
+       toJSON: function(){
+            return JSON.stringify(this.data);
        }
     };
 
     Coccyx.models = {
+        extend: extend
+    };
+
+});
+
+;define('collections', [], function(){
+    'use strict';
+
+    var Coccyx = window.Coccyx = window.Coccyx || {},
+        deepCopy = Coccyx.helpers.deepCopy,
+        proto;
+
+    //Extend the application's collection object.
+    function extend(collectionObject){
+        var obj1 = Coccyx.helpers.extend(Object.create(proto), collectionObject);
+        var obj2 = Object.create(obj1);
+        obj2.readOnly = false;
+        obj2.coll = [];
+        return obj2;
+    }
+
+    //Returns true if element has the same properties as
+    //source and their values are equal, false otherwise.
+    function isMatch(element, source){
+        var prop;
+        for(prop in source){
+            if(source.hasOwnProperty(prop) && element.hasOwnProperty(prop)){
+                if(source[prop] !== element[prop]){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    //Collection prototype properties...
+    proto = {
+        //Sets the collection to a deep copy of [models].
+        set: function set(models, isReadOnly){
+            // Deep copy.
+            this.coll = deepCopy(models);
+            this.readOnly = !!isReadOnly;
+            return true;
+        },
+        //Pushes a deep copy of each element
+        //in [models] to the collection.
+        add: function add(models){
+            if(Array.isArray(models)){
+                models.forEach(function(model){
+                    this.coll.push(deepCopy(model));
+                }, this);
+            }else{
+                this.coll.push(models);
+            }
+        },
+        //Removes all elements from the collection whose
+        //properties matches those of matchingPropertiesHash.
+        remove: function remove(matchingPropertiesHash){
+            var newColl = this.coll.filter(function(el){
+                return !isMatch(el, matchingPropertiesHash);
+            });
+            this.coll = newColl.length !== this.coll.length ? newColl : this.coll;
+        },
+        //Returns true if the coll has at least one element whose
+        //properties matches those of matchingPropertiesHash.
+        has: function has(matchingPropertiesHash){
+            return this.coll.some(function(el){
+                return isMatch(el, matchingPropertiesHash);
+            });
+        },
+        //Returns the elements whose properties
+        //match those of matchingPropertiesHash.
+        find: function find(matchingPropertiesHash){
+            return this.coll.filter(function(el){
+                return isMatch(el, matchingPropertiesHash);
+            });
+        }
+
+    };
+
+    Coccyx.collections = {
         extend: extend
     };
 

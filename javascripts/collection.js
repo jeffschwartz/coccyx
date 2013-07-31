@@ -69,6 +69,9 @@ define('collections', [], function(){
             return this.coll.filter(function(el){
                 return isMatch(el, matchingPropertiesHash);
             });
+        },
+        toJSON: function toJSON(){
+            return JSON.stringify(this.coll);
         }
 
     };
