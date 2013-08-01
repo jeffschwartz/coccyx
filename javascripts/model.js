@@ -23,9 +23,9 @@ define('models', [], function(){
         var obj1 =  modelObject ? Coccyx.helpers.extend(Object.create(proto), modelObject) : proto;
         var obj2 = Object.create(obj1);
         // Decorate the new object with additional properties.
-        obj2.set = false;
-        obj2.readOnly = false;
-        obj2.dirty = false;
+        obj2.isSet = false;
+        obj2.isReadOnly = false;
+        obj2.isDirty = false;
         obj2.originalData = {};
         obj2.changedData = {};
         obj2.data = {};
@@ -53,18 +53,18 @@ define('models', [], function(){
             // it returns true, sets valid to true and proceeds with setting data.
             // If options validate is false or there isn't a validate method
             // set valid to true.
-            this.valid = o.validate && this.validate ? this.validate(dataHash) : true;
-            if(!this.valid){
+            this.isValid = o.validate && this.validate ? this.validate(dataHash) : true;
+            if(!this.isValid){
                 return false;
             }
             // Deep copy.
             this.originalData = o.empty ? {} : deepCopy(dataHash);
-            this.readOnly = o.readOnly;
-            this.dirty = o.dirty;
+            this.isReadOnly = o.readOnly;
+            this.isDirty = o.dirty;
             // Deep copy.
             this.data = deepCopy(dataHash);
             this.changedData = {};
-            this.set = true;
+            this.isSet = true;
             return true;
         },
         getData: function getData(){
@@ -91,13 +91,13 @@ define('models', [], function(){
             // A model's data properties cannot be written to if the model
             // hasn't been set yet or if the model is read only.
             if(this.set){
-                if(!this.readOnly){
+                if(!this.isReadOnly){
                     // Deep copy, maintain the changedValues hash.
                     this.changedData[propertyName] = deepCopy(data);
                     // Deep copy if property is typeof 'object'.
                     this.data[propertyName] = typeof data === 'object' ?
                     deepCopy(data) : data;
-                    this.dirty = true;
+                    this.isDirty = true;
                 }else{
                     console.log('Warning! Coccyx.model::setProperty called on read only model.');
                 }
