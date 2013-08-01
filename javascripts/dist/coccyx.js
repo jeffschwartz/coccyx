@@ -492,23 +492,21 @@
             return this;
         },
 
-        /* Properties */
-
         /* Mutators */
 
-        //Push [models] onto the collection' data property
-        //and returns the length of the collection.
-        push: function push(models){
-            addModels(this.coll, models);
-            this.length = this.coll.length;
-            return this.length;
-        },
         //Pops the last model from the collection's
         //data property and returns that model.
         pop: function pop(){
             var m = this.coll.pop();
             this.length = this.coll.length;
             return m;
+        },
+        //Push [models] onto the collection' data property
+        //and returns the length of the collection.
+        push: function push(models){
+            addModels(this.coll, models);
+            this.length = this.coll.length;
+            return this.length;
         },
         reverse: function reverse(){
             this.coll.reverse();
@@ -518,10 +516,11 @@
             this.length = this.coll.length;
             return m;
         },
-        unshift: function unshift(){
-            var m = [].unshift.apply(this.coll, argumentsToModels(argumentsToModels));
-            this.length = this.coll.length;
-            return m;
+        //Works the same as Array.sort(function(a,b){...})
+        sort: function sort(callback){
+            this.coll.sort(function(a, b){
+                return callback(a, b);
+            });
         },
         //Adds and optionally removing models. Takes new
         //[modlels] starting with the 3rd parameter.
@@ -533,11 +532,10 @@
             this.length = this.coll.length;
             return m;
         },
-        //Works the same as Array.sort(function(a,b){...})
-        sort: function sort(callback){
-            this.coll.sort(function(a, b){
-                return callback(a, b);
-            });
+        unshift: function unshift(){
+            var m = [].unshift.apply(this.coll, argumentsToModels(argumentsToModels));
+            this.length = this.coll.length;
+            return m;
         },
 
         /* Accessors */
@@ -546,8 +544,62 @@
         at: function(index){
             return this.coll[index];
         },
+        //Returns a new array comprised of a this collection object's coll joined with other
+        //array(s) and / or value(s). It does not alter the collection object's internal coll.
+        concat: function(){
+            return [].concat.apply(this.coll, arguments);
+        },
+        //Joins all elements of this collection object's coll into a string.
+        join: function(){
+            return [].join.apply(this.coll, arguments);
+        },
+        //Returns a shallow copy of a portion of an array.
+        slice: function(){
+            return [].slice.apply(this.coll, arguments);
+        },
 
         /* Iterators */
+
+        //Invokes a callback function for each model in the
+        //collection with three arguments: the model, the model's
+        //index, and the collection object's coll.
+        forEach: function forEach(callback){
+            this.coll.forEach(function(element, index, coll){
+                callback(element, index, coll);
+            });
+        },
+        //Tests whether all models in the collection pass the
+        //test implemented by the provided callback.
+        every: function every(callback, context){
+            return [].every.call(this.coll, callback, context);
+        },
+        //Tests whether some model in the collection passes the
+        //test implemented by the provided callback.
+        some: function(callback, context){
+            return [].some.call(this.coll, callback, context);
+        },
+        //Returns an array containing all the models that pass
+        //the test implemented by the provided callback.
+        filter: function(callback, context){
+            return [].filter.call(this.coll, callback, context);
+        },
+        //Creates a new array with the results of calling a
+        //provided function on every model in the collection.
+        map: function(callback, context){
+            return [].map.call(this.coll, callback, context);
+        },
+        //Apply a function against an accumulator and each
+        //model in the collection (from left-to-right) as to
+        //reduce it to a single value.
+        reduce: function(callback, initialValue){
+            return [].reduce.call(this.coll, callback, initialValue);
+        },
+        //Apply a function simultaneously against two models
+        //of the collection (from right-to-left) as to reduce
+        //it to a single value.
+        reduceRight: function(callback, initialValue){
+            return [].reduceRight.call(this.coll, callback, initialValue);
+        },
 
         /* Sugar */
 
