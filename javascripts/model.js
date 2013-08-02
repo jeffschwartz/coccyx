@@ -90,7 +90,7 @@ define('models', [], function(){
         setProperty: function setProperty(propertyName, data){
             // A model's data properties cannot be written to if the model
             // hasn't been set yet or if the model is read only.
-            if(this.set){
+            if(this.isSet){
                 if(!this.isReadOnly){
                     // Deep copy, maintain the changedValues hash.
                     this.changedData[propertyName] = deepCopy(data);

@@ -16,6 +16,64 @@ define('collections', [], function(){
         return obj2;
     }
 
+    function compareArrays(a, b){
+        var i,
+            len;
+        if(Array.isArray(a) && Array.isArray(b)){
+            if(a.length !== b.length){
+                return false;
+            }
+            for(i = 0, len = a.length; i < len; i++){
+                if(typeof a[i] === 'object' && typeof b[i] === 'object'){
+                    if(!compareObjects(a[i], b[i])){
+                        return false;
+                    }
+                }
+                if(typeof a[i] === 'object' || typeof b[i] === 'object'){
+                    return false;
+                }
+                if(Array.isArray(a[i]) && Array.isArray(b[i])){
+                    if(!compareArrays(a[i], b[i])){
+                        return false;
+                    }
+                }
+                if(Array.isArray(a[i]) || Array.isArray(b[i])){
+                    return false;
+                }
+                if(a[i] !== b[i]){
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    function compareObjects(a, b){
+        var prop;
+        if(compareArrays(a, b)){
+            return true;
+        }
+        for(prop in a){
+            if(a.hasOwnProperty(prop) && b.hasOwnProperty(prop)){
+                if(typeof a[prop] === 'object' && typeof b[prop] === 'object'){
+                    if(!compareObjects(a[prop], b[prop])){
+                        return false;
+                    }
+                }
+                if(typeof a[prop] === 'object' || typeof b[prop] === 'object'){
+                    return false;
+                }
+                if(a[prop] !== b[prop]){
+                    return false;
+                }
+            }else {
+                return false;
+            }
+        }
+        return true;
+    }
+
     //Returns true if element has the same properties as
     //source and their values are equal, false otherwise.
     function isMatch(element, source){
@@ -23,10 +81,13 @@ define('collections', [], function(){
         for(prop in source){
             if(source.hasOwnProperty(prop) && element.hasOwnProperty(prop)){
                 if(typeof element[prop] === 'object' && typeof source[prop] === 'object'){
-                    //!Recursive iteration...
-                    if(!isMatch(element[prop], source[prop])){
+                    if(!compareObjects(element[prop], source[prop])){
                         return false;
                     }
+                    // //!Recursive iteration...
+                    // if(!isMatch(element[prop], source[prop])){
+                    //     return false;
+                    // }
                 }else if(typeof element[prop] === 'object' || typeof source[prop] === 'object'){
                     return false;
                 }else{
@@ -41,18 +102,22 @@ define('collections', [], function(){
         return true;
     }
 
+    function isNotAnObjectOrIsAnArray(value){
+        return typeof value !== 'object' || Array.isArray(value) ? true : false;
+    }
+
     //If it walks and talks like a duck...
     //Checks for the following properties on a model's data:
-    //['set']
-    //['readOnly']
-    //['dirty]
+    //['isSet']
+    //['isReadOnly']
+    //['isDirty]
     //['originalData']
     //['changedData']
     //['data']
     //If data has all of them then 'it is' a model
     //and returns true, otherwise it returns false.
     function isAModel(data){
-        var markers = ['set', 'readOnly', 'dirty', 'originalData', 'changedData', 'data'],
+        var markers = ['isSet', 'isReadOnly', 'isDirty', 'originalData', 'changedData', 'data'],
             i,
             len;
         for(i = 0, len = markers.length; i < len; i++){
@@ -223,7 +288,11 @@ define('collections', [], function(){
         //Removes all models from the collection whose data
         //properties matches those of matchingPropertiesHash.
         remove: function remove(matchingPropertiesHash){
-            var newColl = this.coll.filter(function(el){
+            var newColl;
+            if(isNotAnObjectOrIsAnArray(matchingPropertiesHash)){
+                return;
+            }
+            newColl = this.coll.filter(function(el){
                 return !isMatch(el.data, matchingPropertiesHash);
             });
             this.coll = newColl.length !== this.coll.length ? newColl : this.coll;
@@ -232,6 +301,9 @@ define('collections', [], function(){
         //Returns true if the coll has at least one model whose
         //data properties matches those of matchingPropertiesHash.
         has: function has(matchingPropertiesHash){
+            if(isNotAnObjectOrIsAnArray(matchingPropertiesHash)){
+                return false;
+            }
             return this.coll.some(function(el){
                 return isMatch(el.data, matchingPropertiesHash);
             });
@@ -239,6 +311,9 @@ define('collections', [], function(){
         //Returns all the models whose data properties
         //match those of matchingPropertiesHash.
         find: function find(matchingPropertiesHash){
+            if(isNotAnObjectOrIsAnArray(matchingPropertiesHash)){
+                return null;
+            }
             return this.coll.filter(function(el){
                 return isMatch(el.data, matchingPropertiesHash);
             });
