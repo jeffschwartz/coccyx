@@ -197,7 +197,7 @@ define('collections', [], function(){
                 return callback(a, b);
             });
         },
-        //Adds and optionally removing models. Takes new
+        //Adds and optionally removes models. Takes new
         //[modlels] starting with the 3rd parameter.
         splice: function splice(index, howMany){
             var a =[index, howMany],
