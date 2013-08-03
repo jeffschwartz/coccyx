@@ -452,6 +452,7 @@
                     if(!compareObjects(a[prop], b[prop])){
                         return false;
                     }
+                    continue;
                 }
                 if(typeof a[prop] === 'object' || typeof b[prop] === 'object'){
                     return false;
