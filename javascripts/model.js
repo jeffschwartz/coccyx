@@ -59,7 +59,7 @@ define('models', [], function(){
             }
             // Deep copy.
             this.originalData = o.empty ? {} : deepCopy(dataHash);
-            this.isReadOnly = o.readOnly;
+            this.is;ReadOnly = o.readOnly;
             this.isDirty = o.dirty;
             // Deep copy.
             this.data = deepCopy(dataHash);

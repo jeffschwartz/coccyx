@@ -328,7 +328,7 @@
             }
             // Deep copy.
             this.originalData = o.empty ? {} : deepCopy(dataHash);
-            this.isReadOnly = o.readOnly;
+            this.is;ReadOnly = o.readOnly;
             this.isDirty = o.dirty;
             // Deep copy.
             this.data = deepCopy(dataHash);
@@ -680,18 +680,6 @@
         //provided function on every model in the collection.
         map: function(callback, context){
             return [].map.call(this.coll, callback, context);
-        },
-        //Apply a function against an accumulator and each
-        //model in the collection (from left-to-right) as to
-        //reduce it to a single value.
-        reduce: function(callback, initialValue){
-            return [].reduce.call(this.coll, callback, initialValue);
-        },
-        //Apply a function simultaneously against two models
-        //of the collection (from right-to-left) as to reduce
-        //it to a single value.
-        reduceRight: function(callback, initialValue){
-            return [].reduceRight.call(this.coll, callback, initialValue);
         },
 
         /* Sugar */
