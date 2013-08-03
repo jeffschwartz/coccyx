@@ -159,6 +159,8 @@ define('collections', [], function(){
 
     //Collection prototype properties...
     proto = {
+        /* Mutators */
+
         //Sets the collection's data property to [models].
         setModels: function setModels(models, isReadOnly){
             addModels(this.coll, models);
@@ -166,9 +168,6 @@ define('collections', [], function(){
             this.length = this.coll.length;
             return this;
         },
-
-        /* Mutators */
-
         //Pops the last model from the collection's
         //data property and returns that model.
         pop: function pop(){
@@ -215,6 +214,10 @@ define('collections', [], function(){
 
         /* Accessors */
 
+        //Returns an array of all the models in the collection
+        getModels: function(){
+            return this.coll;
+        },
         //Works like array[i].
         at: function(index){
             return this.coll[index];
