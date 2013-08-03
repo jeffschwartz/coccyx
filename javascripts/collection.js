@@ -214,9 +214,11 @@ define('collections', [], function(){
 
         /* Accessors */
 
-        //Returns an array of all the models in the collection
-        getModels: function(){
-            return this.coll;
+        //Returns an array of the data of all models in the collection
+        getData: function(){
+            return this.map(function(model){
+                return model.getData();
+            });
         },
         //Works like array[i].
         at: function(index){
