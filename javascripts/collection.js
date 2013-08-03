@@ -256,10 +256,6 @@ define('collections', [], function(){
         concat: function(){
             return [].concat.apply(this.coll, argsToModels(arguments));
         },
-        //Joins all elements of this collection object's coll into a string.
-        join: function(){
-            return [].join.apply(this.coll, arguments);
-        },
         //Returns a shallow copy of a portion of an array.
         slice: function(){
             return [].slice.apply(this.coll, arguments);
