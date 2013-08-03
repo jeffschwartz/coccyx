@@ -138,6 +138,24 @@ define('collections', [], function(){
         return model;
     }
 
+    //A simple general use, recursive iterator. Makes no
+    //assumptions about what args is. Args could be
+    //anything - a function's arguments, an Array, an
+    //object or even a primitive.
+    function iterate(args, callback){
+        var i,
+            len;
+        //If args is an Array or it has a length property it is iterable.
+        if(Array.isArray(args) || args.hasOwnProperty('length')){
+            for(i = 0, len = args.length; i < len; i++){
+                iterate(args[i], callback);
+            }
+        }else{
+            //Not iterabe.
+            callback(args);
+        }
+    }
+
     //Pushes [models] onto the collection. [models] can
     //be either models or raw data. If [models] is raw data,
     //the raw data will be turned into models first before
@@ -152,12 +170,13 @@ define('collections', [], function(){
         }
     }
 
-    function argumentsToModels(args){
-        var newModels;
-        newModels = [].slice.call(args, 0);
-        return newModels.map(function(model){
-            return isAModel(model) ? model : makeModelFromRaw(model);
+    //Calls iterate on args to generate and array of models.
+    function argsToModels(args){
+        var models = [];
+        iterate(args, function(arg){
+            models.push(isAModel(arg) ? arg : makeModelFromRaw(arg));
         });
+        return models;
     }
 
     //Collection prototype properties...
@@ -203,14 +222,18 @@ define('collections', [], function(){
         //[modlels] starting with the 3rd parameter.
         splice: function splice(index, howMany){
             var a =[index, howMany],
-                aa = argumentsToModels([].slice.call(arguments, 2));
+                aa = argsToModels([].slice.call(arguments, 2));
             a = a.concat(aa);
             var m = [].splice.apply(this.coll, a);
             this.length = this.coll.length;
             return m;
         },
+        //Adds one or more models to the beginning of an array and returns
+        //the new length of the array. If raw data is passed instead of
+        //models, they will be converted to models first, and then added
+        //to the collection.
         unshift: function unshift(){
-            var m = [].unshift.apply(this.coll, argumentsToModels(argumentsToModels));
+            var m = [].unshift.apply(this.coll, argsToModels(arguments));
             this.length = this.coll.length;
             return m;
         },
@@ -227,10 +250,11 @@ define('collections', [], function(){
         at: function(index){
             return this.coll[index];
         },
-        //Returns a new array comprised of a this collection object's coll joined with other
-        //array(s) and / or value(s). It does not alter the collection object's internal coll.
+        //Returns a new array comprised of this collection's models
+        //joined with other array(s) of models or array(s) of raw data.
+        //It does not alter the collection.
         concat: function(){
-            return [].concat.apply(this.coll, arguments);
+            return [].concat.apply(this.coll, argsToModels(arguments));
         },
         //Joins all elements of this collection object's coll into a string.
         join: function(){
