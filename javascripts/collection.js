@@ -28,6 +28,7 @@ define('collections', [], function(){
                     if(!compareObjects(a[i], b[i])){
                         return false;
                     }
+                    continue;
                 }
                 if(typeof a[i] === 'object' || typeof b[i] === 'object'){
                     return false;
@@ -36,6 +37,7 @@ define('collections', [], function(){
                     if(!compareArrays(a[i], b[i])){
                         return false;
                     }
+                    continue;
                 }
                 if(Array.isArray(a[i]) || Array.isArray(b[i])){
                     return false;
