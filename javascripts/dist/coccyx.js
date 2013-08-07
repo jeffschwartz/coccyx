@@ -285,6 +285,29 @@
         deepCopy = Coccyx.helpers.deepCopy,
         proto;
 
+    //0.6.0
+    //Return the property reachable through the property path or undefined.
+    function findProperty(obj, propertyPath){
+        var a = propertyPath.split('.');
+        if(a.length === 1){
+            return obj[propertyPath];
+        }
+        //Try the next one in the chain.
+        return findProperty(obj[a[0]], a.slice(1).join('.'));
+    }
+
+    //0.6.0
+    //Sets the property reachable through the property path, creating it first if necessary, with a deep copy of val.
+    function findAndSetProperty(obj, propertyPath, val){
+        var a = propertyPath.split('.');
+        if(a.length === 1){
+            obj[propertyPath] = typeof val === 'object' ? deepCopy(val) : val;
+        }else{
+            obj[a[0]] = {};
+            findAndSetProperty(obj[a[0]], a.slice(1).join('.'), val);
+        }
+    }
+
     //0.5.0
     function extend(modelObject){
         // Create a new object using proto as its prototype and
@@ -347,25 +370,29 @@
         getChangedData: function getChangedData(){
             return deepCopy(this.changedData);
         },
-        // Returns data[propertyName] or null.
-        getProperty: function getProperty(propertyName){
-            if (this.data.hasOwnProperty(propertyName)) {
-                // Deep copy if property is typeof 'object'.
-                return typeof this.data[propertyName] === 'object' ?
-                deepCopy(this.data[propertyName]) : this.data[propertyName];
-            }
+        // Returns the property reachable through property path. If
+        // there is no property reachable through property path
+        // return undefined.
+        getProperty: function getProperty(propertyPath){
+            return findProperty(this.data, propertyPath);
         },
-        // Sets the data[propertyName]'s value.
-        setProperty: function setProperty(propertyName, data){
+        //Sets a property on an object reachable through the property path.
+        //If the property doesn't exits, it will be created and then assigned
+        //its value (using a deep copy if typeof data === 'object'). For
+        //example, if the property path is address,street and the target object
+        //is {name: 'some name'}, the result will be
+        //{name: 'some name', address: {street: 'some street'}};
+        setProperty: function setProperty(propertyPath, val){
             // A model's data properties cannot be written to if the model
             // hasn't been set yet or if the model is read only.
             if(this.isSet){
                 if(!this.isReadOnly){
                     // Deep copy, maintain the changedValues hash.
-                    this.changedData[propertyName] = deepCopy(data);
+                    // this.changedData[propertyName] = deepCopy(data);
                     // Deep copy if property is typeof 'object'.
-                    this.data[propertyName] = typeof data === 'object' ?
-                    deepCopy(data) : data;
+                    // this.data[propertyName] = typeof data === 'object' ?
+                    // deepCopy(data) : data;
+                    findAndSetProperty(this.data, propertyPath, val);
                     this.isDirty = true;
                 }else{
                     console.log('Warning! Coccyx.model::setProperty called on read only model.');
