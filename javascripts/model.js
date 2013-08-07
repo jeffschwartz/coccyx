@@ -109,10 +109,12 @@ define('models', [], function(){
         },
         //Sets a property on an object reachable through the property path.
         //If the property doesn't exits, it will be created and then assigned
-        //its value (using a deep copy if typeof data === 'object'). For
-        //example, if the property path is address,street and the target object
-        //is {name: 'some name'}, the result will be
-        //{name: 'some name', address: {street: 'some street'}};
+        //its value (using a deep copy if typeof data === 'object'). Calling
+        //set with a nested object or property is therefore supported. For
+        //example, if the property path is address.street and the mode's data
+        // hash is {name: 'some name'}, the result will be
+        //{name: 'some name', address: {street: 'some street'}}; and the changed
+        //data hash will be {'address.street': some.street'}.
         setProperty: function setProperty(propertyPath, val){
             // A model's data properties cannot be written to if the model
             // hasn't been set yet or if the model is read only.
@@ -124,6 +126,7 @@ define('models', [], function(){
                     // this.data[propertyName] = typeof data === 'object' ?
                     // deepCopy(data) : data;
                     findAndSetProperty(this.data, propertyPath, val);
+                    this.changedData[propertyPath] = deepCopy(val);
                     this.isDirty = true;
                 }else{
                     console.log('Warning! Coccyx.model::setProperty called on read only model.');
