@@ -77,6 +77,10 @@ define('collections', [], function(){
         return true;
     }
 
+    function compare(a, b){
+        return compareObjects(a, b) && compareObjects(b, a);
+    }
+
     //Returns true if element has the same properties as
     //source and their values are equal, false otherwise.
     function isMatch(element, source){
@@ -84,7 +88,7 @@ define('collections', [], function(){
         for(prop in source){
             if(source.hasOwnProperty(prop) && element.hasOwnProperty(prop)){
                 if(typeof element[prop] === 'object' && typeof source[prop] === 'object'){
-                    if(!compareObjects(element[prop], source[prop])){
+                    if(!compare(element[prop], source[prop])){
                         return false;
                     }
                     // //!Recursive iteration...
