@@ -389,11 +389,6 @@
             // hasn't been set yet or if the model is read only.
             if(this.isSet){
                 if(!this.isReadOnly){
-                    // Deep copy, maintain the changedValues hash.
-                    // this.changedData[propertyName] = deepCopy(data);
-                    // Deep copy if property is typeof 'object'.
-                    // this.data[propertyName] = typeof data === 'object' ?
-                    // deepCopy(data) : data;
                     findAndSetProperty(this.data, propertyPath, val);
                     this.changedData[propertyPath] = deepCopy(val);
                     this.isDirty = true;
