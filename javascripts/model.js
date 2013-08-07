@@ -19,6 +19,9 @@ define('models', [], function(){
     //0.6.0
     //Return the property reachable through the property path or undefined.
     function findProperty(obj, propertyPath){
+        if(!obj){
+            return;
+        }
         var a = propertyPath.split('.');
         if(a.length === 1){
             return obj[propertyPath];
