@@ -17,6 +17,16 @@ define('collections', [], function(){
         return obj2;
     }
 
+    //Returns an array containing the raw
+    //data for each model in the models array.
+    function toRaw(models){
+        if(Array.isArray(models)){
+            return models.map(function(model){
+                return model.getData();
+            });
+        }
+    }
+
     function compareArrays(a, b){
         var i,
             len;
@@ -267,8 +277,7 @@ define('collections', [], function(){
         // },
         //Returns a copy of a portion of the models in the collection.
         slice: function(){
-            return [].slice.apply(this.coll, arguments).
-            map(function(model){
+            return [].slice.apply(this.coll, arguments).map(function(model){
                 return makeModelFromRaw(model.getData());
             });
         },
@@ -353,11 +362,15 @@ define('collections', [], function(){
             return  this.coll.map(function(el){
                 return JSON.stringify(el);
             });
-        }
+        },
+        //Same as Coccyx.collections.toRaw(models).
+        //See above for details.
+        toRaw: toRaw
     };
 
     Coccyx.collections = {
-        extend: extend
+        extend: extend,
+        toRaw: toRaw
     };
 
 });
