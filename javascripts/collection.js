@@ -346,8 +346,8 @@ define('collections', [], function(){
                 return isMatch(el.data, matchingPropertiesHash);
             });
         },
-        //Returns all the models whose data properties
-        //match those of matchingPropertiesHash.
+        //Returns an array whose elements contain the stringified value
+        //of their model's data.
         find: function find(matchingPropertiesHash){
             if(isArrayOrNotObject(matchingPropertiesHash)){
                 return null;
@@ -356,11 +356,10 @@ define('collections', [], function(){
                 return isMatch(el.data, matchingPropertiesHash);
             });
         },
-        //Returns an array of stringified json objects,
-        //one for each model's data in the collection.
+        //Stringifies all models data and returns them in an array.
         toJSON: function toJSON(){
             return  this.coll.map(function(el){
-                return JSON.stringify(el);
+                return JSON.stringify(el.getData());
             });
         },
         //Same as Coccyx.collections.toRaw(models).
