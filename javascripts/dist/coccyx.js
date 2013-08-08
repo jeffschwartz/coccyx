@@ -711,18 +711,18 @@
         },
         //Tests whether some model in the collection passes the
         //test implemented by the provided callback.
-        some: function(callback, context){
-            return [].some.call(this.coll, callback, context);
+        some: function(/*callback, context*/){
+            return [].some.apply(this.coll, [].slice.call(arguments, 0));
         },
         //Returns an array containing all the models that pass
         //the test implemented by the provided callback.
-        filter: function(callback, context){
-            return [].filter.call(this.coll, callback, context);
+        filter: function(/*callback, context*/){
+            return [].filter.apply(this.coll, [].slice.call(arguments, 0));
         },
         //Creates a new array with the results of calling a
         //provided function on every model in the collection.
-        map: function(callback, context){
-            return [].map.call(this.coll, callback, context);
+        map: function(/*callback, context*/){
+            return [].map.apply(this.coll, [].slice.call(arguments, 0));
         },
 
         /* Sugar */
