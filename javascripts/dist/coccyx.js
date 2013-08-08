@@ -677,7 +677,7 @@
         // concat: function(){
         //     return [].concat.apply(this.coll, argsToModels(arguments));
         // },
-        //Returns a shallow copy of a portion of an array.
+        //Returns a copy of a portion of the models in the collection.
         slice: function(){
             return [].slice.apply(this.coll, arguments);
         },
