@@ -522,7 +522,7 @@
     }
 
     function isArrayOrNotObject(value){
-        return  Array.isArray(value) || typeof value !== 'object' ? true : false;
+        return Array.isArray(value) || typeof value !== 'object' ? true : false;
     }
 
     //If it walks and talks like a duck...
