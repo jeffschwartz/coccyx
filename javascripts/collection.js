@@ -267,7 +267,10 @@ define('collections', [], function(){
         // },
         //Returns a copy of a portion of the models in the collection.
         slice: function(){
-            return [].slice.apply(this.coll, arguments);
+            return [].slice.apply(this.coll, arguments).
+            map(function(model){
+                return makeModelFromRaw(model.getData());
+            });
         },
 
         /* Iterators */
