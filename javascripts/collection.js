@@ -189,6 +189,7 @@ define('collections', [], function(){
 
         //Sets the collection's data property to [models].
         setModels: function setModels(models, options){
+            this.coll = [];
             addModels(this.coll, models);
             this.isReadOnly = options && options.readOnly;
             this.length = this.coll.length;
