@@ -109,8 +109,8 @@ define('collections', [], function(){
         return true;
     }
 
-    function isNotAnObjectOrIsAnArray(value){
-        return typeof value !== 'object' || Array.isArray(value) ? true : false;
+    function isArrayOrNotObject(value){
+        return  Array.isArray(value) || typeof value !== 'object' ? true : false;
     }
 
     //If it walks and talks like a duck...
@@ -310,7 +310,7 @@ define('collections', [], function(){
         //properties matches those of matchingPropertiesHash.
         remove: function remove(matchingPropertiesHash){
             var newColl;
-            if(isNotAnObjectOrIsAnArray(matchingPropertiesHash)){
+            if(isArrayOrNotObject(matchingPropertiesHash)){
                 return;
             }
             newColl = this.coll.filter(function(el){
@@ -322,7 +322,7 @@ define('collections', [], function(){
         //Returns true if the coll has at least one model whose
         //data properties matches those of matchingPropertiesHash.
         has: function has(matchingPropertiesHash){
-            if(isNotAnObjectOrIsAnArray(matchingPropertiesHash)){
+            if(isArrayOrNotObject(matchingPropertiesHash)){
                 return false;
             }
             return this.coll.some(function(el){
@@ -332,7 +332,7 @@ define('collections', [], function(){
         //Returns all the models whose data properties
         //match those of matchingPropertiesHash.
         find: function find(matchingPropertiesHash){
-            if(isNotAnObjectOrIsAnArray(matchingPropertiesHash)){
+            if(isArrayOrNotObject(matchingPropertiesHash)){
                 return null;
             }
             return this.coll.filter(function(el){
