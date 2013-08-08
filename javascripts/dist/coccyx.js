@@ -20,7 +20,7 @@
      function registerControllers(){
         if(arguments.length !== 1 && !(arguments[0] instanceof Array) && !(arguments[0] instanceof Object)){
             // TODO Not sure if I should be throwing here. Think about it!!!
-            throw new Error('registerControllers missing or invalid param. Expected an [] or {}.');
+            console.log('registerControllers missing or invalid param. Expected an [] or {}.');
         }
         if(arguments[0] instanceof Array){
             // An array of hashes.
