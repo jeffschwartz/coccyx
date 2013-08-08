@@ -1,6 +1,7 @@
 define('collections', [], function(){
     'use strict';
 
+//TODO go through all comments. Insure they are relevant and insightful.
     var Coccyx = window.Coccyx = window.Coccyx || {},
         proto;
 
@@ -255,12 +256,15 @@ define('collections', [], function(){
         at: function(index){
             return this.coll[index];
         },
-        //Returns a new array comprised of this collection's models
-        //joined with other array(s) of models or array(s) of raw data.
-        //It does not alter the collection.
-        concat: function(){
-            return [].concat.apply(this.coll, argsToModels(arguments));
-        },
+        //Note sure if concat makes sense on its own. Maybe provide
+        //a higher level method to create a new collection using
+        //this collection's models and additional models/raw data???
+        // //Returns a new array comprised of this collection's models
+        // //joined with other array(s) of models or array(s) of raw data.
+        // //It does not alter the collection.
+        // concat: function(){
+        //     return [].concat.apply(this.coll, argsToModels(arguments));
+        // },
         //Returns a shallow copy of a portion of an array.
         slice: function(){
             return [].slice.apply(this.coll, arguments);
