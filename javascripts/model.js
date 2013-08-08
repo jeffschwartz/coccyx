@@ -1,3 +1,4 @@
+/* jshint curly: false */
 define('models', [], function(){
     'use strict';
 
@@ -19,13 +20,9 @@ define('models', [], function(){
     //0.6.0
     //Return the property reachable through the property path or undefined.
     function findProperty(obj, propertyPath){
-        if(!obj){
-            return;
-        }
+        if(!obj) return;
         var a = propertyPath.split('.');
-        if(a.length === 1){
-            return obj[propertyPath];
-        }
+        if(a.length === 1) return obj[propertyPath];
         //Try the next one in the chain.
         return findProperty(obj[a[0]], a.slice(1).join('.'));
     }
@@ -62,17 +59,8 @@ define('models', [], function(){
     proto = {
         setData: function setData (dataHash, options) {
             var o = {empty:false, readOnly:false, dirty:false, validate: false};
-                // ,prop;
             // Merge default options with passed in options.
-            if(options){
-                //TODO remove these comments after testing Coccyx.helpers.replace.
-                // for(prop in o){
-                //     if(o.hasOwnProperty(prop) && options.hasOwnProperty(prop)){
-                //         o[prop] = options[prop];
-                //     }
-                // }
-                Coccyx.helpers.replace(o, options);
-            }
+            if(options) Coccyx.helpers.replace(o, options);
             // If options validate is true and there is a validate method and
             // it returns false, sets valid to false and returns false.
             // If options validate is true and there is a validate method and
@@ -80,9 +68,7 @@ define('models', [], function(){
             // If options validate is false or there isn't a validate method
             // set valid to true.
             this.isValid = o.validate && this.validate ? this.validate(dataHash) : true;
-            if(!this.isValid){
-                return false;
-            }
+            if(!this.isValid) return false;
             // Deep copy.
             this.originalData = o.empty ? {} : deepCopy(dataHash);
             this.isReadOnly = o.readOnly;
