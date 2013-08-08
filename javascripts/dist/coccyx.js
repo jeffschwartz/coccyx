@@ -422,7 +422,7 @@
         // that object with collectionObject if it was supplied.
         var obj1 = collectionObject ? Coccyx.helpers.extend(Object.create(proto), collectionObject) : proto;
         var obj2 = Object.create(obj1);
-        obj2.readOnly = false;
+        obj2.isReadOnly = false;
         obj2.coll = [];
         obj2.length = 0;
         return obj2;
@@ -600,9 +600,9 @@
         /* Mutators */
 
         //Sets the collection's data property to [models].
-        setModels: function setModels(models, isReadOnly){
+        setModels: function setModels(models, options){
             addModels(this.coll, models);
-            this.readOnly = !!isReadOnly;
+            this.isReadOnly = options && options.readOnly;
             this.length = this.coll.length;
             return this;
         },
@@ -712,10 +712,11 @@
 
         //Sets the readOnly flag on all models
         //in the collection to isReadOnly.
-        setReadOnly: function setReadOnly(isReadOnly){
+        setReadOnly: function setReadOnly(readOnly){
             this.coll.forEach(function(model){
-               model.readOnly = isReadOnly;
+               model.isReadOnly = readOnly;
             });
+            this.isReadOnly = readOnly;
         },
         //Removes all models from the collection whose data
         //properties matches those of matchingPropertiesHash.
