@@ -244,7 +244,7 @@ define('collections', [], function(){
 
         /* Accessors */
 
-        //Returns an array of the data of all models in the collection
+        //Returns an array of the deep copied data of all models in the collection
         getData: function(){
             return this.map(function(model){
                 return model.getData();
