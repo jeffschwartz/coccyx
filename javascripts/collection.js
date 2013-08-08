@@ -286,16 +286,16 @@ define('collections', [], function(){
 
         //Invokes a callback function for each model in the
         //collection with three arguments: the model, the model's
-        //index, and the collection object's coll.
-        forEach: function forEach(callback){
-            this.coll.forEach(function(element, index, coll){
-                callback(element, index, coll);
-            });
+        //index, and the collection object's coll. If supplied,
+        //the second parameter will be used as the context for
+        //the callback.
+        forEach: function forEach(/*callback, context*/){
+            [].forEach.apply(this.coll, [].slice.call(arguments, 0));
         },
         //Tests whether all models in the collection pass the
         //test implemented by the provided callback.
-        every: function every(callback, context){
-            return [].every.call(this.coll, callback, context);
+        every: function every(/*callback, context*/){
+            return [].every.apply(this.coll, [].slice.call(arguments, 0));
         },
         //Tests whether some model in the collection passes the
         //test implemented by the provided callback.
