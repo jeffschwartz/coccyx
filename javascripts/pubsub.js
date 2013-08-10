@@ -1,6 +1,6 @@
 define('pubsub', [], function(){
     /**
-     * A purely hash-based pubsub implementation.
+     * A purely hash-based backed pubsub implementation.
      */
     'use strict';
 
