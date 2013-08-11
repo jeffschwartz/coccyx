@@ -1,4 +1,4 @@
-// Coccyx.js 0.5.0
+// Coccyx.js 0.6.0
 // (c) 2013 Jeffrey Schwartz
 // Coccyx.js may be freely distributed under the MIT license.
 // For all details and documentation:
@@ -20,7 +20,7 @@
      function registerControllers(){
         if(arguments.length !== 1 && !(arguments[0] instanceof Array) && !(arguments[0] instanceof Object)){
             // TODO Not sure if I should be throwing here. Think about it!!!
-            throw new Error('registerControllers missing or invalid param. Expected an [] or {}.');
+            console.log('registerControllers missing or invalid param. Expected an [] or {}.');
         }
         if(arguments[0] instanceof Array){
             // An array of hashes.
@@ -84,7 +84,7 @@
     Coccyx.plugins = Coccyx.plugins || {};
 
     // Version stamp
-    version = '0.5.0';
+    version = '0.6.0';
     Coccyx.getVersion = function(){
         return version;
     };
@@ -135,6 +135,15 @@
                 }
             }
             return targetObj;
+        },
+        //For each matching property name, replaces
+        //target's value with source's value.
+        replace: function(target, source){
+            for(var prop in target){
+                if(target.hasOwnProperty(prop) && source.hasOwnProperty(prop)){
+                    target[prop] = source[prop];
+                }
+            }
         }
     };
 
@@ -276,15 +285,42 @@
         deepCopy = Coccyx.helpers.deepCopy,
         proto;
 
+    //0.6.0
+    //Return the property reachable through the property path or undefined.
+    function findProperty(obj, propertyPath){
+        if(!obj){
+            return;
+        }
+        var a = propertyPath.split('.');
+        if(a.length === 1){
+            return obj[propertyPath];
+        }
+        //Try the next one in the chain.
+        return findProperty(obj[a[0]], a.slice(1).join('.'));
+    }
+
+    //0.6.0
+    //Sets the property reachable through the property path, creating it first if necessary, with a deep copy of val.
+    function findAndSetProperty(obj, propertyPath, val){
+        var a = propertyPath.split('.');
+        if(a.length === 1){
+            obj[propertyPath] = typeof val === 'object' ? deepCopy(val) : val;
+        }else{
+            obj[a[0]] = {};
+            findAndSetProperty(obj[a[0]], a.slice(1).join('.'), val);
+        }
+    }
+
     //0.5.0
     function extend(modelObject){
-        // Create a new object using proto as its prototype and extend that object with modelObject.
-        var obj1 =  Coccyx.helpers.extend(Object.create(proto), modelObject);
+        // Create a new object using proto as its prototype and
+        // extend that object with modelObject if it was supplied.
+        var obj1 =  modelObject ? Coccyx.helpers.extend(Object.create(proto), modelObject) : proto;
         var obj2 = Object.create(obj1);
         // Decorate the new object with additional properties.
-        obj2.set = false;
-        obj2.readOnly = false;
-        obj2.dirty = false;
+        obj2.isSet = false;
+        obj2.isReadOnly = false;
+        obj2.isDirty = false;
         obj2.originalData = {};
         obj2.changedData = {};
         obj2.data = {};
@@ -294,15 +330,11 @@
     // model prototype properties...
     proto = {
         setData: function setData (dataHash, options) {
-            var o = {empty:false, readOnly:false, dirty:false, validate: false},
-                prop;
+            var o = {empty:false, readOnly:false, dirty:false, validate: false};
+                // ,prop;
             // Merge default options with passed in options.
             if(options){
-                for(prop in o){
-                    if(o.hasOwnProperty(prop) && options.hasOwnProperty(prop)){
-                        o[prop] = options[prop];
-                    }
-                }
+                Coccyx.helpers.replace(o, options);
             }
             // If options validate is true and there is a validate method and
             // it returns false, sets valid to false and returns false.
@@ -310,18 +342,18 @@
             // it returns true, sets valid to true and proceeds with setting data.
             // If options validate is false or there isn't a validate method
             // set valid to true.
-            this.valid = o.validate && this.validate ? this.validate(dataHash) : true;
-            if(!this.valid){
+            this.isValid = o.validate && this.validate ? this.validate(dataHash) : true;
+            if(!this.isValid){
                 return false;
             }
             // Deep copy.
             this.originalData = o.empty ? {} : deepCopy(dataHash);
-            this.readOnly = o.readOnly;
-            this.dirty = o.dirty;
+            this.isReadOnly = o.readOnly;
+            this.isDirty = o.dirty;
             // Deep copy.
             this.data = deepCopy(dataHash);
             this.changedData = {};
-            this.set = true;
+            this.isSet = true;
             return true;
         },
         getData: function getData(){
@@ -335,26 +367,28 @@
         getChangedData: function getChangedData(){
             return deepCopy(this.changedData);
         },
-        // Returns data[propertyName] or null.
-        getProperty: function getProperty(propertyName){
-            if (this.data.hasOwnProperty(propertyName)) {
-                // Deep copy if property is typeof 'object'.
-                return typeof this.data[propertyName] === 'object' ?
-                deepCopy(this.data[propertyName]) : this.data[propertyName];
-            }
+        // Returns the property reachable through property path. If
+        // there is no property reachable through property path
+        // return undefined.
+        getProperty: function getProperty(propertyPath){
+            return findProperty(this.data, propertyPath);
         },
-        // Sets the data[propertyName]'s value.
-        setProperty: function setProperty(propertyName, data){
+        //Sets a property on an object reachable through the property path.
+        //If the property doesn't exits, it will be created and then assigned
+        //its value (using a deep copy if typeof data === 'object'). Calling
+        //set with a nested object or property is therefore supported. For
+        //example, if the property path is address.street and the mode's data
+        // hash is {name: 'some name'}, the result will be
+        //{name: 'some name', address: {street: 'some street'}}; and the changed
+        //data hash will be {'address.street': some.street'}.
+        setProperty: function setProperty(propertyPath, val){
             // A model's data properties cannot be written to if the model
             // hasn't been set yet or if the model is read only.
-            if(this.set){
-                if(!this.readOnly){
-                    // Deep copy, maintain the changedValues hash.
-                    this.changedData[propertyName] = deepCopy(data);
-                    // Deep copy if property is typeof 'object'.
-                    this.data[propertyName] = typeof data === 'object' ?
-                    deepCopy(data) : data;
-                    this.dirty = true;
+            if(this.isSet){
+                if(!this.isReadOnly){
+                    findAndSetProperty(this.data, propertyPath, val);
+                    this.changedData[propertyPath] = deepCopy(val);
+                    this.isDirty = true;
                 }else{
                     console.log('Warning! Coccyx.model::setProperty called on read only model.');
                 }
@@ -363,11 +397,391 @@
             }
             // For chaining.
             return this;
+       },
+       //0.6.0
+       toJSON: function(){
+            return JSON.stringify(this.data);
        }
     };
 
     Coccyx.models = {
         extend: extend
+    };
+
+});
+
+;define('collections', [], function(){
+    'use strict';
+
+//TODO go through all comments. Insure they are relevant and insightful.
+    var Coccyx = window.Coccyx = window.Coccyx || {},
+        proto;
+
+    //Extend the application's collection object.
+    function extend(collectionObject){
+        // Create a new object using proto as its prototype and extend
+        // that object with collectionObject if it was supplied.
+        var obj1 = collectionObject ? Coccyx.helpers.extend(Object.create(proto), collectionObject) : proto;
+        var obj2 = Object.create(obj1);
+        obj2.isReadOnly = false;
+        obj2.coll = [];
+        obj2.length = 0;
+        return obj2;
+    }
+
+    //Returns an array containing the raw
+    //data for each model in the models array.
+    function toRaw(models){
+        if(Array.isArray(models)){
+            return models.map(function(model){
+                return model.getData();
+            });
+        }
+    }
+
+    function compareArrays(a, b){
+        var i,
+            len;
+        if(Array.isArray(a) && Array.isArray(b)){
+            if(a.length !== b.length){
+                return false;
+            }
+            for(i = 0, len = a.length; i < len; i++){
+                if(typeof a[i] === 'object' && typeof b[i] === 'object'){
+                    if(!compareObjects(a[i], b[i])){
+                        return false;
+                    }
+                    continue;
+                }
+                if(typeof a[i] === 'object' || typeof b[i] === 'object'){
+                    return false;
+                }
+                if(Array.isArray(a[i]) && Array.isArray(b[i])){
+                    if(!compareArrays(a[i], b[i])){
+                        return false;
+                    }
+                    continue;
+                }
+                if(Array.isArray(a[i]) || Array.isArray(b[i])){
+                    return false;
+                }
+                if(a[i] !== b[i]){
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    function compareObjects(a, b){
+        var prop;
+        if(compareArrays(a, b)){
+            return true;
+        }
+        for(prop in a){
+            if(a.hasOwnProperty(prop) && b.hasOwnProperty(prop)){
+                if(typeof a[prop] === 'object' && typeof b[prop] === 'object'){
+                    if(!compareObjects(a[prop], b[prop])){
+                        return false;
+                    }
+                    continue;
+                }
+                if(typeof a[prop] === 'object' || typeof b[prop] === 'object'){
+                    return false;
+                }
+                if(a[prop] !== b[prop]){
+                    return false;
+                }
+            }else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function compare(a, b){
+        return compareObjects(a, b) && compareObjects(b, a);
+    }
+
+    //Returns true if element has the same properties as
+    //source and their values are equal, false otherwise.
+    function isMatch(element, source){
+        var prop;
+        for(prop in source){
+            if(source.hasOwnProperty(prop) && element.hasOwnProperty(prop)){
+                if(typeof element[prop] === 'object' && typeof source[prop] === 'object'){
+                    if(!compare(element[prop], source[prop])){
+                        return false;
+                    }
+                    // //!Recursive iteration...
+                    // if(!isMatch(element[prop], source[prop])){
+                    //     return false;
+                    // }
+                }else if(typeof element[prop] === 'object' || typeof source[prop] === 'object'){
+                    return false;
+                }else{
+                    if(source[prop] !== element[prop]){
+                        return false;
+                    }
+                }
+            }else{
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function isArrayOrNotObject(value){
+        return Array.isArray(value) || typeof value !== 'object' ? true : false;
+    }
+
+    //If it walks and talks like a duck...
+    //Checks for the following properties on a model's data:
+    //['isSet']
+    //['isReadOnly']
+    //['isDirty]
+    //['originalData']
+    //['changedData']
+    //['data']
+    //If data has all of them then 'it is' a model
+    //and returns true, otherwise it returns false.
+    function isAModel(data){
+        var markers = ['isSet', 'isReadOnly', 'isDirty', 'originalData', 'changedData', 'data'],
+            i,
+            len;
+        for(i = 0, len = markers.length; i < len; i++){
+            if(!data.hasOwnProperty(markers[i])){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    //Makes a model from raw data and returns that model.
+    function makeModelFromRaw(raw){
+        var model = Coccyx.models.extend();
+        model.setData(raw);
+        return model;
+    }
+
+    //A simple general use, recursive iterator. Makes no
+    //assumptions about what args is. Args could be
+    //anything - a function's arguments, an Array, an
+    //object or even a primitive.
+    function iterate(args, callback){
+        var i,
+            len;
+        //If args is an Array or it has a length property it is iterable.
+        if(Array.isArray(args) || args.hasOwnProperty('length')){
+            for(i = 0, len = args.length; i < len; i++){
+                iterate(args[i], callback);
+            }
+        }else{
+            //Not iterabe.
+            callback(args);
+        }
+    }
+
+    //Pushes [models] onto the collection. [models] can
+    //be either models or raw data. If [models] is raw data,
+    //the raw data will be turned into models first before
+    //being pushed into the collection.
+    function addModels(coll, models){
+        if(Array.isArray(models)){
+            models.forEach(function(model){
+                coll.push(isAModel(model) ? model : makeModelFromRaw(model));
+            });
+        }else{
+            coll.push(isAModel(models) ? models : makeModelFromRaw(models));
+        }
+    }
+
+    //Calls iterate on args to generate and array of models.
+    function argsToModels(args){
+        var models = [];
+        iterate(args, function(arg){
+            models.push(isAModel(arg) ? arg : makeModelFromRaw(arg));
+        });
+        return models;
+    }
+
+    //Collection prototype properties...
+    proto = {
+        /* Mutators */
+
+        //Sets the collection's data property to [models].
+        setModels: function setModels(models, options){
+            this.coll = [];
+            addModels(this.coll, models);
+            this.isReadOnly = options && options.readOnly;
+            this.length = this.coll.length;
+            return this;
+        },
+        //Pops the last model from the collection's
+        //data property and returns that model.
+        pop: function pop(){
+            var m = this.coll.pop();
+            this.length = this.coll.length;
+            return m;
+        },
+        //Push [models] onto the collection' data property
+        //and returns the length of the collection.
+        push: function push(models){
+            addModels(this.coll, models);
+            this.length = this.coll.length;
+            return this.length;
+        },
+        reverse: function reverse(){
+            this.coll.reverse();
+        },
+        shift: function shift(){
+            var m = this.coll.shift();
+            this.length = this.coll.length;
+            return m;
+        },
+        //Works the same as Array.sort(function(a,b){...})
+        sort: function sort(callback){
+            this.coll.sort(function(a, b){
+                return callback(a, b);
+            });
+        },
+        //Adds and optionally removes models. Takes new
+        //[modlels] starting with the 3rd parameter.
+        splice: function splice(index, howMany){
+            var a =[index, howMany],
+                aa = argsToModels([].slice.call(arguments, 2));
+            a = a.concat(aa);
+            var m = [].splice.apply(this.coll, a);
+            this.length = this.coll.length;
+            return m;
+        },
+        //Adds one or more models to the beginning of an array and returns
+        //the new length of the array. If raw data is passed instead of
+        //models, they will be converted to models first, and then added
+        //to the collection.
+        unshift: function unshift(){
+            var m = [].unshift.apply(this.coll, argsToModels(arguments));
+            this.length = this.coll.length;
+            return m;
+        },
+
+        /* Accessors */
+
+        //Returns an array of the deep copied data of all models in the collection
+        getData: function(){
+            return this.map(function(model){
+                return model.getData();
+            });
+        },
+        //Works like array[i].
+        at: function(index){
+            return this.coll[index];
+        },
+        //Note sure if concat makes sense on its own. Maybe provide
+        //a higher level method to create a new collection using
+        //this collection's models and additional models/raw data???
+        // //Returns a new array comprised of this collection's models
+        // //joined with other array(s) of models or array(s) of raw data.
+        // //It does not alter the collection.
+        // concat: function(){
+        //     return [].concat.apply(this.coll, argsToModels(arguments));
+        // },
+        //Returns a copy of a portion of the models in the collection.
+        slice: function(){
+            return [].slice.apply(this.coll, arguments).map(function(model){
+                return makeModelFromRaw(model.getData());
+            });
+        },
+
+        /* Iterators */
+
+        //Invokes a callback function for each model in the
+        //collection with three arguments: the model, the model's
+        //index, and the collection object's coll. If supplied,
+        //the second parameter will be used as the context for
+        //the callback.
+        forEach: function forEach(/*callback, context*/){
+            [].forEach.apply(this.coll, [].slice.call(arguments, 0));
+        },
+        //Tests whether all models in the collection pass the
+        //test implemented by the provided callback.
+        every: function every(/*callback, context*/){
+            return [].every.apply(this.coll, [].slice.call(arguments, 0));
+        },
+        //Tests whether some model in the collection passes the
+        //test implemented by the provided callback.
+        some: function(/*callback, context*/){
+            return [].some.apply(this.coll, [].slice.call(arguments, 0));
+        },
+        //Returns an array containing all the models that pass
+        //the test implemented by the provided callback.
+        filter: function(/*callback, context*/){
+            return [].filter.apply(this.coll, [].slice.call(arguments, 0));
+        },
+        //Creates a new array with the results of calling a
+        //provided function on every model in the collection.
+        map: function(/*callback, context*/){
+            return [].map.apply(this.coll, [].slice.call(arguments, 0));
+        },
+
+        /* Sugar */
+
+        //Sets the readOnly flag on all models
+        //in the collection to isReadOnly.
+        setReadOnly: function setReadOnly(readOnly){
+            this.coll.forEach(function(model){
+               model.isReadOnly = readOnly;
+            });
+            this.isReadOnly = readOnly;
+        },
+        //Removes all models from the collection whose data
+        //properties matches those of matchingPropertiesHash.
+        remove: function remove(matchingPropertiesHash){
+            var newColl;
+            if(isArrayOrNotObject(matchingPropertiesHash)){
+                return;
+            }
+            newColl = this.coll.filter(function(el){
+                return !isMatch(el.data, matchingPropertiesHash);
+            });
+            this.coll = newColl.length !== this.coll.length ? newColl : this.coll;
+            this.length = this.coll.length;
+        },
+        //Returns true if the coll has at least one model whose
+        //data properties matches those of matchingPropertiesHash.
+        has: function has(matchingPropertiesHash){
+            if(isArrayOrNotObject(matchingPropertiesHash)){
+                return false;
+            }
+            return this.coll.some(function(el){
+                return isMatch(el.data, matchingPropertiesHash);
+            });
+        },
+        //Returns an array whose elements contain the stringified value
+        //of their model's data.
+        find: function find(matchingPropertiesHash){
+            if(isArrayOrNotObject(matchingPropertiesHash)){
+                return null;
+            }
+            return this.coll.filter(function(el){
+                return isMatch(el.data, matchingPropertiesHash);
+            });
+        },
+        //Stringifies all models data and returns them in an array.
+        toJSON: function toJSON(){
+            return  this.coll.map(function(el){
+                return JSON.stringify(el.getData());
+            });
+        },
+        //Same as Coccyx.collections.toRaw(models).
+        //See above for details.
+        toRaw: toRaw
+    };
+
+    Coccyx.collections = {
+        extend: extend,
+        toRaw: toRaw
     };
 
 });
@@ -513,17 +927,7 @@
         subscribers = {},
         lastToken = 0;
 
-    /*
-        subscribers is a hash of hashes
-        {
-            'some topic': {
-                'some token': callbackfunction,
-                'some token': callbackfunction,
-                . etc.
-            },
-            . etc
-        }
-    */
+    /* subscribers is a hash of hashes {'some topic': {'some token': callbackfunction, 'some token': callbackfunction, . etc. }, . etc } */
 
     function generateToken(){
         var token;
@@ -577,7 +981,7 @@
 
 });
 
-;define('coccyx', ['application', 'helpers', 'history', 'models', 'router', 'views', 'pubsub'], function () {
+;define('coccyx', ['application', 'helpers', 'history', 'models', 'collections', 'router', 'views', 'pubsub'], function () {
     'use strict';
     return window.Coccyx;
 });

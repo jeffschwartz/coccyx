@@ -35,6 +35,15 @@ define('helpers', [], function(){
                 }
             }
             return targetObj;
+        },
+        //For each matching property name, replaces
+        //target's value with source's value.
+        replace: function(target, source){
+            for(var prop in target){
+                if(target.hasOwnProperty(prop) && source.hasOwnProperty(prop)){
+                    target[prop] = source[prop];
+                }
+            }
         }
     };
 

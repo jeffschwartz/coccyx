@@ -8,17 +8,7 @@ define('pubsub', [], function(){
         subscribers = {},
         lastToken = 0;
 
-    /*
-        subscribers is a hash of hashes
-        {
-            'some topic': {
-                'some token': callbackfunction,
-                'some token': callbackfunction,
-                . etc.
-            },
-            . etc
-        }
-    */
+    /* subscribers is a hash of hashes {'some topic': {'some token': callbackfunction, 'some token': callbackfunction, . etc. }, . etc } */
 
     function generateToken(){
         var token;
