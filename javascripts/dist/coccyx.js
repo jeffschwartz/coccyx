@@ -919,7 +919,7 @@
 
 ;define('pubsub', [], function(){
     /**
-     * A purely hash-based pubsub implementation.
+     * A purely hash-based backed pubsub implementation.
      */
     'use strict';
 
@@ -940,13 +940,29 @@
         }
     }
 
-    function subscribe(topic, handler){
-        var token = generateToken();
+    //0.6.0 Returns a function which wraps
+    //subscribers callback in a setTimeout callback.
+    function genAsyncCallback(callback){
+        return function(data){
+            setTimeout(function(){
+                callback(data);
+            }, 1);
+        };
+    }
 
+    //0.6.0 added async callback. if options.async is false
+    //then the callback will be done synchronously.
+    //0.6.0 options hash as optional 3rd argument.
+    function subscribe(topic, handler/*, options*/){
+        var token = generateToken();
+        var defaultOptions = {context: null, async: true};
+        var options = arguments.length === 3 ? Coccyx.helpers.extend({}, defaultOptions, arguments[2]) : options;
+        var callback = options.context ? handler.bind(options.context) : handler;
+        callback = options.async ? genAsyncCallback(callback) : callback;
         if(!subscribers.hasOwnProperty(topic)){
             subscribers[topic] = {};
         }
-        subscribers[topic][token] = handler;
+        subscribers[topic][token] = callback;
         return token;
     }
 
@@ -973,10 +989,16 @@
         }
     }
 
+    //0.6.0 Might be useful to have for testing.
+    function getCountOfSubscribers(){
+        return subscribers.length;
+    }
+
     Coccyx.pubsub = {
         subscribe: subscribe,
         unsubscribe: unsubscribe,
-        publish: publish
+        publish: publish,
+        getCountOfSubscribers: getCountOfSubscribers
     };
 
 });
