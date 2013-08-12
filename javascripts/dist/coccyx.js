@@ -942,10 +942,10 @@
 
     //0.6.0 Returns a function which wraps
     //subscribers callback in a setTimeout callback.
-    function genAsyncCallback(callback){
-        return function(data){
+    function genAsyncCallback(topic, callback){
+        return function(topic, data){
             setTimeout(function(){
-                callback(data);
+                callback(topic, data);
             }, 1);
         };
     }
@@ -958,7 +958,7 @@
         var defaultOptions = {context: null, async: true};
         var options = arguments.length === 3 ? Coccyx.helpers.extend({}, defaultOptions, arguments[2]) : defaultOptions;
         var callback = options.context ? handler.bind(options.context) : handler;
-        callback = options.async ? genAsyncCallback(callback) : callback;
+        callback = options.async ? genAsyncCallback(topic, callback) : callback;
         if(!subscribers.hasOwnProperty(topic)){
             subscribers[topic] = {};
         }
@@ -980,9 +980,9 @@
             for(token in subscribers[topic] ){
                 if(subscribers[topic].hasOwnProperty(token)){
                     if(data){
-                        subscribers[topic][token](data);
+                        subscribers[topic][token](topic, data);
                     }else{
-                        subscribers[topic][token]();
+                        subscribers[topic][token](topic);
                     }
                 }
             }
