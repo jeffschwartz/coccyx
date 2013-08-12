@@ -37,7 +37,7 @@ define('pubsub', [], function(){
     function subscribe(topic, handler/*, options*/){
         var token = generateToken();
         var defaultOptions = {context: null, async: true};
-        var options = arguments.length === 3 ? Coccyx.helpers.extend({}, defaultOptions, arguments[2]) : options;
+        var options = arguments.length === 3 ? Coccyx.helpers.extend({}, defaultOptions, arguments[2]) : defaultOptions;
         var callback = options.context ? handler.bind(options.context) : handler;
         callback = options.async ? genAsyncCallback(callback) : callback;
         if(!subscribers.hasOwnProperty(topic)){
