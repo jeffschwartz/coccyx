@@ -303,10 +303,13 @@
     //Sets the property reachable through the property path, creating it first if necessary, with a deep copy of val.
     function findAndSetProperty(obj, propertyPath, val){
         var a = propertyPath.split('.');
+        //0.6.0
         if(a.length === 1){
             obj[propertyPath] = typeof val === 'object' ? deepCopy(val) : val;
         }else{
-            obj[a[0]] = {};
+            if(!obj.hasOwnProperty(a[0])){
+                obj[a[0]] = {};
+            }
             findAndSetProperty(obj[a[0]], a.slice(1).join('.'), val);
         }
     }
