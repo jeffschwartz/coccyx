@@ -108,7 +108,7 @@ define('models', [], function(){
         //If the property doesn't exits, it will be created and then assigned
         //its value (using a deep copy if typeof data === 'object'). Calling
         //set with a nested object or property is therefore supported. For
-        //example, if the property path is address.street and the mode's data
+        //example, if the property path is address.street and the model's data
         // hash is {name: 'some name'}, the result will be
         //{name: 'some name', address: {street: 'some street'}}; and the changed
         //data hash will be {'address.street': some.street'}.
