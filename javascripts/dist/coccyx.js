@@ -928,6 +928,7 @@
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
         subscribers = {},
+        totalSubscribers = 0,
         lastToken = 0;
 
     /* subscribers is a hash of hashes {'some topic': {'some token': callbackfunction, 'some token': callbackfunction, . etc. }, . etc } */
@@ -966,6 +967,7 @@
             subscribers[topic] = {};
         }
         subscribers[topic][token] = callback;
+        totalSubscribers++;
         return token;
     }
 
@@ -973,6 +975,7 @@
         if(subscribers.hasOwnProperty(topic)){
             if(subscribers[topic].hasOwnProperty(token)){
                 delete subscribers[topic][token];
+                totalSubscribers--;
             }
         }
     }
@@ -994,14 +997,29 @@
 
     //0.6.0 Might be useful to have for testing.
     function getCountOfSubscribers(){
-        return subscribers.length;
+        return totalSubscribers;
+    }
+
+    //0.6.0 Might be useful to have for testing.
+    function getCountOfSubscribersByTopic(topic){
+        var prop,
+            count = 0;
+        if(subscribers.hasOwnProperty(topic)){
+            for(prop in subscribers[topic]){
+                if(subscribers[topic].hasOwnProperty(prop)){
+                    count++;
+                }
+            }
+        }
+        return count;
     }
 
     Coccyx.pubsub = {
         subscribe: subscribe,
         unsubscribe: unsubscribe,
         publish: publish,
-        getCountOfSubscribers: getCountOfSubscribers
+        getCountOfSubscribers: getCountOfSubscribers,
+        getCountOfSubscribersByTopic: getCountOfSubscribersByTopic
     };
 
 });
