@@ -997,11 +997,26 @@
         return totalSubscribers;
     }
 
+    //0.6.0 Might be useful to have for testing.
+    function getCountOfSubscribersByTopic(topic){
+        var prop,
+            count = 0;
+        if(subscribers.hasOwnProperty(topic)){
+            for(prop in subscribers[topic]){
+                if(subscribers[topic].hasOwnProperty(prop)){
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
     Coccyx.pubsub = {
         subscribe: subscribe,
         unsubscribe: unsubscribe,
         publish: publish,
-        getCountOfSubscribers: getCountOfSubscribers
+        getCountOfSubscribers: getCountOfSubscribers,
+        getCountOfSubscribersByTopic: getCountOfSubscribersByTopic
     };
 
 });
