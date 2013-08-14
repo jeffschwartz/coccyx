@@ -374,7 +374,8 @@
         // there is no property reachable through property path
         // return undefined.
         getProperty: function getProperty(propertyPath){
-            return findProperty(this.data, propertyPath);
+            var v = findProperty(this.data, propertyPath);
+            return typeof v === 'object' ? deepCopy(v) : v;
         },
         //Sets a property on an object reachable through the property path.
         //If the property doesn't exits, it will be created and then assigned
