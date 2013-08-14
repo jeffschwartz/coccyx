@@ -270,6 +270,8 @@
 ;define('models', [], function(){
     'use strict';
 
+    //TODO: rename set and get Property to something else!
+
     /**
      * Model
      * Warning!!!! Don't use primitive object wrappers, Date objects or functions as data
@@ -284,6 +286,12 @@
     var Coccyx = window.Coccyx = window.Coccyx || {},
         deepCopy = Coccyx.helpers.deepCopy,
         proto;
+
+    //0.6.0
+    //Publish event
+    function publishPropertyChangeEvent(model, propertyPath, value){
+        Coccyx.pubsub.publish(model.getModelName() + '_MODEL_EVENT', {eventSubType: 'MODEL_PROPERTY_CHANGED', propertyPath: propertyPath, value: value, model: model});
+    }
 
     //0.6.0
     //Return the property reachable through the property path or undefined.
@@ -392,6 +400,11 @@
                     findAndSetProperty(this.data, propertyPath, val);
                     this.changedData[propertyPath] = deepCopy(val);
                     this.isDirty = true;
+                    //0.6.0
+                    //Named models publish change events.
+                    if(this.modelName){
+                        publishPropertyChangeEvent(this, propertyPath, val);
+                    }
                 }else{
                     console.log('Warning! Coccyx.model::setProperty called on read only model.');
                 }
@@ -404,11 +417,17 @@
        //0.6.0
        toJSON: function(){
             return JSON.stringify(this.data);
+       },
+       //0.6.0
+       getModelName: function(){
+            return this.modelName;
        }
     };
 
     Coccyx.models = {
-        extend: extend
+        extend: extend,
+        //0.6.0
+        findProperty: findProperty
     };
 
 });
