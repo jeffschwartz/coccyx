@@ -296,7 +296,9 @@
     //0.6.0
     //Return the property reachable through the property path or undefined.
     function findProperty(obj, propertyPath){
-        if(!obj){
+        //0.6.0
+        //Return false if obj is an array or not an object.
+        if(Array.isArray(obj) || typeof obj !== 'object'){
             return;
         }
         var a = propertyPath.split('.');
