@@ -19,9 +19,8 @@ define('models', [], function(){
         proto;
 
     //0.6.0
-    //Publish event
     function publishPropertyChangeEvent(model, propertyPath, value){
-        Coccyx.pubsub.publish(model.getModelName() + '_MODEL_EVENT', {eventSubType: 'MODEL_PROPERTY_CHANGED', propertyPath: propertyPath, value: value, model: model});
+        Coccyx.pubsub.publish('MODEL_EVENT', {eventSubType: 'MODEL_PROPERTY_CHANGED', propertyPath: propertyPath, value: value, model: model});
     }
 
     //0.6.0
@@ -162,10 +161,13 @@ define('models', [], function(){
             return this;
        },
        //0.6.0
+       //Returns stringified model's data hash.
        toJSON: function(){
             return JSON.stringify(this.data);
        },
        //0.6.0
+       //Returns this model's name. A model's name along with when publishing model state change events.
+       //
        getModelName: function(){
             return this.modelName;
        }
