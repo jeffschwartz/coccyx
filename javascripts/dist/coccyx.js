@@ -288,8 +288,9 @@
         proto;
 
     //0.6.0
+    //Publishes MODEL_PROPERTY_CHAGED_EVENT event via Coccyx.pubsub.
     function publishPropertyChangeEvent(model, propertyPath, value){
-        Coccyx.pubsub.publish('MODEL_EVENT', {eventSubType: 'MODEL_PROPERTY_CHANGED', propertyPath: propertyPath, value: value, model: model});
+        Coccyx.pubsub.publish('MODEL_PROPERTY_CHANGED_EVENT', {propertyPath: propertyPath, value: value, model: model});
     }
 
     //0.6.0
