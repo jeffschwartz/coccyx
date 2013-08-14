@@ -110,11 +110,25 @@ define('models', [], function(){
         getChangedData: function getChangedData(){
             return deepCopy(this.changedData);
         },
-        // Returns the property reachable through property path. If
+        // Returns the data property reachable through property path. If
         // there is no property reachable through property path
         // return undefined.
         getProperty: function getProperty(propertyPath){
             var v = findProperty(this.data, propertyPath);
+            return typeof v === 'object' ? deepCopy(v) : v;
+        },
+        // Returns the originalData property reachable through property path. If
+        // there is no property reachable through property path
+        // return undefined.
+        getOriginalDataProperty: function getProperty(propertyPath){
+            var v = findProperty(this.originalData, propertyPath);
+            return typeof v === 'object' ? deepCopy(v) : v;
+        },
+        // Returns the changedData property reachable through property path. If
+        // there is no property reachable through property path
+        // return undefined.
+        getChangedDataProperty: function getProperty(propertyPath){
+            var v = findProperty(this.changedData, propertyPath);
             return typeof v === 'object' ? deepCopy(v) : v;
         },
         //Sets a property on an object reachable through the property path.
@@ -158,9 +172,7 @@ define('models', [], function(){
     };
 
     Coccyx.models = {
-        extend: extend,
-        //0.6.0
-        findProperty: findProperty
+        extend: extend
     };
 
 });
