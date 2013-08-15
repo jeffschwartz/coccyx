@@ -1,6 +1,8 @@
 define('models', [], function(){
     'use strict';
 
+    //TODO: rename set and get Property to something else!
+
     /**
      * Model
      * Warning!!!! Don't use primitive object wrappers, Date objects or functions as data
@@ -17,9 +19,17 @@ define('models', [], function(){
         proto;
 
     //0.6.0
+    //Publishes MODEL_PROPERTY_CHAGED_EVENT event via Coccyx.pubsub.
+    function publishPropertyChangeEvent(model, propertyPath, value){
+        Coccyx.pubsub.publish('MODEL_PROPERTY_CHANGED_EVENT', {propertyPath: propertyPath, value: value, model: model});
+    }
+
+    //0.6.0
     //Return the property reachable through the property path or undefined.
     function findProperty(obj, propertyPath){
-        if(!obj){
+        //0.6.0
+        //Return false if obj is an array or not an object.
+        if(Array.isArray(obj) || typeof obj !== 'object'){
             return;
         }
         var a = propertyPath.split('.');
@@ -34,7 +44,6 @@ define('models', [], function(){
     //Sets the property reachable through the property path, creating it first if necessary, with a deep copy of val.
     function findAndSetProperty(obj, propertyPath, val){
         var a = propertyPath.split('.');
-        //0.6.0
         if(a.length === 1){
             obj[propertyPath] = typeof val === 'object' ? deepCopy(val) : val;
         }else{
@@ -101,11 +110,25 @@ define('models', [], function(){
         getChangedData: function getChangedData(){
             return deepCopy(this.changedData);
         },
-        // Returns the property reachable through property path. If
+        // Returns the data property reachable through property path. If
         // there is no property reachable through property path
         // return undefined.
         getProperty: function getProperty(propertyPath){
             var v = findProperty(this.data, propertyPath);
+            return typeof v === 'object' ? deepCopy(v) : v;
+        },
+        // Returns the originalData property reachable through property path. If
+        // there is no property reachable through property path
+        // return undefined.
+        getOriginalDataProperty: function getProperty(propertyPath){
+            var v = findProperty(this.originalData, propertyPath);
+            return typeof v === 'object' ? deepCopy(v) : v;
+        },
+        // Returns the changedData property reachable through property path. If
+        // there is no property reachable through property path
+        // return undefined.
+        getChangedDataProperty: function getProperty(propertyPath){
+            var v = findProperty(this.changedData, propertyPath);
             return typeof v === 'object' ? deepCopy(v) : v;
         },
         //Sets a property on an object reachable through the property path.
@@ -124,6 +147,11 @@ define('models', [], function(){
                     findAndSetProperty(this.data, propertyPath, val);
                     this.changedData[propertyPath] = deepCopy(val);
                     this.isDirty = true;
+                    //0.6.0
+                    //Named models publish change events.
+                    if(this.modelName){
+                        publishPropertyChangeEvent(this, propertyPath, val);
+                    }
                 }else{
                     console.log('Warning! Coccyx.model::setProperty called on read only model.');
                 }
@@ -134,8 +162,15 @@ define('models', [], function(){
             return this;
        },
        //0.6.0
+       //Returns stringified model's data hash.
        toJSON: function(){
             return JSON.stringify(this.data);
+       },
+       //0.6.0
+       //Returns this model's name. A model's name along with when publishing model state change events.
+       //
+       getModelName: function(){
+            return this.modelName;
        }
     };
 
