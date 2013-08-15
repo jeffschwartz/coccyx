@@ -45,7 +45,9 @@ define('application', ['jquery'], function($){
                 // Controller name (the root segment).
                 namedRoute += controller.name;
                 // Remaining path.
-                namedRoute += (route.substring(route.indexOf(' ') + 1) === '/' ? '' : controller.name === '' ? route.substring(route.indexOf(' ') + 1) : '/' + route.substring(route.indexOf(' ') + 1));
+                namedRoute += (route.substring(route.indexOf(' ') + 1) === '/' ?
+                    '' : controller.name === '' ? route.substring(route.indexOf(' ') + 1) :
+                    '/' + route.substring(route.indexOf(' ') + 1));
                 routes[namedRoute] = [controller.name,controller.routes[route]];
                 console.log('Registering route \'' + namedRoute + '\'');
             }
