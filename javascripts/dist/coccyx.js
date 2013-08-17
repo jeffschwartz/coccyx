@@ -26,12 +26,31 @@
             // An array of hashes.
             arguments[0].forEach(function(controller){
                 loadRoutesFromController(controller);
-                callInit(controller); // 0.4.0
+                wireEvents(controller);//0.6.0
+                callInit(controller); //0.4.0
             });
         }else{
             // A single hash.
             loadRoutesFromController(arguments[0]);
-            callInit(arguments[0]); // 0.4.0
+            wireEvents(arguments[0]);//0.6.0
+            callInit(arguments[0]); //0.4.0
+        }
+    }
+
+    //0.6.0 Auto wires controller events.
+    function wireEvents(controller){
+        //0.6.0 Wires controller to receive model property changed
+        //events if the controller defines a function called
+        //modelPropertyChangedEventHandler. The function will be called
+        //using the context of the controller in which it is defined.
+        //The token id returned from calling Coccyx.pubsub.subscribe()
+        //is saved as a property of the callback function and is named
+        //modelPropertyChangedEventHandlerTokenId.
+        if(controller.modelPropertyChangedEventHandler){
+            controller.modelPropertyChangedEventHandler.modelPropertyChangedEventHandlerTokenId =
+                Coccyx.pubsub.subscribe(Coccyx.models.propertyChangedEventTopic,
+                    controller.modelPropertyChangedEventHandler,
+                    {context: controller});
         }
     }
 
@@ -287,12 +306,13 @@
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
         deepCopy = Coccyx.helpers.deepCopy,
+        modelPropertyChangedEventTopic = 'MODEL_PROPERTY_CHANGED_EVENT',
         proto;
 
     //0.6.0
     //Publishes MODEL_PROPERTY_CHAGED_EVENT event via Coccyx.pubsub.
     function publishPropertyChangeEvent(model, propertyPath, value){
-        Coccyx.pubsub.publish('MODEL_PROPERTY_CHANGED_EVENT', {propertyPath: propertyPath, value: value, model: model});
+        Coccyx.pubsub.publish(modelPropertyChangedEventTopic, {propertyPath: propertyPath, value: value, model: model});
     }
 
     //0.6.0
@@ -446,7 +466,8 @@
     };
 
     Coccyx.models = {
-        extend: extend
+        extend: extend,
+        propertyChangedEventTopic: modelPropertyChangedEventTopic
     };
 
 });
