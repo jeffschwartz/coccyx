@@ -16,12 +16,13 @@ define('models', [], function(){
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
         deepCopy = Coccyx.helpers.deepCopy,
+        modelPropertyChangedEventTopic = 'MODEL_PROPERTY_CHANGED_EVENT',
         proto;
 
     //0.6.0
     //Publishes MODEL_PROPERTY_CHAGED_EVENT event via Coccyx.pubsub.
     function publishPropertyChangeEvent(model, propertyPath, value){
-        Coccyx.pubsub.publish('MODEL_PROPERTY_CHANGED_EVENT', {propertyPath: propertyPath, value: value, model: model});
+        Coccyx.pubsub.publish(modelPropertyChangedEventTopic, {propertyPath: propertyPath, value: value, model: model});
     }
 
     //0.6.0
@@ -175,7 +176,8 @@ define('models', [], function(){
     };
 
     Coccyx.models = {
-        extend: extend
+        extend: extend,
+        propertyChangedEventTopic: modelPropertyChangedEventTopic
     };
 
 });
