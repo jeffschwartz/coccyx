@@ -11,10 +11,10 @@ define('views', ['jquery'], function($){
 
     //0.6.0
     //domEventsHash = {viewName: 'viewname', events['event selector',...]}.
-    function wireDomEvents(domEventsHash){
-        domEventsHash.events.forEach(function(event){
-            var a = event.split(' ');
-            Coccyx.$(a[1]).on(a[0], {viewName: domEventsHash.viewName, eventType: a[0], eventSelector: a[1]}, domEventDispatcher);
+    function wireDomEvents(viewObject){
+        viewObject.domEvents.events.forEach(function(eventDescription){
+            var a = eventDescription.split(' ');
+            Coccyx.$(viewObject.domTarget).on(a[0], a[1], {viewName: viewObject.domEvents.viewName, eventType: a[0], eventSelector: a[1]}, domEventDispatcher);
         });
     }
 
@@ -28,7 +28,7 @@ define('views', ['jquery'], function($){
         obj.$domTarget = viewObject.hasOwnProperty('domTarget') ? $(viewObject.domTarget) : undefined;
         //0.6.0
         if(viewObject.hasOwnProperty('domEvents')){
-            wireDomEvents(viewObject.domEvents);
+            wireDomEvents(viewObject);
         }
         return obj;
     }
