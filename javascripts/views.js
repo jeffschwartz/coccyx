@@ -8,6 +8,7 @@ define('views', ['jquery'], function($){
         // Create a new object using the view object as its prototype.
         var obj =  Object.create(viewObject);
         // Decorate the new object with additional properties.
+        obj.$domTarget = viewObject.hasOwnProperty('domTarget') ? $(viewObject.domTarget) : undefined;
         obj.$ = $;
         return obj;
     }
