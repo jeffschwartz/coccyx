@@ -14,7 +14,7 @@ define('views', ['jquery'], function($){
     function wireDomEvents(domEventsHash){
         domEventsHash.events.forEach(function(event){
             var a = event.split(' ');
-            Coccyx.$(a[1]).on(a[0], {viewName: domEventsHash.viewName}, domEventDispatcher);
+            Coccyx.$(a[1]).on(a[0], {viewName: domEventsHash.viewName, eventType: a[0], eventSelector: a[1]}, domEventDispatcher);
         });
     }
 
