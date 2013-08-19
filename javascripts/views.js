@@ -21,11 +21,6 @@ define('views', ['jquery'], function($){
         }
     }
 
-    //0.6.0
-    function remove(viewObject){
-        viewObject.$domTarget.off(viewObject.namespace);
-    }
-
     //0.5.0, 0.6.0
     function extend(viewObject, domEventsHash){
         // Create a new object using the view object as its prototype.
@@ -50,7 +45,6 @@ define('views', ['jquery'], function($){
 
     Coccyx.views = {
         extend: extend,
-        remove: remove,
         domEventTopic: domEventTopic
     };
 
