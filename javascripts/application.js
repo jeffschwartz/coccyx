@@ -21,19 +21,19 @@ define('application', ['jquery'], function($){
             // An array of hashes.
             arguments[0].forEach(function(controller){
                 loadRoutesFromController(controller);
-                wireEvents(controller);//0.6.0
+                wireModelPropertyChangeEvents(controller);//0.6.0
                 callInit(controller); //0.4.0
             });
         }else{
             // A single hash.
             loadRoutesFromController(arguments[0]);
-            wireEvents(arguments[0]);//0.6.0
+            wireModelPropertyChangeEvents(arguments[0]);//0.6.0
             callInit(arguments[0]); //0.4.0
         }
     }
 
     //0.6.0 Auto wires controller events.
-    function wireEvents(controller){
+    function wireModelPropertyChangeEvents(controller){
         //0.6.0 Wires controller to receive model property changed
         //events if the controller defines a function called
         //modelPropertyChangedEventHandler. The function will be called
