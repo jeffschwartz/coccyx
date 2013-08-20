@@ -26,7 +26,9 @@ define('views', ['jquery'], function($){
         // Create a new object using the view object as its prototype.
         var obj1 =  Coccyx.helpers.extend(Object.create(proto), viewObject);
         var obj2 = Object.create(obj1);
-        obj2.$domTarget = viewObject.hasOwnProperty('domTarget') ? $(viewObject.domTarget) : undefined;
+        //Default domTarget to div if not defined.
+        obj2.domTarget = viewObject.hasOwnProperty('domTarget') ? viewObject.domTarget : document.createElement('div');
+        obj2.$domTarget = $(obj2.domTarget);
         if(domEventsHash){
             obj2.namespace = '.' + Date.now().toString();
             wireDomEvents(typeof domEventsHash === 'function' ? domEventsHash() : domEventsHash, obj2.$domTarget, obj2.namespace);
