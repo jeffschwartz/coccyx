@@ -26,33 +26,14 @@
             // An array of hashes.
             arguments[0].forEach(function(controller){
                 loadRoutesFromController(controller);
-                // wireModelPropertyChangeEvents(controller);//0.6.0
                 callInit(controller); //0.4.0
             });
         }else{
             // A single hash.
             loadRoutesFromController(arguments[0]);
-            // wireModelPropertyChangeEvents(arguments[0]);//0.6.0
             callInit(arguments[0]); //0.4.0
         }
     }
-
-    // //0.6.0 Auto wires controller events.
-    // function wireModelPropertyChangeEvents(controller){
-    //     //0.6.0 Wires controller to receive model property changed
-    //     //events if the controller defines a function called
-    //     //modelPropertyChangedEventHandler. The function will be called
-    //     //using the context of the controller in which it is defined.
-    //     //The token id returned from calling Coccyx.pubsub.subscribe()
-    //     //is saved as a property of the callback function and is named
-    //     //modelPropertyChangedEventHandlerTokenId.
-    //     if(controller.modelPropertyChangedEventHandler){
-    //         controller.modelPropertyChangedEventHandler.modelPropertyChangedEventHandlerTokenId =
-    //             Coccyx.pubsub.subscribe(Coccyx.models.propertyChangedEventTopic,
-    //                 controller.modelPropertyChangedEventHandler,
-    //                 {context: controller});
-    //     }
-    // }
 
     function loadRoutesFromController(controller){
         var namedRoute;
@@ -482,6 +463,7 @@
 
 //TODO go through all comments. Insure they are relevant and insightful.
     var Coccyx = window.Coccyx = window.Coccyx || {},
+        eventerProto,
         proto;
 
     //Extend the application's collection object.
@@ -489,7 +471,7 @@
         // Create a new object using proto as its prototype and extend
         // that object with collectionObject if it was supplied.
         // 0.6.0 Added support for Coccyx.eventer.
-        var obj0 = Coccyx.helpers.extend(Object.create(Coccyx.eventer.proto), proto);
+        var obj0 = Coccyx.helpers.extend(Object.create(eventerProto), proto);
         var obj1 = collectionObject ? Coccyx.helpers.extend(obj0, collectionObject) : obj0;
         var obj2 = Object.create(obj1);
         obj2.isReadOnly = false;
@@ -689,6 +671,29 @@
         return models;
     }
 
+    //Eventer prototype properties...
+    eventerProto = {
+        eventObject: {},
+        //Attach a callback handler to a specific custom event or events
+        //fired from 'this' object optionally binding the callback to context.
+        handle: function handle(events, callback, context){
+            $(this.eventObject).on(events, context? $.proxy(callback, context) : callback);
+        },
+        //Like handle but will only fire the event one time and
+        //will ignore subsequent events.
+        handleOnce: function handleOnce(events, callback, context){
+            $(this.eventObject).one(events, context? $.proxy(callback, context) : callback);
+        },
+        //Removes the handler.
+        removeHandler: function removeHandler(events, callback){
+            $(this.eventObject).off(events, callback);
+        },
+        //Fire an event for object optionally passing args if provide.
+        emitEvent: function emitEvent(events, args){
+            $(this.eventObject).trigger(events, args);
+        }
+    };
+
     //Collection prototype properties...
     proto = {
         /* Internal model property change event handler */
@@ -713,6 +718,7 @@
         pop: function pop(){
             var m = this.coll.pop();
             this.length = this.coll.length;
+            this.emitEvent(Coccyx.collections.removeEvent);
             return m;
         },
         //Push [models] onto the collection' data property
@@ -720,6 +726,7 @@
         push: function push(models){
             addModels(this, models);
             this.length = this.coll.length;
+            this.emitEvent(Coccyx.collections.addEvent);
             return this.length;
         },
         reverse: function reverse(){
@@ -728,6 +735,7 @@
         shift: function shift(){
             var m = this.coll.shift();
             this.length = this.coll.length;
+            this.emitEvent(Coccyx.collections.removeEvent);
             return m;
         },
         //Works the same as Array.sort(function(a,b){...})
@@ -735,6 +743,7 @@
             this.coll.sort(function(a, b){
                 return callback(a, b);
             });
+            this.emitEvent(Coccyx.collections.sortEvent);
         },
         //Adds and optionally removes models. Takes new
         //[modlels] starting with the 3rd parameter.
@@ -744,6 +753,12 @@
             a = a.concat(aa);
             var m = [].splice.apply(this.coll, a);
             this.length = this.coll.length;
+            if(arguments.length === 3){
+                this.emitEvent(Coccyx.collections.addEvent);
+            }
+            if(howMany !== 0){
+                this.emitEvent(Coccyx.collections.removeEvent);
+            }
             return m;
         },
         //Adds one or more models to the beginning of an array and returns
@@ -753,6 +768,7 @@
         unshift: function unshift(){
             var m = [].unshift.apply(this.coll, argsToModels(this, arguments));
             this.length = this.coll.length;
+            this.emitEvent(Coccyx.collections.addEvent);
             return m;
         },
 
@@ -827,16 +843,35 @@
         },
         //Removes all models from the collection whose data
         //properties matches those of matchingPropertiesHash.
+        //Any models removed from their collection will also
+        //have their property changed event handlers removed.
+        //Removing models causes a remove event to be fired,
+        //and the removed models are passed along as the 2nd
+        //argument to the event handler's callback function.
         remove: function remove(matchingPropertiesHash){
-            var newColl;
-            if(isArrayOrNotObject(matchingPropertiesHash)){
+            var newColl,
+                removed = [],
+                self = this;
+            if(this.length === 0 || isArrayOrNotObject(matchingPropertiesHash)){
                 return;
             }
             newColl = this.coll.filter(function(el){
-                return !isMatch(el.data, matchingPropertiesHash);
+                if(isMatch(el.data, matchingPropertiesHash)){
+                    removed.push(el);
+                    return false;
+                }
+                return true;
             });
-            this.coll = newColl.length !== this.coll.length ? newColl : this.coll;
-            this.length = this.coll.length;
+            if(removed.length){
+                removed.forEach(function(el){
+                    el.removeHandler(Coccyx.models.propertyChangedEventTopic,
+                        self.modelPropertyChangedHandler);
+                });
+                this.coll = newColl;
+                this.length = this.coll.length;
+                this.emitEvent(Coccyx.collections.removeEvent);
+            }
+            return removed;
         },
         //Returns true if the coll has at least one model whose
         //data properties matches those of matchingPropertiesHash.
@@ -871,7 +906,10 @@
 
     Coccyx.collections = {
         extend: extend,
-        toRaw: toRaw
+        toRaw: toRaw,
+        addEvent: 'COLLECTION_MODEL_ADDED_EVENT',
+        removeEvent: 'COLLECTION_MODEL_REMOVED_EVENT',
+        sortEvent: 'COLLECTION_SORTED_EVENT'
     };
 
 });
