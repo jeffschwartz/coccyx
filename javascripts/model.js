@@ -16,13 +16,13 @@ define('models', [], function(){
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
         deepCopy = Coccyx.helpers.deepCopy,
-        modelPropertyChangedEventTopic = 'MODEL_PROPERTY_CHANGED_EVENT',
+        propertyChangedEventTopic = 'MODEL_PROPERTY_CHANGED_EVENT',
         proto;
 
     //0.6.0
-    //Publishes MODEL_PROPERTY_CHAGED_EVENT event via Coccyx.pubsub.
+    //Publishes MODEL_PROPERTY_CHAGED_EVENT event via Coccyx.eventer.
     function publishPropertyChangeEvent(model, propertyPath, value){
-        Coccyx.pubsub.publish(modelPropertyChangedEventTopic, {propertyPath: propertyPath, value: value, model: model});
+        model.emitEvent(propertyChangedEventTopic, {propertyPath: propertyPath, value: value, model: model});
     }
 
     //0.6.0
@@ -59,7 +59,9 @@ define('models', [], function(){
     function extend(modelObject){
         // Create a new object using proto as its prototype and
         // extend that object with modelObject if it was supplied.
-        var obj1 =  modelObject ? Coccyx.helpers.extend(Object.create(proto), modelObject) : proto;
+        // 0.6.0 Added support for Coccyx.eventer.
+        var obj0 = Coccyx.helpers.extend(Object.create(Coccyx.eventer.proto), proto);
+        var obj1 =  modelObject ? Coccyx.helpers.extend(obj0, modelObject) : obj0;
         var obj2 = Object.create(obj1);
         // Decorate the new object with additional properties.
         obj2.isSet = false;
@@ -148,11 +150,13 @@ define('models', [], function(){
                     findAndSetProperty(this.data, propertyPath, val);
                     this.changedData[propertyPath] = deepCopy(val);
                     this.isDirty = true;
+                    // //0.6.0
+                    // //Named models publish change events.
+                    // if(this.modelName){
+                    //     publishPropertyChangeEvent(this, propertyPath, val);
+                    // }
                     //0.6.0
-                    //Named models publish change events.
-                    if(this.modelName){
-                        publishPropertyChangeEvent(this, propertyPath, val);
-                    }
+                    publishPropertyChangeEvent(this, propertyPath, val);
                 }else{
                     console.log('Warning! Coccyx.model::setProperty called on read only model.');
                 }
@@ -166,18 +170,19 @@ define('models', [], function(){
        //Returns stringified model's data hash.
        toJSON: function(){
             return JSON.stringify(this.data);
-       },
-       //0.6.0
-       //Returns this model's name. A model's name along with when publishing model state change events.
-       //
-       getModelName: function(){
-            return this.modelName;
        }
+       // ,
+       // //0.6.0
+       // //Returns this model's name. A model's name along with when publishing model state change events.
+       // //
+       // getModelName: function(){
+       //      return this.modelName;
+       // }
     };
 
     Coccyx.models = {
         extend: extend,
-        propertyChangedEventTopic: modelPropertyChangedEventTopic
+        propertyChangedEventTopic: propertyChangedEventTopic
     };
 
 });
