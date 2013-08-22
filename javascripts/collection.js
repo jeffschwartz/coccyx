@@ -9,7 +9,9 @@ define('collections', [], function(){
     function extend(collectionObject){
         // Create a new object using proto as its prototype and extend
         // that object with collectionObject if it was supplied.
-        var obj1 = collectionObject ? Coccyx.helpers.extend(Object.create(proto), collectionObject) : proto;
+        // 0.6.0 Added support for Coccyx.eventer.
+        var obj0 = Coccyx.helpers.extend(Object.create(Coccyx.eventer.proto), proto);
+        var obj1 = collectionObject ? Coccyx.helpers.extend(obj0, collectionObject) : obj0;
         var obj2 = Object.create(obj1);
         obj2.isReadOnly = false;
         obj2.coll = [];
@@ -171,37 +173,58 @@ define('collections', [], function(){
         }
     }
 
+    //0.6.0
+    //Wire the model's property change event to be handled by this collection.
+    function wireModelPropertyChangedHandler(collObject, model){
+        model.handle(Coccyx.models.propertyChangedEventTopic,
+            collObject.modelPropertyChangedHandler, collObject);
+        return model;
+    }
+
     //Pushes [models] onto the collection. [models] can
     //be either models or raw data. If [models] is raw data,
     //the raw data will be turned into models first before
     //being pushed into the collection.
-    function addModels(coll, models){
+    //Beginning with 0.6.0, collections proxy their models'
+    //property change events.
+    //0.5.0/0.6.0
+    function addModels(collObject, models){
         if(Array.isArray(models)){
             models.forEach(function(model){
-                coll.push(isAModel(model) ? model : makeModelFromRaw(model));
+                collObject.coll.push(wireModelPropertyChangedHandler(collObject,
+                    isAModel(model) ? model : makeModelFromRaw(model)));
             });
         }else{
-            coll.push(isAModel(models) ? models : makeModelFromRaw(models));
+            collObject.coll.push(wireModelPropertyChangedHandler(collObject,
+                isAModel(models) ? models : makeModelFromRaw(models)));
         }
     }
 
     //Calls iterate on args to generate and array of models.
-    function argsToModels(args){
+    function argsToModels(collObject, args){
         var models = [];
         iterate(args, function(arg){
-            models.push(isAModel(arg) ? arg : makeModelFromRaw(arg));
+            var m = isAModel(arg) ? arg : makeModelFromRaw(arg);
+            models.push(wireModelPropertyChangedHandler(collObject, m));
         });
         return models;
     }
 
     //Collection prototype properties...
     proto = {
+        /* Internal model property change event handler */
+
+        //0.6.0
+        modelPropertyChangedHandler: function modelPropertyChangedHandler(event, data){
+            this.emitEvent(event, data);
+        },
+
         /* Mutators */
 
         //Sets the collection's data property to [models].
         setModels: function setModels(models, options){
             this.coll = [];
-            addModels(this.coll, models);
+            addModels(this, models);
             this.isReadOnly = options && options.readOnly;
             this.length = this.coll.length;
             return this;
@@ -216,7 +239,7 @@ define('collections', [], function(){
         //Push [models] onto the collection' data property
         //and returns the length of the collection.
         push: function push(models){
-            addModels(this.coll, models);
+            addModels(this, models);
             this.length = this.coll.length;
             return this.length;
         },
@@ -238,7 +261,7 @@ define('collections', [], function(){
         //[modlels] starting with the 3rd parameter.
         splice: function splice(index, howMany){
             var a =[index, howMany],
-                aa = argsToModels([].slice.call(arguments, 2));
+                aa = argsToModels(this, [].slice.call(arguments, 2));
             a = a.concat(aa);
             var m = [].splice.apply(this.coll, a);
             this.length = this.coll.length;
@@ -249,7 +272,7 @@ define('collections', [], function(){
         //models, they will be converted to models first, and then added
         //to the collection.
         unshift: function unshift(){
-            var m = [].unshift.apply(this.coll, argsToModels(arguments));
+            var m = [].unshift.apply(this.coll, argsToModels(this, arguments));
             this.length = this.coll.length;
             return m;
         },
