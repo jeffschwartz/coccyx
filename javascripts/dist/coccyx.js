@@ -1048,14 +1048,47 @@
         }
     }
 
+    //0.6.0
+    //Every view must have a domTarget property, which is used to render the view.
+    //Views can be rendered in 1 of 2 ways, either "detached" or "attached" to the DOM.
+    //To render as detached, provide either a tagName property ('div', 'section', 'article',
+    //'span', etc.) and a domTargetAttrs property (a hash, that can contain an id property, a class
+    //property and other element attributes as properties), or set the domTarget property (either
+    //a string, whose value would be appropriate for calling document.createElement(domTarget),
+    //or a callback to a function that returns a string appropriate for calling
+    //document.createElement(domTarget)) yourself, or omit domTarget and domTargetAttrs altogether
+    //and a default domTarget will be provided for you, which will be a plain "<div>" element.
+    //To render as attached, set $domTarget to a valid jquery object and domTarget will be created
+    //for you from $domTarget.
+    function setTarget(){
+        /*jshint validthis:true*/
+        if(this.$domTarget && this.$domTarget instanceof Coccyx.$){
+            //Use $domTarget.
+            this.domTarget = this.$domTarget[0];
+        }else if(this.domTarget){
+            //Use domTarget.
+            this.domTarget = document.createElement(typeof this.domTarget === 'string' ? this.domTarget : this.domTarget());
+            this.$domTarget = Coccyx.$(this.domTarget);
+        }else if(this.domTargetAttrs){
+            //Use domTargetAttrs.
+            this.$domTarget = Coccyx.$(document.createElement(this.tagName ?
+               this.tagName : 'div')).attr(this.domTargetAttrs);
+            this.domTarget = this.$domTarget[0];
+        }else{
+            //Default to 'div'.
+            this.domTarget = document.createElement('div');
+            this.$domTarget = Coccyx.$(this.domTarget);
+        }
+    }
+
     //0.5.0, 0.6.0
     function extend(viewObject, domEventsHash){
         // Create a new object using the view object as its prototype.
         var obj1 =  Coccyx.helpers.extend(Object.create(proto), viewObject);
         var obj2 = Object.create(obj1);
-        //Default domTarget to div if not defined.
-        obj2.domTarget = viewObject.hasOwnProperty('domTarget') ? viewObject.domTarget : document.createElement('div');
-        obj2.$domTarget = $(obj2.domTarget);
+        //0.6.0 Set domTarget && $domTarget
+        setTarget.call(obj2);
+        //0.6.0 Wire up events, if any are declared.
         if(domEventsHash){
             obj2.namespace = '.' + Date.now().toString();
             wireDomEvents(typeof domEventsHash === 'function' ? domEventsHash() : domEventsHash, obj2.$domTarget, obj2.namespace);

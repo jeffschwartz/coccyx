@@ -35,23 +35,20 @@ define('views', ['jquery'], function($){
     //for you from $domTarget.
     function setTarget(){
         /*jshint validthis:true*/
-        var tmp;
         if(this.$domTarget && this.$domTarget instanceof Coccyx.$){
-            //Use $domTarget to create domTarget if $domTarget is provided.
+            //Use $domTarget.
             this.domTarget = this.$domTarget[0];
         }else if(this.domTarget){
-            //Was domTarget provided as a string value?
-            if(typeof this.domTarget === 'string'){
-                this.$domTarget = document.createElement(this.domTarget);
-            }
-            //Was domTarget provided as a callback?
-            if(typeof this.domTarget === 'function'){
-                this.$domTarget = this.domTarget();
-            }
+            //Use domTarget.
+            this.domTarget = document.createElement(typeof this.domTarget === 'string' ? this.domTarget : this.domTarget());
+            this.$domTarget = Coccyx.$(this.domTarget);
         }else if(this.domTargetAttrs){
-            tmp = this.tagName ? '<' + this.tagName + '>' : '<div>';
-            this.$domTarget = Coccyx.$(tmp).attr(this.domTargetAttrs);
+            //Use domTargetAttrs.
+            this.$domTarget = Coccyx.$(document.createElement(this.tagName ?
+               this.tagName : 'div')).attr(this.domTargetAttrs);
+            this.domTarget = this.$domTarget[0];
         }else{
+            //Default to 'div'.
             this.domTarget = document.createElement('div');
             this.$domTarget = Coccyx.$(this.domTarget);
         }
