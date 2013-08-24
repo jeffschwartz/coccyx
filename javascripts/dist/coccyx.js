@@ -172,7 +172,8 @@
     $(document).on('click', 'a', function(event){
         if($(this).attr('href').indexOf('/') === 0){
             event.preventDefault();
-            var pathName = event.target.pathname;
+            //0.6.0 changed target to currentTarget
+            var pathName = event.currentTarget.pathname;
             // console.log('The url's path = ', ''' + pathName+''');
             // console.log(event);
             // The 'verb' for routes on anchors is always 'get'.
