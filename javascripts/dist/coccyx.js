@@ -172,13 +172,14 @@
     $(document).on('click', 'a', function(event){
         if($(this).attr('href').indexOf('/') === 0){
             event.preventDefault();
-            //0.6.0 changed target to currentTarget
+            //0.6.0 changed target to currentTarget.
             var pathName = event.currentTarget.pathname;
             // console.log('The url's path = ', ''' + pathName+''');
             // console.log(event);
             // The 'verb' for routes on anchors is always 'get'.
             Coccyx.router.route('get', pathName);
-            history.pushState({verb: 'get'}, null, event.target.href);
+            //0.6.0 changed target to currentTarget.
+            history.pushState({verb: 'get'}, null, event.currentTarget.href);
         }
     });
 
