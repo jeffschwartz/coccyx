@@ -21,12 +21,10 @@ define('application', ['jquery'], function($){
             // An array of hashes.
             arguments[0].forEach(function(controller){
                 loadRoutesFromController(controller);
-                callInit(controller); //0.4.0
             });
         }else{
             // A single hash.
             loadRoutesFromController(arguments[0]);
-            callInit(arguments[0]); //0.4.0
         }
     }
 
@@ -51,14 +49,6 @@ define('application', ['jquery'], function($){
                 routes[namedRoute] = [controller.name,controller.routes[route]];
                 console.log('Registering route \'' + namedRoute + '\'');
             }
-        }
-    }
-
-    // 0.4.0
-    function callInit(controller){
-        // init is optional so check if the controller has it first!
-        if(controller.hasOwnProperty('init')){
-           controller.init();
         }
     }
 
