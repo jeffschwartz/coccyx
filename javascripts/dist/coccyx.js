@@ -26,12 +26,10 @@
             // An array of hashes.
             arguments[0].forEach(function(controller){
                 loadRoutesFromController(controller);
-                callInit(controller); //0.4.0
             });
         }else{
             // A single hash.
             loadRoutesFromController(arguments[0]);
-            callInit(arguments[0]); //0.4.0
         }
     }
 
@@ -56,14 +54,6 @@
                 routes[namedRoute] = [controller.name,controller.routes[route]];
                 console.log('Registering route \'' + namedRoute + '\'');
             }
-        }
-    }
-
-    // 0.4.0
-    function callInit(controller){
-        // init is optional so check if the controller has it first!
-        if(controller.hasOwnProperty('init')){
-           controller.init();
         }
     }
 
@@ -916,7 +906,7 @@
 
 });
 
-;define('router', ['jquery'], function($) {
+;define('router', [], function() {
     'use strict';
 
     /**
@@ -1005,20 +995,27 @@
     }
 
     function routeFound(route, valuesHash){
+        //0.6.0 Prior versions called controller.init() when the controller is loaded.
+        //Starting with 0.6.0, controller.init() is only called when routing is called
+        //to one of their route callbacks. This eliminates unnecessary initialization
+        //if the controller is never used.
+        var controller = Coccyx.controllers.getController(route.controllerName);
+        if(controller.hasOwnProperty('init') && !controller.hasOwnProperty('initCalled')){
+            controller.init();
+            controller.initCalled = true;
+        }
         // Route callbacks are bound (their contexts (their 'this')) to their controllers.
         if(valuesHash){
-            route.fn.call(Coccyx.controllers.getController(route.controllerName), valuesHash);
+            route.fn.call(controller, valuesHash);
         }else if(route.params.length){
-            route.fn.apply(Coccyx.controllers.getController(route.controllerName), route.params);
+            route.fn.apply(controller, route.params);
         }else{
-            route.fn.call(Coccyx.controllers.getController(route.controllerName));
+            route.fn.call(controller);
         }
     }
 
     function routeNotFound(url){
         console.log('router::routeNotFound called with route = ' + url);
-        // Show a Coccyx 404 error.
-        $('body').html('<div style="font-size:68px;"><p style="margin:auto !important;line-height:80px;">Coccyx 404</p><p style="margin:auto !important;line-height:80px;">' + url + ' Not Found.</p><p style="margin:auto !important;line-height:80px;"> Did you forget to call Coccyx.controllers.registerController to register your controller?</p></div>');
     }
 
     Coccyx.router = {
