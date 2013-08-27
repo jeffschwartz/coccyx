@@ -17,7 +17,8 @@ define('models', [], function(){
     var Coccyx = window.Coccyx = window.Coccyx || {},
         deepCopy = Coccyx.helpers.deepCopy,
         propertyChangedEventTopic = 'MODEL_PROPERTY_CHANGED_EVENT',
-        proto;
+        proto,
+        syntheticId = -1; //0.6.0 Generates synthetic model ids.
 
     //0.6.0
     //Publishes MODEL_PROPERTY_CHAGED_EVENT event via Coccyx.eventer.
@@ -98,6 +99,14 @@ define('models', [], function(){
             this.isDirty = o.dirty;
             // Deep copy.
             this.data = deepCopy(dataHash);
+            //0.6.0 Every model has an id, either a synthetic one
+            //(see syntheticId, above) or one provided by its data and
+            //whose property is this.id.
+            if(this.id && this.data.hasOwnProperty(this.id)){
+                this.modelId = this.data[this.id];
+            }else{
+                this.modelId = syntheticId--;
+            }
             this.changedData = {};
             this.isSet = true;
             return true;
