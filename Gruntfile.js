@@ -18,6 +18,7 @@ module.exports = function ( grunt ) {
                     'javascripts/router.js',
                     'javascripts/views.js',
                     'javascripts/eventer.js',
+                    'javascripts/ajax.js',
                     'javascripts/pubsub.js',
                     'javascripts/amd.js'
                     ],
