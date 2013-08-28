@@ -784,6 +784,14 @@
         at: function(index){
             return this.coll[index];
         },
+        //Find a model by its id and return it.
+        findById: function(id){
+            for(var i = 0; i < this.length; i++){
+                if(this.getAt(i).modelId === id){
+                    return this.getAt(i);
+                }
+            }
+        },
         //Note sure if concat makes sense on its own. Maybe provide
         //a higher level method to create a new collection using
         //this collection's models and additional models/raw data???
