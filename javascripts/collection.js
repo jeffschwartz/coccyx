@@ -314,17 +314,17 @@ define('collections', [], function(){
         /* Accessors */
 
         //Returns an array of the deep copied data of all models in the collection
-        getData: function(){
+        getData: function getData(){
             return this.map(function(model){
                 return model.getData();
             });
         },
         //Works like array[i].
-        at: function(index){
+        at: function at(index){
             return this.coll[index];
         },
         //Find a model by its id and return it.
-        findById: function(id){
+        findById: function findById(id){
             for(var i = 0; i < this.length; i++){
                 if(this.at(i).modelId === id){
                     return this.at(i);
@@ -341,7 +341,7 @@ define('collections', [], function(){
         //     return [].concat.apply(this.coll, argsToModels(arguments));
         // },
         //Returns a copy of a portion of the models in the collection.
-        slice: function(){
+        slice: function slice(){
             var self = this;
             return [].slice.apply(this.coll, arguments).map(function(model){
                 return makeModelFromRaw(model.getData(), self.modelsIdPropertyName, self.modelsEndPoint);
@@ -365,17 +365,17 @@ define('collections', [], function(){
         },
         //Tests whether some model in the collection passes the
         //test implemented by the provided callback.
-        some: function(/*callback, context*/){
+        some: function some(/*callback, context*/){
             return [].some.apply(this.coll, [].slice.call(arguments, 0));
         },
         //Returns an array containing all the models that pass
         //the test implemented by the provided callback.
-        filter: function(/*callback, context*/){
+        filter: function filter(/*callback, context*/){
             return [].filter.apply(this.coll, [].slice.call(arguments, 0));
         },
         //Creates a new array with the results of calling a
         //provided function on every model in the collection.
-        map: function(/*callback, context*/){
+        map: function map(/*callback, context*/){
             return [].map.apply(this.coll, [].slice.call(arguments, 0));
         },
 

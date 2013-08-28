@@ -171,12 +171,19 @@ define('models', [], function(){
             // For chaining.
             return this;
        },
+       //0.6.0 Delete a property from this.data.
+       deleteProperty: function deleteProperty(propertyName){
+            if(this.data.hasOwnProperty(propertyName)){
+                delete this.data.propertyName;
+                this.isDirty = true;
+            }
+       },
        //0.6.0 Returns true if model is new, false otherwise.
-       isNew: function(){
+       isNew: function isNew(){
             return (typeof this.data[this.idPropertyName] === 'undefined');
        },
        //0.6.0 Returns stringified model's data hash.
-       toJSON: function(){
+       toJSON: function toJSON(){
             return JSON.stringify(this.data);
        }
     };
