@@ -283,17 +283,14 @@
         proto,
         syntheticId = -1; //0.6.0 Generates synthetic model ids.
 
-    //0.6.0
-    //Publishes MODEL_PROPERTY_CHAGED_EVENT event via Coccyx.eventer.
+    //0.6.0 Publishes MODEL_PROPERTY_CHAGED_EVENT event via Coccyx.eventer.
     function publishPropertyChangeEvent(model, propertyPath, value){
         model.emitEvent(propertyChangedEventTopic, {propertyPath: propertyPath, value: value, model: model});
     }
 
-    //0.6.0
-    //Return the property reachable through the property path or undefined.
+    //0.6.0 Return the property reachable through the property path or undefined.
     function findProperty(obj, propertyPath){
-        //0.6.0
-        //Return false if obj is an array or not an object.
+        //0.6.0 Return false if obj is an array or not an object.
         if(Array.isArray(obj) || typeof obj !== 'object'){
             return;
         }
@@ -305,8 +302,8 @@
         return findProperty(obj[a[0]], a.slice(1).join('.'));
     }
 
-    //0.6.0
-    //Sets the property reachable through the property path, creating it first if necessary, with a deep copy of val.
+    //0.6.0 Sets the property reachable through the property path,
+    //creating it first if necessary, with a deep copy of val.
     function findAndSetProperty(obj, propertyPath, val){
         var a = propertyPath.split('.');
         if(a.length === 1){
@@ -362,7 +359,7 @@
             this.isDirty = o.dirty;
             // Deep copy.
             this.data = deepCopy(dataHash);
-            //0.6.0 Every model has an id, either a synthetic one
+            //0.6.0 Every model has a modelId property, either a synthetic one
             //(see syntheticId, above) or one provided by its data and
             //whose property is this.id.
             if(this.id && this.data.hasOwnProperty(this.id)){
@@ -437,18 +434,14 @@
             // For chaining.
             return this;
        },
-       //0.6.0
-       //Returns stringified model's data hash.
+       //0.6.0 Returns true if model is new, false otherwise.
+       isNew: function(){
+            return (typeof this.data[this.id] === 'undefined');
+       },
+       //0.6.0 Returns stringified model's data hash.
        toJSON: function(){
             return JSON.stringify(this.data);
        }
-       // ,
-       // //0.6.0
-       // //Returns this model's name. A model's name along with when publishing model state change events.
-       // //
-       // getModelName: function(){
-       //      return this.modelName;
-       // }
     };
 
     Coccyx.models = {
