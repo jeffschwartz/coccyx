@@ -467,6 +467,8 @@ define('collections', [], function(){
         var obj1 = collObj ? Coccyx.helpers.extend(obj0, collObj) : obj0;
         //Collections have to know what their models' id property names are. Defaults to 'id', unless provided.
         obj1.modelsIdPropertyName = typeof obj1.modelsIdPropertyName === 'undefined' ? 'id' : obj1.modelsIdPropertyName;
+        //Collections have to know what their models' endPoints are. Defaults to '/', unless provided.
+        obj1.modelsEndPoint = typeof obj1.modelsEndPoint === 'undefined' ? '/' : obj1.modelsEndPoint;
         var obj2 = Object.create(obj1);
         obj2.isReadOnly = false;
         obj2.coll = [];
@@ -604,8 +606,8 @@ define('collections', [], function(){
     }
 
     //Makes a model from raw data and returns that model.
-    function makeModelFromRaw(raw, modelsIdPropertyName){
-        var model = Coccyx.models.extend({idPropertyName: modelsIdPropertyName});
+    function makeModelFromRaw(raw, modelsIdPropertyName, modelsEndPoint){
+        var model = Coccyx.models.extend({idPropertyName: modelsIdPropertyName, endPoint: modelsEndPoint});
         model.setData(raw);
         return model;
     }
@@ -644,11 +646,11 @@ define('collections', [], function(){
         if(Array.isArray(models)){
             models.forEach(function(model){
                 collObject.coll.push(wireModelPropertyChangedHandler(collObject,
-                    isAModel(model) ? model : makeModelFromRaw(model, collObject.modelsIdPropertyName)));
+                    isAModel(model) ? model : makeModelFromRaw(model, collObject.modelsIdPropertyName, collObject.modelsEndPoint)));
             });
         }else{
             collObject.coll.push(wireModelPropertyChangedHandler(collObject,
-                isAModel(models) ? models : makeModelFromRaw(models, collObject.modelsIdPropertyName)));
+                isAModel(models) ? models : makeModelFromRaw(models, collObject.modelsIdPropertyName, collObject.modelsEndPoint)));
         }
     }
 
@@ -656,7 +658,7 @@ define('collections', [], function(){
     function argsToModels(collObject, args){
         var models = [];
         iterate(args, function(arg){
-            var m = isAModel(arg) ? arg : makeModelFromRaw(arg, collObject.modelsIdPropertyName);
+            var m = isAModel(arg) ? arg : makeModelFromRaw(arg, collObject.modelsIdPropertyName, collObject.modelsEndPoint);
             models.push(wireModelPropertyChangedHandler(collObject, m));
         });
         return models;
@@ -795,7 +797,7 @@ define('collections', [], function(){
         slice: function(){
             var self = this;
             return [].slice.apply(this.coll, arguments).map(function(model){
-                return makeModelFromRaw(model.getData(), self.modelsIdPropertyName );
+                return makeModelFromRaw(model.getData(), self.modelsIdPropertyName, self.modelsEndPoint);
             });
         },
 
