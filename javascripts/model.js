@@ -159,11 +159,10 @@ define('models', [], function(){
                     findAndSetProperty(this.data, propertyPath, val);
                     this.changedData[propertyPath] = deepCopy(val);
                     this.isDirty = true;
-                    // //0.6.0
-                    // //Named models publish change events.
-                    // if(this.modelName){
-                    //     publishPropertyChangeEvent(this, propertyPath, val);
-                    // }
+                    //0.6.0 Maintain id's state when setting properties on data.
+                    if(this.id && this.data.hasOwnProperty(this.id)){
+                        this.modelId = this.data[this.id];
+                    }
                     //0.6.0
                     publishPropertyChangeEvent(this, propertyPath, val);
                 }else{
