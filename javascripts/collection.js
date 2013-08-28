@@ -7,11 +7,13 @@ define('collections', [], function(){
         proto;
 
     //Extend the application's collection object.
-    function extend(collectionObject){
+    function extend(collObj){
         // Create a new object using proto as its prototype and extend
-        // that object with collectionObject if it was supplied.
+        // that object with collObj if it was supplied.
         var obj0 = Coccyx.helpers.extend(Object.create(eventerProto), proto);
-        var obj1 = collectionObject ? Coccyx.helpers.extend(obj0, collectionObject) : obj0;
+        var obj1 = collObj ? Coccyx.helpers.extend(obj0, collObj) : obj0;
+        //Collections have to know what their models' id property names are. Defaults to 'id', unless provided.
+        obj1.modelsIdPropertyName = typeof obj1.modelsIdPropertyName === 'undefined' ? 'id' : obj1.modelsIdPropertyName;
         var obj2 = Object.create(obj1);
         obj2.isReadOnly = false;
         obj2.coll = [];
@@ -149,8 +151,8 @@ define('collections', [], function(){
     }
 
     //Makes a model from raw data and returns that model.
-    function makeModelFromRaw(raw){
-        var model = Coccyx.models.extend();
+    function makeModelFromRaw(raw, modelsIdPropertyName){
+        var model = Coccyx.models.extend({idPropertyName: modelsIdPropertyName});
         model.setData(raw);
         return model;
     }
@@ -189,11 +191,11 @@ define('collections', [], function(){
         if(Array.isArray(models)){
             models.forEach(function(model){
                 collObject.coll.push(wireModelPropertyChangedHandler(collObject,
-                    isAModel(model) ? model : makeModelFromRaw(model)));
+                    isAModel(model) ? model : makeModelFromRaw(model, collObject.modelsIdPropertyName)));
             });
         }else{
             collObject.coll.push(wireModelPropertyChangedHandler(collObject,
-                isAModel(models) ? models : makeModelFromRaw(models)));
+                isAModel(models) ? models : makeModelFromRaw(models, collObject.modelsIdPropertyName)));
         }
     }
 
@@ -201,7 +203,7 @@ define('collections', [], function(){
     function argsToModels(collObject, args){
         var models = [];
         iterate(args, function(arg){
-            var m = isAModel(arg) ? arg : makeModelFromRaw(arg);
+            var m = isAModel(arg) ? arg : makeModelFromRaw(arg, collObject.modelsIdPropertyName);
             models.push(wireModelPropertyChangedHandler(collObject, m));
         });
         return models;
@@ -338,8 +340,9 @@ define('collections', [], function(){
         // },
         //Returns a copy of a portion of the models in the collection.
         slice: function(){
+            var self = this;
             return [].slice.apply(this.coll, arguments).map(function(model){
-                return makeModelFromRaw(model.getData());
+                return makeModelFromRaw(model.getData(), self.modelsIdPropertyName );
             });
         },
 
