@@ -322,8 +322,8 @@ define('collections', [], function(){
         //Find a model by its id and return it.
         findById: function(id){
             for(var i = 0; i < this.length; i++){
-                if(this.getAt(i).modelId === id){
-                    return this.getAt(i);
+                if(this.at(i).modelId === id){
+                    return this.at(i);
                 }
             }
         },
