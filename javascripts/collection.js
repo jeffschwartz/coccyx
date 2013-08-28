@@ -1,7 +1,7 @@
+//0.6.0
 define('collections', [], function(){
     'use strict';
 
-//TODO go through all comments. Insure they are relevant and insightful.
     var Coccyx = window.Coccyx = window.Coccyx || {},
         eventerProto,
         proto;
@@ -10,7 +10,6 @@ define('collections', [], function(){
     function extend(collectionObject){
         // Create a new object using proto as its prototype and extend
         // that object with collectionObject if it was supplied.
-        // 0.6.0 Added support for Coccyx.eventer.
         var obj0 = Coccyx.helpers.extend(Object.create(eventerProto), proto);
         var obj1 = collectionObject ? Coccyx.helpers.extend(obj0, collectionObject) : obj0;
         var obj2 = Object.create(obj1);
@@ -174,7 +173,6 @@ define('collections', [], function(){
         }
     }
 
-    //0.6.0
     //Wire the model's property change event to be handled by this collection.
     function wireModelPropertyChangedHandler(collObject, model){
         model.handle(Coccyx.models.propertyChangedEventTopic,
@@ -186,9 +184,7 @@ define('collections', [], function(){
     //be either models or raw data. If [models] is raw data,
     //the raw data will be turned into models first before
     //being pushed into the collection.
-    //Beginning with 0.6.0, collections proxy their models'
-    //property change events.
-    //0.5.0/0.6.0
+    //Collections proxy model property change events.
     function addModels(collObject, models){
         if(Array.isArray(models)){
             models.forEach(function(model){
@@ -238,7 +234,6 @@ define('collections', [], function(){
     proto = {
         /* Internal model property change event handler */
 
-        //0.6.0
         modelPropertyChangedHandler: function modelPropertyChangedHandler(event, data){
             this.emitEvent(event, data);
         },
