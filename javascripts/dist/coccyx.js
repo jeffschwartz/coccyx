@@ -437,7 +437,7 @@
        //0.6.0 Delete a property from this.data.
        deleteProperty: function deleteProperty(propertyName){
             if(this.data.hasOwnProperty(propertyName)){
-                delete this.data.propertyName;
+                delete this.data[propertyName];
                 this.isDirty = true;
             }
        },
