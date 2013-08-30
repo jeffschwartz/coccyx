@@ -7,20 +7,24 @@ define('ajax', ['jquery'], function($){
     //All methods return a Promise.
     Coccyx.ajax = {
         //http GET
-        ajaxGet: function(url, data){
-            return $.ajax({type: 'GET', url: url, data: data});
+        ajaxGet: function(settings){
+            settings.type = 'GET';
+            return $.ajax(settings);
         },
         //http POST
-        ajaxPost: function(url, data){
-            return $.ajax({type: 'POST', url: url, data: data});
+        ajaxPost: function(settings){
+            settings.type = 'POST';
+            return $.ajax(settings);
         },
         //http PUT
-        ajaxPut: function(url, data){
-            return $.ajax({type: 'PUT', url: url, data: data});
+        ajaxPut: function(settings){
+            settings.type = 'PUT';
+            return $.ajax(settings);
         },
         //http DELETE
-        ajaxDelete: function(url, data){
-            return $.ajax({type: 'DELETE', url: url, data: data});
+        ajaxDelete: function(settings){
+            settings.type = 'DELETE';
+            return $.ajax(settings);
         }
     };
 
