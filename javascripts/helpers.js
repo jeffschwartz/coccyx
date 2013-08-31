@@ -44,6 +44,8 @@ define('helpers', [], function(){
                     target[prop] = source[prop];
                 }
             }
+            //0.6.0 Return target.
+            return target;
         }
     };
 

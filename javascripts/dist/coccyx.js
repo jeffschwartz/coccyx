@@ -136,6 +136,8 @@
                     target[prop] = source[prop];
                 }
             }
+            //0.6.0 Return target.
+            return target;
         }
     };
 
@@ -280,6 +282,7 @@
     var Coccyx = window.Coccyx = window.Coccyx || {},
         deepCopy = Coccyx.helpers.deepCopy,
         ext = Coccyx.helpers.extend,
+        replace = Coccyx.helpers.replace,
         propertyChangedEventTopic = 'MODEL_PROPERTY_CHANGED_EVENT',
         proto,
         syntheticId = -1; //0.6.0 Generates synthetic model ids.
@@ -336,8 +339,8 @@
     }
 
     //0.6.0
-    function setAjaxSettings(modelObject, verb, settings){
-        settings = settings ? settings : {};
+    function setAjaxSettings(modelObject, verb){
+        var settings = {};
         settings.url = modelObject.endPoint;
         if(verb !== 'post'){
             settings.url += ('/' + modelObject.data[modelObject.idPropertyName]);
@@ -347,6 +350,13 @@
         }
         settings.dataType = modelObject.endPoint.charAt(0) === '/' ? 'json' : 'jsonp';
         return settings;
+    }
+
+    //0.6.0
+    function setAjaxOptions(options){
+        var defOpts = {rawJSON: false};
+        var opts = options ? options : {};
+        return replace(defOpts, opts);
     }
 
     // model prototype properties...
@@ -462,18 +472,19 @@
             return JSON.stringify(this.data);
         },
         //0.6.0 Ajax "GET".
-        ajaxGet: function ajaxGet(settings){
+        ajaxGet: function ajaxGet(options){
             var deferred = $.Deferred(),
                 self = this,
-                promise;
-            promise = Coccyx.ajax.ajaxGet(setAjaxSettings(this, 'get', settings));
+                promise,
+                opts = setAjaxOptions(options);
+            promise = Coccyx.ajax.ajaxGet(setAjaxSettings(this, 'get'));
             promise.done(function(json){
-                if(json){
+                if(json && !opts.rawJSON){
                     //Set this model's data.
                     self.setData(ext(self.getData(),json));
                 }
                 //Call promise.done.
-                deferred.resolve(self);
+                deferred.resolve(opts.rawJSON ? json : self);
             });
             promise.fail(function(jjqXHR, textStatus, errorThrown){
                 //Call promise.fail.
@@ -483,18 +494,19 @@
             return deferred.promise();
         },
         //0.6.0 Ajax "POST".
-        ajaxPost: function ajaxPost(settings){
+        ajaxPost: function ajaxPost(options){
             var deferred = $.Deferred(),
                 self = this,
-                promise;
-            promise = Coccyx.ajax.ajaxPost(setAjaxSettings(this, 'post', settings));
+                promise,
+                opts = setAjaxOptions(options);
+            promise = Coccyx.ajax.ajaxPost(setAjaxSettings(this, 'post'));
             promise.done(function(json){
-                if(json){
+                if(json && !opts.rawJSON){
                     //Set this model's data.
                     self.setData(ext(self.getData(),json));
                 }
                 //Call promise.done.
-                deferred.resolve(self);
+                deferred.resolve(opts.rawJSON ? json : self);
             });
             promise.fail(function(jjqXHR, textStatus, errorThrown){
                 //Call promise.fail.
@@ -504,18 +516,19 @@
             return deferred.promise();
         },
         //0.6.0 Ajax "PUT".
-        ajaxPut: function ajaxPut(settings){
+        ajaxPut: function ajaxPut(options){
             var deferred = $.Deferred(),
                 self = this,
-                promise;
-            promise = Coccyx.ajax.ajaxPut(setAjaxSettings(this, 'put', settings));
+                promise,
+                opts = setAjaxOptions(options);
+            promise = Coccyx.ajax.ajaxPut(setAjaxSettings(this, 'put'));
             promise.done(function(json){
-                if(json){
+                if(json && !opts.rawJSON){
                     //Set this model's data.
                     self.setData(ext(self.getData(),json));
                 }
                 //Call promise.done.
-                deferred.resolve(self);
+                deferred.resolve(opts.rawJSON ? json : self);
             });
             promise.fail(function(jjqXHR, textStatus, errorThrown){
                 //Call promise.fail.
@@ -525,18 +538,19 @@
             return deferred.promise();
         },
         //0.6.0 Ajax "DELETE".
-        ajaxDelete: function ajaxDelete(settings){
+        ajaxDelete: function ajaxDelete(options){
             var deferred = $.Deferred(),
                 self = this,
-                promise;
-            promise = Coccyx.ajax.ajaxDelete(setAjaxSettings(this, 'delete', settings));
+                promise,
+                opts = setAjaxOptions(options);
+            promise = Coccyx.ajax.ajaxDelete(setAjaxSettings(this, 'delete'));
             promise.done(function(json){
-                if(json){
+                if(json && !opts.rawJSON){
                     //Set this model's data.
                     self.setData(ext(self.getData(),json));
                 }
                 //Call promise.done.
-                deferred.resolve(self);
+                deferred.resolve(opts.rawJSON ? json : self);
             });
             promise.fail(function(jjqXHR, textStatus, errorThrown){
                 //Call promise.fail.
