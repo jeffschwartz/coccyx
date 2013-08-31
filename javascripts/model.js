@@ -71,6 +71,20 @@ define('models', ['jquery'], function($){
         return obj2;
     }
 
+    //0.6.0
+    function setAjaxSettings(modelObject, verb, settings){
+        settings = settings ? settings : {};
+        settings.url = modelObject.endPoint;
+        if(verb !== 'post'){
+            settings.url += ('/' + modelObject.data[modelObject.idPropertyName]);
+        }
+        if(verb !== 'get'){
+            settings.data = modelObject.getData();
+        }
+        settings.dataType = modelObject.endPoint.charAt(0) === '/' ? 'json' : 'jsonp';
+        return settings;
+    }
+
     // model prototype properties...
     proto = {
         setData: function setData (dataHash, options) {
@@ -188,9 +202,7 @@ define('models', ['jquery'], function($){
             var deferred = $.Deferred(),
                 self = this,
                 promise;
-            settings = settings ? settings : {};
-            settings.url = this.endPoint + '/' + this.data[this.idPropertyName];
-            promise = Coccyx.ajax.ajaxGet(settings);
+            promise = Coccyx.ajax.ajaxGet(setAjaxSettings(this, 'get', settings));
             promise.done(function(json){
                 //Set this model's data.
                 self.setData(json);
@@ -209,11 +221,7 @@ define('models', ['jquery'], function($){
             var deferred = $.Deferred(),
                 self = this,
                 promise;
-            settings = settings ? settings : {};
-            settings.url = this.endPoint;
-            settings.data = this.getData();
-            settings.dataType = 'json';
-            promise = Coccyx.ajax.ajaxPost(settings);
+            promise = Coccyx.ajax.ajaxPost(setAjaxSettings(this, 'post', settings));
             promise.done(function(json){
                 if(json){
                     //Set this model's data.
@@ -234,11 +242,7 @@ define('models', ['jquery'], function($){
             var deferred = $.Deferred(),
                 self = this,
                 promise;
-            settings = settings ? settings : {};
-            settings.url = this.endPoint + '/' + this.data[this.idPropertyName];
-            settings.data = this.getData();
-            settings.dataType = 'json';
-            promise = Coccyx.ajax.ajaxPut(settings);
+            promise = Coccyx.ajax.ajaxPut(setAjaxSettings(this, 'put', settings));
             promise.done(function(json){
                 //Set this model's data.
                 self.setData(json);
@@ -257,11 +261,7 @@ define('models', ['jquery'], function($){
             var deferred = $.Deferred(),
                 self = this,
                 promise;
-            settings = settings ? settings : {};
-            settings.url = this.endPoint + '/' + this.data[this.idPropertyName];
-            settings.data = this.getData();
-            settings.dataType = 'json';
-            promise = Coccyx.ajax.ajaxDelete(settings);
+            promise = Coccyx.ajax.ajaxDelete(setAjaxSettings(this, 'delete', settings));
             promise.done(function(json){
                 //Set this model's data.
                 self.setData(json);
