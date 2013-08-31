@@ -467,8 +467,10 @@
                 promise;
             promise = Coccyx.ajax.ajaxGet(setAjaxSettings(this, 'get', settings));
             promise.done(function(json){
-                //Set this model's data.
-                self.setData(json);
+                if(json){
+                    //Set this model's data.
+                    self.setData(json);
+                }
                 //Call promise.done.
                 deferred.resolve(self);
             });
@@ -507,8 +509,10 @@
                 promise;
             promise = Coccyx.ajax.ajaxPut(setAjaxSettings(this, 'put', settings));
             promise.done(function(json){
-                //Set this model's data.
-                self.setData(json);
+                if(json){
+                    //Set this model's data.
+                    self.setData(json);
+                }
                 //Call promise.done.
                 deferred.resolve(self);
             });
@@ -526,8 +530,10 @@
                 promise;
             promise = Coccyx.ajax.ajaxDelete(setAjaxSettings(this, 'delete', settings));
             promise.done(function(json){
-                //Set this model's data.
-                self.setData(json);
+                if(json){
+                    //Set this model's data.
+                    self.setData(json);
+                }
                 //Call promise.done.
                 deferred.resolve(self);
             });
