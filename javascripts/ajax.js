@@ -2,12 +2,12 @@ define('ajax', ['jquery'], function($){
     'use strict';
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
-        helpers = Coccyx.helpers,
+        extend = Coccyx.helpers.extend,
         defaultSettings = {cache: false, url: '/'};
 
         //Mege default setting with user's settings.
         function mergeSettings(settings){
-            return helpers.extend({}, defaultSettings, settings);
+            return extend({}, defaultSettings, settings);
         }
 
     //A simple promise-based wrapper around jQuery Ajax. All methods return a Promise.

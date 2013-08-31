@@ -1,4 +1,4 @@
-define('models', [], function(){
+define('models', ['jquery'], function($){
     'use strict';
 
     //TODO: rename set and get Property to something else!
@@ -96,14 +96,11 @@ define('models', [], function(){
             this.isDirty = o.dirty;
             // Deep copy.
             this.data = deepCopy(dataHash);
-            //0.6.0 Every model has a modelId property, either a synthetic one
-            //(see syntheticId, above) or one provided by its data and
-            //whose property name is this.idPropertyName.
-            if(this.idPropertyName && this.data.hasOwnProperty(this.idPropertyName)){
-                this.modelId = this.data[this.idPropertyName];
-            }else{
-                this.modelId = syntheticId--;
-            }
+            //0.6.0 Every model has an idPropetyName whose value is the name of data's id property.
+            this.idPropertyName = typeof this.idPropertyName === 'undefined' ? 'id' : this.idPropertyName;
+            //0.6.0 Every model has a modelId property, either a synthetic one (see syntheticId, above)
+            //or one provided by its data and whose property name is this.idPropertyName.
+            this.modelId = this.data.hasOwnProperty(this.idPropertyName) ? this.data[this.idPropertyName] : syntheticId--;
             this.changedData = {};
             this.isSet = true;
             return true;
@@ -157,7 +154,7 @@ define('models', [], function(){
                     this.changedData[propertyPath] = deepCopy(val);
                     this.isDirty = true;
                     //0.6.0 Maintain id's state when setting properties on data.
-                    if(this.idPropertyName && this.data.hasOwnProperty(this.idPropertyName)){
+                    if(this.data.hasOwnProperty(this.idPropertyName)){
                         this.modelId = this.data[this.idPropertyName];
                     }
                     //0.6.0
@@ -170,22 +167,114 @@ define('models', [], function(){
             }
             // For chaining.
             return this;
-       },
-       //0.6.0 Delete a property from this.data.
-       deleteProperty: function deleteProperty(propertyName){
+        },
+        //0.6.0 Delete a property from this.data.
+        deleteProperty: function deleteProperty(propertyName){
             if(this.data.hasOwnProperty(propertyName)){
                 delete this.data[propertyName];
                 this.isDirty = true;
             }
-       },
-       //0.6.0 Returns true if model is new, false otherwise.
-       isNew: function isNew(){
+        },
+        //0.6.0 Returns true if model is new, false otherwise.
+        isNew: function isNew(){
             return (typeof this.data[this.idPropertyName] === 'undefined');
-       },
-       //0.6.0 Returns stringified model's data hash.
-       toJSON: function toJSON(){
+        },
+        //0.6.0 Returns stringified model's data hash.
+        toJSON: function toJSON(){
             return JSON.stringify(this.data);
-       }
+        },
+        //0.6.0 Ajax "GET".
+        ajaxGet: function ajaxGet(settings){
+            var deferred = $.Deferred(),
+                self = this,
+                promise;
+            settings = settings ? settings : {};
+            settings.url = this.endPoint + '/' + this.data[this.idPropertyName];
+            promise = Coccyx.ajax.ajaxGet(settings);
+            promise.done(function(json){
+                //Set this model's data.
+                self.setData(json);
+                //Call promise.done.
+                deferred.resolve(self);
+            });
+            promise.fail(function(jjqXHR, textStatus, errorThrown){
+                //Call promise.fail.
+                deferred.reject(jjqXHR, textStatus, errorThrown);
+            });
+            //Return a promise.
+            return deferred.promise();
+        },
+        //0.6.0 Ajax "POST".
+        ajaxPost: function ajaxPost(settings){
+            var deferred = $.Deferred(),
+                self = this,
+                promise;
+            settings = settings ? settings : {};
+            settings.url = this.endPoint;
+            settings.data = this.getData();
+            settings.dataType = 'json';
+            promise = Coccyx.ajax.ajaxPost(settings);
+            promise.done(function(json){
+                if(json){
+                    //Set this model's data.
+                    self.setData(json);
+                }
+                //Call promise.done.
+                deferred.resolve(self);
+            });
+            promise.fail(function(jjqXHR, textStatus, errorThrown){
+                //Call promise.fail.
+                deferred.reject(jjqXHR, textStatus, errorThrown);
+            });
+            //Return a promise.
+            return deferred.promise();
+        },
+        //0.6.0 Ajax "PUT".
+        ajaxPut: function ajaxPut(settings){
+            var deferred = $.Deferred(),
+                self = this,
+                promise;
+            settings = settings ? settings : {};
+            settings.url = this.endPoint + '/' + this.data[this.idPropertyName];
+            settings.data = this.getData();
+            settings.dataType = 'json';
+            promise = Coccyx.ajax.ajaxPut(settings);
+            promise.done(function(json){
+                //Set this model's data.
+                self.setData(json);
+                //Call promise.done.
+                deferred.resolve(self);
+            });
+            promise.fail(function(jjqXHR, textStatus, errorThrown){
+                //Call promise.fail.
+                deferred.reject(jjqXHR, textStatus, errorThrown);
+            });
+            //Return a promise.
+            return deferred.promise();
+        },
+        //0.6.0 Ajax "DELETE".
+        ajaxDelete: function ajaxDelete(settings){
+            var deferred = $.Deferred(),
+                self = this,
+                promise;
+            settings = settings ? settings : {};
+            settings.url = this.endPoint + '/' + this.data[this.idPropertyName];
+            settings.data = this.getData();
+            settings.dataType = 'json';
+            promise = Coccyx.ajax.ajaxDelete(settings);
+            promise.done(function(json){
+                //Set this model's data.
+                self.setData(json);
+                //Call promise.done.
+                deferred.resolve(self);
+            });
+            promise.fail(function(jjqXHR, textStatus, errorThrown){
+                //Call promise.fail.
+                deferred.reject(jjqXHR, textStatus, errorThrown);
+            });
+            //Return a promise.
+            return deferred.promise();
+        }
     };
 
     Coccyx.models = {
