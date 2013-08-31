@@ -279,6 +279,7 @@
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
         deepCopy = Coccyx.helpers.deepCopy,
+        ext = Coccyx.helpers.extend,
         propertyChangedEventTopic = 'MODEL_PROPERTY_CHANGED_EVENT',
         proto,
         syntheticId = -1; //0.6.0 Generates synthetic model ids.
@@ -321,8 +322,8 @@
         // Create a new object using proto as its prototype and
         // extend that object with modelObject if it was supplied.
         // 0.6.0 Added support for Coccyx.eventer.
-        var obj0 = Coccyx.helpers.extend(Object.create(Coccyx.eventer.proto), proto);
-        var obj1 =  modelObject ? Coccyx.helpers.extend(obj0, modelObject) : obj0;
+        var obj0 = ext(Object.create(Coccyx.eventer.proto), proto);
+        var obj1 =  modelObject ? ext(obj0, modelObject) : obj0;
         var obj2 = Object.create(obj1);
         // Decorate the new object with additional properties.
         obj2.isSet = false;
@@ -469,7 +470,7 @@
             promise.done(function(json){
                 if(json){
                     //Set this model's data.
-                    self.setData(json);
+                    self.setData(ext(self.getData(),json));
                 }
                 //Call promise.done.
                 deferred.resolve(self);
@@ -490,7 +491,7 @@
             promise.done(function(json){
                 if(json){
                     //Set this model's data.
-                    self.setData(json);
+                    self.setData(ext(self.getData(),json));
                 }
                 //Call promise.done.
                 deferred.resolve(self);
@@ -511,7 +512,7 @@
             promise.done(function(json){
                 if(json){
                     //Set this model's data.
-                    self.setData(json);
+                    self.setData(ext(self.getData(),json));
                 }
                 //Call promise.done.
                 deferred.resolve(self);
@@ -532,7 +533,7 @@
             promise.done(function(json){
                 if(json){
                     //Set this model's data.
-                    self.setData(json);
+                    self.setData(ext(self.getData(),json));
                 }
                 //Call promise.done.
                 deferred.resolve(self);
