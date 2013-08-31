@@ -339,16 +339,17 @@
     }
 
     //0.6.0
-    function setAjaxSettings(modelObject, verb){
+    function setAjaxSettings(verb){
+        /*jshint validthis:true*/
         var settings = {};
-        settings.url = modelObject.endPoint;
+        settings.url = this.endPoint;
         if(verb !== 'post'){
-            settings.url += ('/' + modelObject.data[modelObject.idPropertyName]);
+            settings.url += ('/' + this.data[this.idPropertyName]);
         }
         if(verb !== 'get'){
-            settings.data = modelObject.getData();
+            settings.data = this.getData();
         }
-        settings.dataType = modelObject.endPoint.charAt(0) === '/' ? 'json' : 'jsonp';
+        settings.dataType = this.endPoint.charAt(0) === '/' ? 'json' : 'jsonp';
         return settings;
     }
 
@@ -357,6 +358,30 @@
         var defOpts = {rawJSON: false};
         var opts = options ? options : {};
         return replace(defOpts, opts);
+    }
+
+    //0.6.0 Does the heavy lifting
+    function ajax(op, opt, fn){
+        /*jshint validthis:true*/
+        var deferred = $.Deferred(),
+            self = this,
+            promise,
+            opts = setAjaxOptions(opt);
+        promise = fn(setAjaxSettings.call(this, op));
+        promise.done(function(json){
+            if(json && !opts.rawJSON){
+                //Set this model's data.
+                self.setData(ext(self.getData(),json));
+            }
+            //Call promise.done.
+            deferred.resolve(opts.rawJSON ? json : self);
+        });
+        promise.fail(function(jjqXHR, textStatus, errorThrown){
+            //Call promise.fail.
+            deferred.reject(jjqXHR, textStatus, errorThrown);
+        });
+        //Return a promise.
+        return deferred.promise();
     }
 
     // model prototype properties...
@@ -473,91 +498,19 @@
         },
         //0.6.0 Ajax "GET".
         ajaxGet: function ajaxGet(options){
-            var deferred = $.Deferred(),
-                self = this,
-                promise,
-                opts = setAjaxOptions(options);
-            promise = Coccyx.ajax.ajaxGet(setAjaxSettings(this, 'get'));
-            promise.done(function(json){
-                if(json && !opts.rawJSON){
-                    //Set this model's data.
-                    self.setData(ext(self.getData(),json));
-                }
-                //Call promise.done.
-                deferred.resolve(opts.rawJSON ? json : self);
-            });
-            promise.fail(function(jjqXHR, textStatus, errorThrown){
-                //Call promise.fail.
-                deferred.reject(jjqXHR, textStatus, errorThrown);
-            });
-            //Return a promise.
-            return deferred.promise();
+            return ajax.call(this, 'get', options, Coccyx.ajax.ajaxGet);
         },
         //0.6.0 Ajax "POST".
         ajaxPost: function ajaxPost(options){
-            var deferred = $.Deferred(),
-                self = this,
-                promise,
-                opts = setAjaxOptions(options);
-            promise = Coccyx.ajax.ajaxPost(setAjaxSettings(this, 'post'));
-            promise.done(function(json){
-                if(json && !opts.rawJSON){
-                    //Set this model's data.
-                    self.setData(ext(self.getData(),json));
-                }
-                //Call promise.done.
-                deferred.resolve(opts.rawJSON ? json : self);
-            });
-            promise.fail(function(jjqXHR, textStatus, errorThrown){
-                //Call promise.fail.
-                deferred.reject(jjqXHR, textStatus, errorThrown);
-            });
-            //Return a promise.
-            return deferred.promise();
+            return ajax.call(this, 'post', options, Coccyx.ajax.ajaxPost);
         },
         //0.6.0 Ajax "PUT".
         ajaxPut: function ajaxPut(options){
-            var deferred = $.Deferred(),
-                self = this,
-                promise,
-                opts = setAjaxOptions(options);
-            promise = Coccyx.ajax.ajaxPut(setAjaxSettings(this, 'put'));
-            promise.done(function(json){
-                if(json && !opts.rawJSON){
-                    //Set this model's data.
-                    self.setData(ext(self.getData(),json));
-                }
-                //Call promise.done.
-                deferred.resolve(opts.rawJSON ? json : self);
-            });
-            promise.fail(function(jjqXHR, textStatus, errorThrown){
-                //Call promise.fail.
-                deferred.reject(jjqXHR, textStatus, errorThrown);
-            });
-            //Return a promise.
-            return deferred.promise();
+            return ajax.call(this, 'put', options, Coccyx.ajax.ajaxPut);
         },
         //0.6.0 Ajax "DELETE".
         ajaxDelete: function ajaxDelete(options){
-            var deferred = $.Deferred(),
-                self = this,
-                promise,
-                opts = setAjaxOptions(options);
-            promise = Coccyx.ajax.ajaxDelete(setAjaxSettings(this, 'delete'));
-            promise.done(function(json){
-                if(json && !opts.rawJSON){
-                    //Set this model's data.
-                    self.setData(ext(self.getData(),json));
-                }
-                //Call promise.done.
-                deferred.resolve(opts.rawJSON ? json : self);
-            });
-            promise.fail(function(jjqXHR, textStatus, errorThrown){
-                //Call promise.fail.
-                deferred.reject(jjqXHR, textStatus, errorThrown);
-            });
-            //Return a promise.
-            return deferred.promise();
+            return ajax.call(this, 'delete', options, Coccyx.ajax.ajaxDelete);
         }
     };
 
