@@ -4,7 +4,7 @@ define('helpers', [], function(){
     var Coccyx = window.Coccyx = window.Coccyx || {};
 
     Coccyx.helpers = {
-        // Returns true if s1 contains s2, otherwise returns false.
+        //Returns true if s1 contains s2, otherwise returns false.
         contains: function(s1, s2){
             var i, len;
             if(typeof s1 === 'string'){
@@ -16,12 +16,11 @@ define('helpers', [], function(){
             }
             return false;
         },
-        // Returns a deep copy object o.
+        //Returns a deep copy object o.
         deepCopy: function(o){
             return JSON.parse(JSON.stringify(o));
         },
-        // Pass one or more objects as the source objects whose
-        // properties are to be copied to the target object.
+        //Pass one or more objects as the source objects whose properties are to be copied to the target object.
         extend: function(targetObj){
             var property,
                 i,
@@ -36,8 +35,7 @@ define('helpers', [], function(){
             }
             return targetObj;
         },
-        //For each matching property name, replaces
-        //target's value with source's value.
+        //For each matching property name, replaces target's value with source's value.
         replace: function(target, source){
             for(var prop in target){
                 if(target.hasOwnProperty(prop) && source.hasOwnProperty(prop)){

@@ -11,13 +11,11 @@ define('eventer', ['jquery'], function($){
         proto;
 
     proto = {
-        //Attach a callback handler to a specific custom event or events
-        //fired from 'this' object optionally binding the callback to context.
+        //Attach a callback handler to a specific custom event or events fired from 'this' object optionally binding the callback to context.
         handle: function handle(events, callback, context){
             $(this).on(events, context? $.proxy(callback, context) : callback);
         },
-        //Like handle but will only fire the event one time and
-        //will ignore subsequent events.
+        //Like handle but will only fire the event one time and will ignore subsequent events.
         handleOnce: function handleOnce(events, callback, context){
             $(this).one(events, context? $.proxy(callback, context) : callback);
         },

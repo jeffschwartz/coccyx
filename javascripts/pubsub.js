@@ -22,8 +22,7 @@ define('pubsub', [], function(){
         }
     }
 
-    //0.6.0 Returns a function which wraps
-    //subscribers callback in a setTimeout callback.
+    //0.6.0 Returns a function which wraps subscribers callback in a setTimeout callback.
     function genAsyncCallback(topic, callback){
         return function(topic, data){
             setTimeout(function(){
@@ -32,8 +31,7 @@ define('pubsub', [], function(){
         };
     }
 
-    //0.6.0 added async callback. if options.async is false
-    //then the callback will be done synchronously.
+    //0.6.0 added async callback. if options.async is false then the callback will be done synchronously.
     //0.6.0 options hash as optional 3rd argument.
     function subscribe(topic, handler/*, options*/){
         var token = generateToken();

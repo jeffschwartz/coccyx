@@ -5,10 +5,9 @@ define('models', ['jquery'], function($){
 
     /**
      * Model
-     * Warning!!!! Don't use primitive object wrappers, Date objects or functions as data
-     * property values. This is because model uses JSON.parse(JSON.stringify(data)) to
-     * perform a deep copy of your model data and JSON doesn't support primitive object
-     * wrappers, Date objects or functions.
+     * Warning!!!! Don't use primitive object wrappers, Date objects or functions as data property values.
+     * This is because model uses JSON.parse(JSON.stringify(data)) to perform a deep copy of your model
+     * data and JSON doesn't support primitive object wrappers, Date objects or functions.
      * (see https://developer.mozilla.org/en-US/docs/JSON for details)
      * Deep copying is necessary to isolate the originalValues and changedValues from
      * changes made in data. If you don't heed this warning bad things _will_ happen!!!
@@ -41,8 +40,7 @@ define('models', ['jquery'], function($){
         return findProperty(obj[a[0]], a.slice(1).join('.'));
     }
 
-    //0.6.0 Sets the property reachable through the property path,
-    //creating it first if necessary, with a deep copy of val.
+    //0.6.0 Sets the property reachable through the property path, creating it first if necessary, with a deep copy of val.
     function findAndSetProperty(obj, propertyPath, val){
         var a = propertyPath.split('.');
         if(a.length === 1){
@@ -57,13 +55,12 @@ define('models', ['jquery'], function($){
 
     //0.5.0
     function extend(modelObject){
-        // Create a new object using proto as its prototype and
-        // extend that object with modelObject if it was supplied.
-        // 0.6.0 Added support for Coccyx.eventer.
+        //Create a new object using proto as its prototype and extend that object with modelObject if it was supplied.
+        //0.6.0 Added support for Coccyx.eventer.
         var obj0 = ext(Object.create(Coccyx.eventer.proto), proto);
         var obj1 =  modelObject ? ext(obj0, modelObject) : obj0;
         var obj2 = Object.create(obj1);
-        // Decorate the new object with additional properties.
+        //Decorate the new object with additional properties.
         obj2.isSet = false;
         obj2.isReadOnly = false;
         obj2.isDirty = false;
@@ -119,30 +116,26 @@ define('models', ['jquery'], function($){
         return deferred.promise();
     }
 
-    // model prototype properties...
+    //model prototype properties...
     proto = {
         setData: function setData (dataHash, options) {
             var o = {empty:false, readOnly:false, dirty:false, validate: false};
-                // ,prop;
-            // Merge default options with passed in options.
+            //Merge default options with passed in options.
             if(options){
                 Coccyx.helpers.replace(o, options);
             }
-            // If options validate is true and there is a validate method and
-            // it returns false, sets valid to false and returns false.
-            // If options validate is true and there is a validate method and
-            // it returns true, sets valid to true and proceeds with setting data.
-            // If options validate is false or there isn't a validate method
-            // set valid to true.
+            //If options validate is true and there is a validate method and it returns false, sets valid to false and returns false.
+            //If options validate is true and there is a validate method and it returns true, sets valid to true and proceeds with setting data.
+            //If options validate is false or there isn't a validate method set valid to true.
             this.isValid = o.validate && this.validate ? this.validate(dataHash) : true;
             if(!this.isValid){
                 return false;
             }
-            // Deep copy.
+            //Deep copy.
             this.originalData = o.empty ? {} : deepCopy(dataHash);
             this.isReadOnly = o.readOnly;
             this.isDirty = o.dirty;
-            // Deep copy.
+            //Deep copy.
             this.data = deepCopy(dataHash);
             //0.6.0 Every model has an idPropetyName whose value is the name of data's id property.
             this.idPropertyName = typeof this.idPropertyName === 'undefined' ? 'id' : this.idPropertyName;
@@ -156,64 +149,52 @@ define('models', ['jquery'], function($){
         getData: function getData(){
             return deepCopy(this.data);
         },
-        // Returns deep copy of originalData
+        //Returns deep copy of originalData
         getOriginalData: function getOriginalData(){
             return deepCopy(this.originalData);
         },
-        // Returns deep copy of changedData
+        //Returns deep copy of changedData
         getChangedData: function getChangedData(){
             return deepCopy(this.changedData);
         },
-        // Returns the data property reachable through property path. If
-        // there is no property reachable through property path
-        // return undefined.
+        //Returns the data property reachable through property path. If there is no property reachable through property path
+        //return undefined.
         getProperty: function getProperty(propertyPath){
             var v = findProperty(this.data, propertyPath);
             return typeof v === 'object' ? deepCopy(v) : v;
         },
-        // Returns the originalData property reachable through property path. If
-        // there is no property reachable through property path
-        // return undefined.
+        //Returns the originalData property reachable through property path. If there is no property reachable through property path
+        //return undefined.
         getOriginalDataProperty: function getProperty(propertyPath){
             var v = findProperty(this.originalData, propertyPath);
             return typeof v === 'object' ? deepCopy(v) : v;
         },
-        // Returns the changedData property reachable through property path. If
-        // there is no property reachable through property path
-        // return undefined.
+        //Returns the changedData property reachable through property path. If there is no property reachable through property path
+        //return undefined.
         getChangedDataProperty: function getProperty(propertyPath){
             var v = findProperty(this.changedData, propertyPath);
             return typeof v === 'object' ? deepCopy(v) : v;
         },
-        //Sets a property on an object reachable through the property path.
-        //If the property doesn't exits, it will be created and then assigned
-        //its value (using a deep copy if typeof data === 'object'). Calling
-        //set with a nested object or property is therefore supported. For
-        //example, if the property path is address.street and the model's data
-        // hash is {name: 'some name'}, the result will be
-        //{name: 'some name', address: {street: 'some street'}}; and the changed
-        //data hash will be {'address.street': some.street'}.
+        //Sets a property on an object reachable through the property path. If the property doesn't exits, it will be created and then assigned
+        //its value (using a deep copy if typeof data === 'object'). Calling set with a nested object or property is therefore supported. For
+        //example, if the property path is address.street and the model's data hash is {name: 'some name'}, the result will be
+        //{name: 'some name', address: {street: 'some street'}}; and the changed data hash will be {'address.street': some.street'}.
         setProperty: function setProperty(propertyPath, val){
-            // A model's data properties cannot be written to if the model
-            // hasn't been set yet or if the model is read only.
-            if(this.isSet){
-                if(!this.isReadOnly){
-                    findAndSetProperty(this.data, propertyPath, val);
-                    this.changedData[propertyPath] = deepCopy(val);
-                    this.isDirty = true;
-                    //0.6.0 Maintain id's state when setting properties on data.
-                    if(this.data.hasOwnProperty(this.idPropertyName)){
-                        this.modelId = this.data[this.idPropertyName];
-                    }
-                    //0.6.0
-                    publishPropertyChangeEvent(this, propertyPath, val);
-                }else{
-                    console.log('Warning! Coccyx.model::setProperty called on read only model.');
+            //A model's data properties cannot be written to if the model hasn't been set yet or if the model is read only.
+            if(this.isSet && !this.isReadOnly){
+                findAndSetProperty(this.data, propertyPath, val);
+                this.changedData[propertyPath] = deepCopy(val);
+                this.isDirty = true;
+                //0.6.0 Maintain id's state when setting properties on data.
+                if(this.data.hasOwnProperty(this.idPropertyName)){
+                    this.modelId = this.data[this.idPropertyName];
                 }
+                //0.6.0
+                publishPropertyChangeEvent(this, propertyPath, val);
             }else{
-                console.log('Warning! Coccyx.model::setProperty called on model before model::set was called.');
+                console.log(!this.isSet ? 'Warning! setProperty called on model before set was called.' : 'Warning! setProperty called on read only model.');
             }
-            // For chaining.
+            //For chaining.
             return this;
         },
         //0.6.0 Delete a property from this.data.
