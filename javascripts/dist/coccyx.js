@@ -245,10 +245,7 @@
 ;define('models', ['jquery'], function($){
     'use strict';
 
-    //TODO: rename set and get Property to something else!
-
     /**
-     * Model
      * Warning!!!! Don't use primitive object wrappers, Date objects or functions as data property values.
      * This is because model uses JSON.parse(JSON.stringify(data)) to perform a deep copy of your model
      * data and JSON doesn't support primitive object wrappers, Date objects or functions.
@@ -901,10 +898,6 @@ define('collections', [], function(){
 ;define('router', [], function() {
     'use strict';
 
-    /**
-     * Router routes urls to their controllers
-     */
-
     var Coccyx = window.Coccyx = window.Coccyx || {};
 
     function route(verb, url, valuesHash){
@@ -987,10 +980,9 @@ define('collections', [], function(){
     }
 
     function routeFound(route, valuesHash){
-        //0.6.0 Prior versions called controller.init() when the controller is loaded.
-        //Starting with 0.6.0, controller.init() is only called when routing is called
-        //to one of their route callbacks. This eliminates unnecessary initialization
-        //if the controller is never used.
+        //0.6.0 Prior versions called controller.init() when the controller is loaded. Starting with 0.6.0,
+        //controller.init() is only called when routing is called to one of their route callbacks. This
+        //eliminates unnecessary initialization if the controller is never used.
         var controller = Coccyx.controllers.getController(route.controllerName);
         if(controller.hasOwnProperty('init') && !controller.hasOwnProperty('initCalled')){
             controller.init();
@@ -1107,10 +1099,8 @@ define('collections', [], function(){
 define('eventer', ['jquery'], function($){
     'use strict';
 
-    //A custom non-dom  based "eventer" based on jQuery's .on() method's
-    //ability to use any object as an 'eventer' to generate custom events
-    //and to handle emitted custom events. Use this to add eventing to
-    //your own objects.
+    //A custom non-dom  based "eventer" based on jQuery's .on() method's ability to use any object as an 'eventer' to generate custom events
+    //and to handle emitted custom events. Use this to add eventing to your own objects.
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
         proto;

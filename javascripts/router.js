@@ -1,10 +1,6 @@
 define('router', [], function() {
     'use strict';
 
-    /**
-     * Router routes urls to their controllers
-     */
-
     var Coccyx = window.Coccyx = window.Coccyx || {};
 
     function route(verb, url, valuesHash){
@@ -87,10 +83,9 @@ define('router', [], function() {
     }
 
     function routeFound(route, valuesHash){
-        //0.6.0 Prior versions called controller.init() when the controller is loaded.
-        //Starting with 0.6.0, controller.init() is only called when routing is called
-        //to one of their route callbacks. This eliminates unnecessary initialization
-        //if the controller is never used.
+        //0.6.0 Prior versions called controller.init() when the controller is loaded. Starting with 0.6.0,
+        //controller.init() is only called when routing is called to one of their route callbacks. This
+        //eliminates unnecessary initialization if the controller is never used.
         var controller = Coccyx.controllers.getController(route.controllerName);
         if(controller.hasOwnProperty('init') && !controller.hasOwnProperty('initCalled')){
             controller.init();

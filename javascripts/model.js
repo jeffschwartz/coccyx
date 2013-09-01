@@ -1,10 +1,7 @@
 define('models', ['jquery'], function($){
     'use strict';
 
-    //TODO: rename set and get Property to something else!
-
     /**
-     * Model
      * Warning!!!! Don't use primitive object wrappers, Date objects or functions as data property values.
      * This is because model uses JSON.parse(JSON.stringify(data)) to perform a deep copy of your model
      * data and JSON doesn't support primitive object wrappers, Date objects or functions.

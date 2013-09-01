@@ -2,10 +2,8 @@
 define('eventer', ['jquery'], function($){
     'use strict';
 
-    //A custom non-dom  based "eventer" based on jQuery's .on() method's
-    //ability to use any object as an 'eventer' to generate custom events
-    //and to handle emitted custom events. Use this to add eventing to
-    //your own objects.
+    //A custom non-dom  based "eventer" based on jQuery's .on() method's ability to use any object as an 'eventer' to generate custom events
+    //and to handle emitted custom events. Use this to add eventing to your own objects.
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
         proto;
