@@ -498,7 +498,9 @@ define('collections', [], function(){
         var obj2 = Object.create(obj1);
         obj2.isReadOnly = false;
         obj2.coll = [];
+        obj2.deletedColl = [];
         obj2.length = 0;
+        obj2.eventObject = {};
         return obj2;
     }
 
@@ -652,15 +654,19 @@ define('collections', [], function(){
     //the raw data will be turned into models first before being pushed into the collection.
     //Collections proxy model property change events.
     function addModels(collObject, models){
+        var pushed = [];
         if(Array.isArray(models)){
             models.forEach(function(model){
                 collObject.coll.push(wireModelPropertyChangedHandler(collObject,
                     isAModel(model) ? model : makeModelFromRaw(model, collObject.modelsIdPropertyName, collObject.modelsEndPoint)));
+                pushed.push(collObject.at(collObject.coll.length - 1));
             });
         }else{
             collObject.coll.push(wireModelPropertyChangedHandler(collObject,
                 isAModel(models) ? models : makeModelFromRaw(models, collObject.modelsIdPropertyName, collObject.modelsEndPoint)));
+            pushed.push(collObject.at(collObject.coll.length - 1));
         }
+        return pushed;
     }
 
     //Calls iterate on args to generate and array of models.
@@ -675,7 +681,6 @@ define('collections', [], function(){
 
     //Eventer prototype properties...
     eventerProto = {
-        eventObject: {},
         //Attach a callback handler to a specific custom event or events fired from 'this' object optionally binding the callback to context.
         handle: function handle(events, callback, context){
             $(this.eventObject).on(events, context? $.proxy(callback, context) : callback);
@@ -688,7 +693,7 @@ define('collections', [], function(){
         removeHandler: function removeHandler(events, callback){
             $(this.eventObject).off(events, callback);
         },
-        //Fire an event for object optionally passing args if provide.
+        //Fire an event for object optionally passing args if provided.
         emitEvent: function emitEvent(events, args){
             $(this.eventObject).trigger(events, args);
         }
@@ -712,27 +717,30 @@ define('collections', [], function(){
             this.length = this.coll.length;
             return this;
         },
-        //Pops the last model from the collection's data property and returns that model.
+        //Pops the last model from the collection's data property and returns that model. Fires the removeEvent. Maintains deletedColl.
         pop: function pop(){
             var m = this.coll.pop();
+            this.deletedColl.push(m);
             this.length = this.coll.length;
-            this.emitEvent(Coccyx.collections.removeEvent);
+            this.emitEvent(Coccyx.collections.removeEvent, m);
             return m;
         },
         //Push [models] onto the collection' data property and returns the length of the collection.
         push: function push(models){
-            addModels(this, models);
+            var pushed = addModels(this, models);
             this.length = this.coll.length;
-            this.emitEvent(Coccyx.collections.addEvent);
+            this.emitEvent(Coccyx.collections.addEvent, pushed);
             return this.length;
         },
         reverse: function reverse(){
             this.coll.reverse();
         },
+        //Removes the first model from the collection's data property and returns that model. Fires the removeEvent. Maintains deletedColl.
         shift: function shift(){
             var m = this.coll.shift();
+            this.deletedColl.push(m);
             this.length = this.coll.length;
-            this.emitEvent(Coccyx.collections.removeEvent);
+            this.emitEvent(Coccyx.collections.removeEvent, m);
             return m;
         },
         //Works the same as Array.sort(function(a,b){...})
@@ -742,28 +750,30 @@ define('collections', [], function(){
             });
             this.emitEvent(Coccyx.collections.sortEvent);
         },
-        //Adds and optionally removes models. Takes new [modlels] starting with the 3rd parameter.
+        //Adds and optionally removes models. Takes new [modlels] starting with the 3rd parameter. Maintains deletedColl. Fires addEvent and removeEvent. Maintains deletedColl.
         splice: function splice(index, howMany){
             var a =[index, howMany],
                 aa = argsToModels(this, [].slice.call(arguments, 2));
             a = a.concat(aa);
             var m = [].splice.apply(this.coll, a);
+            if(m.length){this.deletedColl.push.apply(this.deletedColl, m);}
             this.length = this.coll.length;
-            if(arguments.length === 3){
-                this.emitEvent(Coccyx.collections.addEvent);
+            if(aa && aa.length){
+                this.emitEvent(Coccyx.collections.addEvent, aa);
             }
             if(howMany !== 0){
-                this.emitEvent(Coccyx.collections.removeEvent);
+                this.emitEvent(Coccyx.collections.removeEvent, m);
             }
             return m;
         },
         //Adds one or more models to the beginning of an array and returns the new length of the array. If raw data is passed instead of
         //models, they will be converted to models first, and then added to the collection.
         unshift: function unshift(){
-            var m = [].unshift.apply(this.coll, argsToModels(this, arguments));
+            var added = argsToModels(this, arguments);
+            var l = [].unshift.apply(this.coll, added);
             this.length = this.coll.length;
-            this.emitEvent(Coccyx.collections.addEvent);
-            return m;
+            this.emitEvent(Coccyx.collections.addEvent, added);
+            return l;
         },
 
         /* Accessors */
@@ -831,7 +841,7 @@ define('collections', [], function(){
         //Removes all models from the collection whose data properties matches those of matchingPropertiesHash.
         //Any models removed from their collection will also have their property changed event handlers removed.
         //Removing models causes a remove event to be fired, and the removed models are passed along as the 2nd
-        //argument to the event handler's callback function.
+        //argument to the event handler's callback function. Maintains deletedColl.
         remove: function remove(matchingPropertiesHash){
             var newColl,
                 removed = [],
@@ -847,13 +857,14 @@ define('collections', [], function(){
                 return true;
             });
             if(removed.length){
+                this.deletedColl.push.apply(this.deletedColl, removed);
                 removed.forEach(function(el){
                     el.removeHandler(Coccyx.models.propertyChangedEvent,
                         self.modelPropertyChangedHandler);
                 });
                 this.coll = newColl;
                 this.length = this.coll.length;
-                this.emitEvent(Coccyx.collections.removeEvent);
+                this.emitEvent(Coccyx.collections.removeEvent, removed);
             }
             return removed;
         },
