@@ -500,6 +500,7 @@ define('collections', [], function(){
         obj2.coll = [];
         obj2.deletedColl = [];
         obj2.length = 0;
+        obj2.eventObject = {};
         return obj2;
     }
 
@@ -653,15 +654,19 @@ define('collections', [], function(){
     //the raw data will be turned into models first before being pushed into the collection.
     //Collections proxy model property change events.
     function addModels(collObject, models){
+        var pushed = [];
         if(Array.isArray(models)){
             models.forEach(function(model){
                 collObject.coll.push(wireModelPropertyChangedHandler(collObject,
                     isAModel(model) ? model : makeModelFromRaw(model, collObject.modelsIdPropertyName, collObject.modelsEndPoint)));
+                pushed.push(collObject.at(collObject.coll.length - 1));
             });
         }else{
             collObject.coll.push(wireModelPropertyChangedHandler(collObject,
                 isAModel(models) ? models : makeModelFromRaw(models, collObject.modelsIdPropertyName, collObject.modelsEndPoint)));
+            pushed.push(collObject.at(collObject.coll.length - 1));
         }
+        return pushed;
     }
 
     //Calls iterate on args to generate and array of models.
@@ -676,7 +681,6 @@ define('collections', [], function(){
 
     //Eventer prototype properties...
     eventerProto = {
-        eventObject: {},
         //Attach a callback handler to a specific custom event or events fired from 'this' object optionally binding the callback to context.
         handle: function handle(events, callback, context){
             $(this.eventObject).on(events, context? $.proxy(callback, context) : callback);
@@ -723,9 +727,9 @@ define('collections', [], function(){
         },
         //Push [models] onto the collection' data property and returns the length of the collection.
         push: function push(models){
-            addModels(this, models);
+            var pushed = addModels(this, models);
             this.length = this.coll.length;
-            this.emitEvent(Coccyx.collections.addEvent);
+            this.emitEvent(Coccyx.collections.addEvent, pushed);
             return this.length;
         },
         reverse: function reverse(){
@@ -765,10 +769,11 @@ define('collections', [], function(){
         //Adds one or more models to the beginning of an array and returns the new length of the array. If raw data is passed instead of
         //models, they will be converted to models first, and then added to the collection.
         unshift: function unshift(){
-            var m = [].unshift.apply(this.coll, argsToModels(this, arguments));
+            var added = argsToModels(this, arguments);
+            var l = [].unshift.apply(this.coll, added);
             this.length = this.coll.length;
-            this.emitEvent(Coccyx.collections.addEvent);
-            return m;
+            this.emitEvent(Coccyx.collections.addEvent, added);
+            return l;
         },
 
         /* Accessors */
