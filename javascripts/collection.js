@@ -163,7 +163,7 @@ define('collections', [], function(){
 
     //Wire the model's property change event to be handled by this collection.
     function wireModelPropertyChangedHandler(collObject, model){
-        model.handle(Coccyx.models.propertyChangedEventTopic,
+        model.handle(Coccyx.models.propertyChangedEvent,
             collObject.modelPropertyChangedHandler, collObject);
         return model;
     }
@@ -368,7 +368,7 @@ define('collections', [], function(){
             });
             if(removed.length){
                 removed.forEach(function(el){
-                    el.removeHandler(Coccyx.models.propertyChangedEventTopic,
+                    el.removeHandler(Coccyx.models.propertyChangedEvent,
                         self.modelPropertyChangedHandler);
                 });
                 this.coll = newColl;

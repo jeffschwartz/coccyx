@@ -258,13 +258,13 @@
         deepCopy = Coccyx.helpers.deepCopy,
         ext = Coccyx.helpers.extend,
         replace = Coccyx.helpers.replace,
-        propertyChangedEventTopic = 'MODEL_PROPERTY_CHANGED_EVENT',
+        propertyChangedEvent = 'MODEL_PROPERTY_CHANGED_EVENT',
         proto,
         syntheticId = -1; //0.6.0 Generates synthetic model ids.
 
     //0.6.0 Publishes MODEL_PROPERTY_CHAGED_EVENT event via Coccyx.eventer.
     function publishPropertyChangeEvent(model, propertyPath, value){
-        model.emitEvent(propertyChangedEventTopic, {propertyPath: propertyPath, value: value, model: model});
+        model.emitEvent(propertyChangedEvent, {propertyPath: propertyPath, value: value, model: model});
     }
 
     //0.6.0 Return the property reachable through the property path or undefined.
@@ -473,7 +473,7 @@
 
     Coccyx.models = {
         extend: extend,
-        propertyChangedEventTopic: propertyChangedEventTopic
+        propertyChangedEvent: propertyChangedEvent
     };
 
 });
@@ -643,7 +643,7 @@ define('collections', [], function(){
 
     //Wire the model's property change event to be handled by this collection.
     function wireModelPropertyChangedHandler(collObject, model){
-        model.handle(Coccyx.models.propertyChangedEventTopic,
+        model.handle(Coccyx.models.propertyChangedEvent,
             collObject.modelPropertyChangedHandler, collObject);
         return model;
     }
@@ -848,7 +848,7 @@ define('collections', [], function(){
             });
             if(removed.length){
                 removed.forEach(function(el){
-                    el.removeHandler(Coccyx.models.propertyChangedEventTopic,
+                    el.removeHandler(Coccyx.models.propertyChangedEvent,
                         self.modelPropertyChangedHandler);
                 });
                 this.coll = newColl;
