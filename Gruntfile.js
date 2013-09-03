@@ -18,7 +18,8 @@ module.exports = function ( grunt ) {
                     'javascripts/router.js',
                     'javascripts/views.js',
                     'javascripts/eventer.js',
-                    'javascripts/pubsub.js',
+                    'javascripts/ajax.js',
+                    // 'javascripts/pubsub.js', removed from main lib starting with v0.6.0
                     'javascripts/amd.js'
                     ],
                 dest : 'javascripts/dist/coccyx.js'

@@ -56,7 +56,7 @@ define('views', ['jquery'], function($){
 
     //0.5.0, 0.6.0
     function extend(viewObject, domEventsHash){
-        // Create a new object using the view object as its prototype.
+        //Create a new object using the view object as its prototype.
         var obj1 =  Coccyx.helpers.extend(Object.create(proto), viewObject);
         var obj2 = Object.create(obj1);
         //0.6.0 Set domTarget && $domTarget

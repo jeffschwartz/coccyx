@@ -1,18 +1,20 @@
+//0.6.0
 define('collections', [], function(){
     'use strict';
 
-//TODO go through all comments. Insure they are relevant and insightful.
     var Coccyx = window.Coccyx = window.Coccyx || {},
         eventerProto,
         proto;
 
     //Extend the application's collection object.
-    function extend(collectionObject){
-        // Create a new object using proto as its prototype and extend
-        // that object with collectionObject if it was supplied.
-        // 0.6.0 Added support for Coccyx.eventer.
+    function extend(collObj){
+        //Create a new object using proto as its prototype and extend that object with collObj if it was supplied.
         var obj0 = Coccyx.helpers.extend(Object.create(eventerProto), proto);
-        var obj1 = collectionObject ? Coccyx.helpers.extend(obj0, collectionObject) : obj0;
+        var obj1 = collObj ? Coccyx.helpers.extend(obj0, collObj) : obj0;
+        //Collections have to know what their models' id property names are. Defaults to 'id', unless provided.
+        obj1.modelsIdPropertyName = typeof obj1.modelsIdPropertyName === 'undefined' ? 'id' : obj1.modelsIdPropertyName;
+        //Collections have to know what their models' endPoints are. Defaults to '/', unless provided.
+        obj1.modelsEndPoint = typeof obj1.modelsEndPoint === 'undefined' ? '/' : obj1.modelsEndPoint;
         var obj2 = Object.create(obj1);
         obj2.isReadOnly = false;
         obj2.coll = [];
@@ -20,8 +22,7 @@ define('collections', [], function(){
         return obj2;
     }
 
-    //Returns an array containing the raw
-    //data for each model in the models array.
+    //Returns an array containing the raw data for each model in the models array.
     function toRaw(models){
         if(Array.isArray(models)){
             return models.map(function(model){
@@ -95,8 +96,7 @@ define('collections', [], function(){
         return compareObjects(a, b) && compareObjects(b, a);
     }
 
-    //Returns true if element has the same properties as
-    //source and their values are equal, false otherwise.
+    //Returns true if element has the same properties as source and their values are equal, false otherwise.
     function isMatch(element, source){
         var prop;
         for(prop in source){
@@ -105,10 +105,6 @@ define('collections', [], function(){
                     if(!compare(element[prop], source[prop])){
                         return false;
                     }
-                    // //!Recursive iteration...
-                    // if(!isMatch(element[prop], source[prop])){
-                    //     return false;
-                    // }
                 }else if(typeof element[prop] === 'object' || typeof source[prop] === 'object'){
                     return false;
                 }else{
@@ -127,22 +123,15 @@ define('collections', [], function(){
         return Array.isArray(value) || typeof value !== 'object' ? true : false;
     }
 
-    //If it walks and talks like a duck...
-    //Checks for the following properties on a model's data:
-    //['isSet']
-    //['isReadOnly']
-    //['isDirty]
-    //['originalData']
-    //['changedData']
-    //['data']
-    //If data has all of them then 'it is' a model
-    //and returns true, otherwise it returns false.
-    function isAModel(data){
+    //If it walks and talks like a duck... Checks for the following properties on a model's data:
+    //isSet, isReadOnly, isDirty, originalData, changedData, data.
+    //If data has all of the above then 'it is' a model and returns true, otherwise it returns false.
+    function isAModel(obj){
         var markers = ['isSet', 'isReadOnly', 'isDirty', 'originalData', 'changedData', 'data'],
             i,
             len;
         for(i = 0, len = markers.length; i < len; i++){
-            if(!data.hasOwnProperty(markers[i])){
+            if(!obj.hasOwnProperty(markers[i])){
                 return false;
             }
         }
@@ -150,16 +139,14 @@ define('collections', [], function(){
     }
 
     //Makes a model from raw data and returns that model.
-    function makeModelFromRaw(raw){
-        var model = Coccyx.models.extend();
+    function makeModelFromRaw(raw, modelsIdPropertyName, modelsEndPoint){
+        var model = Coccyx.models.extend({idPropertyName: modelsIdPropertyName, endPoint: modelsEndPoint});
         model.setData(raw);
         return model;
     }
 
-    //A simple general use, recursive iterator. Makes no
-    //assumptions about what args is. Args could be
-    //anything - a function's arguments, an Array, an
-    //object or even a primitive.
+    //A simple general use, recursive iterator. Makes no assumptions about what args is. Args could be
+    //anything - a function's arguments, an Array, an object or even a primitive.
     function iterate(args, callback){
         var i,
             len;
@@ -174,7 +161,6 @@ define('collections', [], function(){
         }
     }
 
-    //0.6.0
     //Wire the model's property change event to be handled by this collection.
     function wireModelPropertyChangedHandler(collObject, model){
         model.handle(Coccyx.models.propertyChangedEventTopic,
@@ -182,22 +168,18 @@ define('collections', [], function(){
         return model;
     }
 
-    //Pushes [models] onto the collection. [models] can
-    //be either models or raw data. If [models] is raw data,
-    //the raw data will be turned into models first before
-    //being pushed into the collection.
-    //Beginning with 0.6.0, collections proxy their models'
-    //property change events.
-    //0.5.0/0.6.0
+    //Pushes [models] onto the collection. [models] can be either models or raw data. If [models] is raw data,
+    //the raw data will be turned into models first before being pushed into the collection.
+    //Collections proxy model property change events.
     function addModels(collObject, models){
         if(Array.isArray(models)){
             models.forEach(function(model){
                 collObject.coll.push(wireModelPropertyChangedHandler(collObject,
-                    isAModel(model) ? model : makeModelFromRaw(model)));
+                    isAModel(model) ? model : makeModelFromRaw(model, collObject.modelsIdPropertyName, collObject.modelsEndPoint)));
             });
         }else{
             collObject.coll.push(wireModelPropertyChangedHandler(collObject,
-                isAModel(models) ? models : makeModelFromRaw(models)));
+                isAModel(models) ? models : makeModelFromRaw(models, collObject.modelsIdPropertyName, collObject.modelsEndPoint)));
         }
     }
 
@@ -205,7 +187,7 @@ define('collections', [], function(){
     function argsToModels(collObject, args){
         var models = [];
         iterate(args, function(arg){
-            var m = isAModel(arg) ? arg : makeModelFromRaw(arg);
+            var m = isAModel(arg) ? arg : makeModelFromRaw(arg, collObject.modelsIdPropertyName, collObject.modelsEndPoint);
             models.push(wireModelPropertyChangedHandler(collObject, m));
         });
         return models;
@@ -214,13 +196,11 @@ define('collections', [], function(){
     //Eventer prototype properties...
     eventerProto = {
         eventObject: {},
-        //Attach a callback handler to a specific custom event or events
-        //fired from 'this' object optionally binding the callback to context.
+        //Attach a callback handler to a specific custom event or events fired from 'this' object optionally binding the callback to context.
         handle: function handle(events, callback, context){
             $(this.eventObject).on(events, context? $.proxy(callback, context) : callback);
         },
-        //Like handle but will only fire the event one time and
-        //will ignore subsequent events.
+        //Like handle but will only fire the event one time and will ignore subsequent events.
         handleOnce: function handleOnce(events, callback, context){
             $(this.eventObject).one(events, context? $.proxy(callback, context) : callback);
         },
@@ -238,7 +218,6 @@ define('collections', [], function(){
     proto = {
         /* Internal model property change event handler */
 
-        //0.6.0
         modelPropertyChangedHandler: function modelPropertyChangedHandler(event, data){
             this.emitEvent(event, data);
         },
@@ -253,16 +232,14 @@ define('collections', [], function(){
             this.length = this.coll.length;
             return this;
         },
-        //Pops the last model from the collection's
-        //data property and returns that model.
+        //Pops the last model from the collection's data property and returns that model.
         pop: function pop(){
             var m = this.coll.pop();
             this.length = this.coll.length;
             this.emitEvent(Coccyx.collections.removeEvent);
             return m;
         },
-        //Push [models] onto the collection' data property
-        //and returns the length of the collection.
+        //Push [models] onto the collection' data property and returns the length of the collection.
         push: function push(models){
             addModels(this, models);
             this.length = this.coll.length;
@@ -285,8 +262,7 @@ define('collections', [], function(){
             });
             this.emitEvent(Coccyx.collections.sortEvent);
         },
-        //Adds and optionally removes models. Takes new
-        //[modlels] starting with the 3rd parameter.
+        //Adds and optionally removes models. Takes new [modlels] starting with the 3rd parameter.
         splice: function splice(index, howMany){
             var a =[index, howMany],
                 aa = argsToModels(this, [].slice.call(arguments, 2));
@@ -301,10 +277,8 @@ define('collections', [], function(){
             }
             return m;
         },
-        //Adds one or more models to the beginning of an array and returns
-        //the new length of the array. If raw data is passed instead of
-        //models, they will be converted to models first, and then added
-        //to the collection.
+        //Adds one or more models to the beginning of an array and returns the new length of the array. If raw data is passed instead of
+        //models, they will be converted to models first, and then added to the collection.
         unshift: function unshift(){
             var m = [].unshift.apply(this.coll, argsToModels(this, arguments));
             this.length = this.coll.length;
@@ -315,78 +289,68 @@ define('collections', [], function(){
         /* Accessors */
 
         //Returns an array of the deep copied data of all models in the collection
-        getData: function(){
+        getData: function getData(){
             return this.map(function(model){
                 return model.getData();
             });
         },
         //Works like array[i].
-        at: function(index){
+        at: function at(index){
             return this.coll[index];
         },
-        //Note sure if concat makes sense on its own. Maybe provide
-        //a higher level method to create a new collection using
-        //this collection's models and additional models/raw data???
-        // //Returns a new array comprised of this collection's models
-        // //joined with other array(s) of models or array(s) of raw data.
-        // //It does not alter the collection.
-        // concat: function(){
-        //     return [].concat.apply(this.coll, argsToModels(arguments));
-        // },
+        //Find a model by its id and return it.
+        findById: function findById(id){
+            for(var i = 0; i < this.length; i++){
+                if(this.at(i).modelId === id){
+                    return this.at(i);
+                }
+            }
+        },
         //Returns a copy of a portion of the models in the collection.
-        slice: function(){
+        slice: function slice(){
+            var self = this;
             return [].slice.apply(this.coll, arguments).map(function(model){
-                return makeModelFromRaw(model.getData());
+                return makeModelFromRaw(model.getData(), self.modelsIdPropertyName, self.modelsEndPoint);
             });
         },
 
         /* Iterators */
 
-        //Invokes a callback function for each model in the
-        //collection with three arguments: the model, the model's
-        //index, and the collection object's coll. If supplied,
-        //the second parameter will be used as the context for
+        //Invokes a callback function for each model in the collection with three arguments: the model, the model's
+        //index, and the collection object's coll. If supplied, the second parameter will be used as the context for
         //the callback.
         forEach: function forEach(/*callback, context*/){
             [].forEach.apply(this.coll, [].slice.call(arguments, 0));
         },
-        //Tests whether all models in the collection pass the
-        //test implemented by the provided callback.
+        //Tests whether all models in the collection pass the test implemented by the provided callback.
         every: function every(/*callback, context*/){
             return [].every.apply(this.coll, [].slice.call(arguments, 0));
         },
-        //Tests whether some model in the collection passes the
-        //test implemented by the provided callback.
-        some: function(/*callback, context*/){
+        //Tests whether some model in the collection passes the test implemented by the provided callback.
+        some: function some(/*callback, context*/){
             return [].some.apply(this.coll, [].slice.call(arguments, 0));
         },
-        //Returns an array containing all the models that pass
-        //the test implemented by the provided callback.
-        filter: function(/*callback, context*/){
+        //Returns an array containing all the models that pass the test implemented by the provided callback.
+        filter: function filter(/*callback, context*/){
             return [].filter.apply(this.coll, [].slice.call(arguments, 0));
         },
-        //Creates a new array with the results of calling a
-        //provided function on every model in the collection.
-        map: function(/*callback, context*/){
+        //Creates a new array with the results of calling a provided function on every model in the collection.
+        map: function map(/*callback, context*/){
             return [].map.apply(this.coll, [].slice.call(arguments, 0));
         },
 
         /* Sugar */
 
-        //Sets the readOnly flag on all models
-        //in the collection to isReadOnly.
+        //Sets the readOnly flag on all models in the collection to isReadOnly.
         setReadOnly: function setReadOnly(readOnly){
             this.coll.forEach(function(model){
                model.isReadOnly = readOnly;
             });
             this.isReadOnly = readOnly;
         },
-        //Removes all models from the collection whose data
-        //properties matches those of matchingPropertiesHash.
-        //Any models removed from their collection will also
-        //have their property changed event handlers removed.
-        //Removing models causes a remove event to be fired,
-        //and the removed models are passed along as the 2nd
+        //Removes all models from the collection whose data properties matches those of matchingPropertiesHash.
+        //Any models removed from their collection will also have their property changed event handlers removed.
+        //Removing models causes a remove event to be fired, and the removed models are passed along as the 2nd
         //argument to the event handler's callback function.
         remove: function remove(matchingPropertiesHash){
             var newColl,
@@ -413,8 +377,7 @@ define('collections', [], function(){
             }
             return removed;
         },
-        //Returns true if the coll has at least one model whose
-        //data properties matches those of matchingPropertiesHash.
+        //Returns true if the coll has at least one model whose data properties matches those of matchingPropertiesHash.
         has: function has(matchingPropertiesHash){
             if(isArrayOrNotObject(matchingPropertiesHash)){
                 return false;
@@ -423,8 +386,7 @@ define('collections', [], function(){
                 return isMatch(el.data, matchingPropertiesHash);
             });
         },
-        //Returns an array whose elements contain the stringified value
-        //of their model's data.
+        //Returns an array whose elements contain the stringified value of their model's data.
         find: function find(matchingPropertiesHash){
             if(isArrayOrNotObject(matchingPropertiesHash)){
                 return null;
@@ -439,8 +401,7 @@ define('collections', [], function(){
                 return JSON.stringify(el.getData());
             });
         },
-        //Same as Coccyx.collections.toRaw(models).
-        //See above for details.
+        //Same as Coccyx.collections.toRaw(models). See above for details.
         toRaw: toRaw
     };
 
