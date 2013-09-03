@@ -18,6 +18,7 @@ define('collections', [], function(){
         var obj2 = Object.create(obj1);
         obj2.isReadOnly = false;
         obj2.coll = [];
+        obj2.deletedColl = [];
         obj2.length = 0;
         return obj2;
     }
@@ -208,7 +209,7 @@ define('collections', [], function(){
         removeHandler: function removeHandler(events, callback){
             $(this.eventObject).off(events, callback);
         },
-        //Fire an event for object optionally passing args if provide.
+        //Fire an event for object optionally passing args if provided.
         emitEvent: function emitEvent(events, args){
             $(this.eventObject).trigger(events, args);
         }
@@ -232,11 +233,12 @@ define('collections', [], function(){
             this.length = this.coll.length;
             return this;
         },
-        //Pops the last model from the collection's data property and returns that model.
+        //Pops the last model from the collection's data property and returns that model. Fires the removeEvent. Maintains deletedColl.
         pop: function pop(){
             var m = this.coll.pop();
+            this.deletedColl.push(m);
             this.length = this.coll.length;
-            this.emitEvent(Coccyx.collections.removeEvent);
+            this.emitEvent(Coccyx.collections.removeEvent, m);
             return m;
         },
         //Push [models] onto the collection' data property and returns the length of the collection.
@@ -249,10 +251,12 @@ define('collections', [], function(){
         reverse: function reverse(){
             this.coll.reverse();
         },
+        //Removes the first model from the collection's data property and returns that model. Fires the removeEvent. Maintains deletedColl.
         shift: function shift(){
             var m = this.coll.shift();
+            this.deletedColl.push(m);
             this.length = this.coll.length;
-            this.emitEvent(Coccyx.collections.removeEvent);
+            this.emitEvent(Coccyx.collections.removeEvent, m);
             return m;
         },
         //Works the same as Array.sort(function(a,b){...})
@@ -262,18 +266,19 @@ define('collections', [], function(){
             });
             this.emitEvent(Coccyx.collections.sortEvent);
         },
-        //Adds and optionally removes models. Takes new [modlels] starting with the 3rd parameter.
+        //Adds and optionally removes models. Takes new [modlels] starting with the 3rd parameter. Maintains deletedColl. Fires addEvent and removeEvent. Maintains deletedColl.
         splice: function splice(index, howMany){
             var a =[index, howMany],
                 aa = argsToModels(this, [].slice.call(arguments, 2));
             a = a.concat(aa);
             var m = [].splice.apply(this.coll, a);
+            if(m.length){this.deletedColl.push.apply(this.deletedColl, m);}
             this.length = this.coll.length;
-            if(arguments.length === 3){
-                this.emitEvent(Coccyx.collections.addEvent);
+            if(aa && aa.length){
+                this.emitEvent(Coccyx.collections.addEvent, aa);
             }
             if(howMany !== 0){
-                this.emitEvent(Coccyx.collections.removeEvent);
+                this.emitEvent(Coccyx.collections.removeEvent, m);
             }
             return m;
         },
@@ -351,7 +356,7 @@ define('collections', [], function(){
         //Removes all models from the collection whose data properties matches those of matchingPropertiesHash.
         //Any models removed from their collection will also have their property changed event handlers removed.
         //Removing models causes a remove event to be fired, and the removed models are passed along as the 2nd
-        //argument to the event handler's callback function.
+        //argument to the event handler's callback function. Maintains deletedColl.
         remove: function remove(matchingPropertiesHash){
             var newColl,
                 removed = [],
@@ -367,13 +372,14 @@ define('collections', [], function(){
                 return true;
             });
             if(removed.length){
+                this.deletedColl.push.apply(this.deletedColl, removed);
                 removed.forEach(function(el){
                     el.removeHandler(Coccyx.models.propertyChangedEvent,
                         self.modelPropertyChangedHandler);
                 });
                 this.coll = newColl;
                 this.length = this.coll.length;
-                this.emitEvent(Coccyx.collections.removeEvent);
+                this.emitEvent(Coccyx.collections.removeEvent, removed);
             }
             return removed;
         },
