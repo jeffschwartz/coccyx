@@ -35,7 +35,6 @@ define('eventer', ['jquery'], function($){
         extend: extend
     };
 
-    //Used by models and collections internally.
     Coccyx.eventer.proto = proto;
 
 });

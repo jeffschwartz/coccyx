@@ -73,7 +73,6 @@
         return version;
     };
 
-    //Define what a controller is.
     Coccyx.controllers = {
         registerControllers : registerControllers,
         getRoutes: getRoutes,
@@ -1145,7 +1144,6 @@ define('eventer', ['jquery'], function($){
         extend: extend
     };
 
-    //Used by models and collections internally.
     Coccyx.eventer.proto = proto;
 
 });
@@ -1157,7 +1155,7 @@ define('eventer', ['jquery'], function($){
         extend = Coccyx.helpers.extend,
         defaultSettings = {cache: false, url: '/'};
 
-        //Mege default setting with user's settings.
+        //Merge default setting with user's settings.
         function mergeSettings(settings){
             return extend({}, defaultSettings, settings);
         }
