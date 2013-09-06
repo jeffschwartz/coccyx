@@ -134,10 +134,10 @@ define('models', ['jquery'], function($){
             this.isDirty = o.dirty;
             //Deep copy.
             this.data = deepCopy(dataHash);
-            //0.6.0 Every model has an idPropetyName whose value is the name of data's id property.
-            this.idPropertyName = typeof this.idPropertyName === 'undefined' ? 'id' : this.idPropertyName;
+            //0.6.0 Every model has an idPropetyName whose value is the name of the model's data id property.
+            if(typeof this.idPropertyName === 'undefined') {this.idPropertyName = 'id';}
             //0.6.0 Every model has a modelId property, either a synthetic one (see syntheticId, above)
-            //or one provided by its data and whose property name is this.idPropertyName.
+            //or one provided by the model's data and whose property name is this.idPropertyName.
             this.modelId = this.data.hasOwnProperty(this.idPropertyName) ? this.data[this.idPropertyName] : syntheticId--;
             this.changedData = {};
             this.isSet = true;
