@@ -1,7 +1,8 @@
 define('router', [], function() {
     'use strict';
 
-    var Coccyx = window.Coccyx = window.Coccyx || {};
+    var Coccyx = window.Coccyx = window.Coccyx || {},
+        contains = Coccyx.helpers.contains;
 
     function route(verb, url, valuesHash){
         var rt = getRoute(verb, url);
@@ -24,7 +25,7 @@ define('router', [], function() {
                 v = route.substring(0, route.indexOf(' '));
                 //Get the url.
                 b = route.substring(route.indexOf('/') + 1).split('/');
-                if(verb === v && (a.length === b.length || Coccyx.helpers.contains(route, '*'))){
+                if(verb === v && (a.length === b.length || contains(route, '*'))){
                     eq = true;
                     //The url and the route have the same number of segments so the route
                     //can be either static or it could contain parameterized segments.
@@ -34,7 +35,7 @@ define('router', [], function() {
                             continue;
                         }
                         //If the route segment is parameterized then save the parameter and continue looping.
-                        if(Coccyx.helpers.contains(b[i],':')){
+                        if(contains(b[i],':')){
                             //0.4.0 - checking for 'some:thing'
                             c = b[i].split(':');
                             if(c.length === 2){
@@ -47,7 +48,7 @@ define('router', [], function() {
                             continue;
                         }
                         //If the route is a relative route, push it onto the array and break out of the loop.
-                        if(Coccyx.helpers.contains(b[i], '*')){
+                        if(contains(b[i], '*')){
                             rel = true;
                             eq = false;
                             break;

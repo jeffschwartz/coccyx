@@ -4,13 +4,14 @@ define('collections', [], function(){
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
         extendModel = Coccyx.models.extend,
+        ext = Coccyx.helpers.extend,
         eventerProto, proto;
 
     //Extend the application's collection object.
     function extend(collObj){
         //Create a new object using proto as its prototype and extend that object with collObj if it was supplied.
-        var obj0 = Coccyx.helpers.extend(Object.create(eventerProto), proto),
-            obj1 = collObj ? Coccyx.helpers.extend(obj0, collObj) : obj0;
+        var obj0 = ext(Object.create(eventerProto), proto),
+            obj1 = collObj ? ext(obj0, collObj) : obj0;
         //Collections have to know what their models' id property names are. Defaults to 'id', unless provided.
         obj1.modelsIdPropertyName = obj1.model && typeof obj1.model.idPropertyName !== 'undefined' ? obj1.model.idPropertyName : typeof obj1.modelsIdPropertyName !== 'undefined' ? obj1.modelsIdPropertyName : 'id';
         //Collections have to know what their models' endPoints are. Defaults to '/', unless provided.

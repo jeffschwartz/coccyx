@@ -119,7 +119,7 @@ define('models', ['jquery'], function($){
             var o = {empty:false, readOnly:false, dirty:false, validate: false};
             //Merge default options with passed in options.
             if(options){
-                Coccyx.helpers.replace(o, options);
+                replace(o, options);
             }
             //If options validate is true and there is a validate method and it returns false, sets valid to false and returns false.
             //If options validate is true and there is a validate method and it returns true, sets valid to true and proceeds with setting data.
