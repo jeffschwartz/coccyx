@@ -56,8 +56,8 @@ define('application', ['jquery'], function($){
     //Provide jQuery in the Coccyx name space.
     Coccyx.$ = $;
 
-    //Provide a bucket for end-user application stuff.
-    Coccyx.userspace = Coccyx.userspace || {};
+    //0.6.0 Renamed userspace to application - provides a bucket for application stuff.
+    Coccyx.application = Coccyx.application || {};
 
     //Provide a bucket for Coccyx library plug-ins.
     Coccyx.plugins = Coccyx.plugins || {};
