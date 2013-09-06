@@ -10,8 +10,7 @@ define('views', ['jquery'], function($){
     //using the context of the controller when calling the callbacks.
     //domEventsHash = {controller: controller, events: {'event selector': callback, ...}}.
     function wireDomEvents(domEventsHash, $domTarget, namespace){
-        var prop;
-        var a;
+        var prop, a;
         for(prop in domEventsHash.events){
             if(domEventsHash.events.hasOwnProperty(prop)){
                 a = prop.split(' ');
@@ -57,8 +56,8 @@ define('views', ['jquery'], function($){
     //0.5.0, 0.6.0
     function extend(viewObject, domEventsHash){
         //Create a new object using the view object as its prototype.
-        var obj1 =  Coccyx.helpers.extend(Object.create(proto), viewObject);
-        var obj2 = Object.create(obj1);
+        var obj1 =  Coccyx.helpers.extend(Object.create(proto), viewObject),
+            obj2 = Object.create(obj1);
         //0.6.0 Set domTarget && $domTarget
         setTarget.call(obj2);
         //0.6.0 Wire up events, if any are declared.

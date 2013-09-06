@@ -106,9 +106,8 @@
         },
         //Pass one or more objects as the source objects whose properties are to be copied to the target object.
         extend: function(targetObj){
-            var property,
-                i,
-                len = arguments.length - 1;
+            var len = arguments.length - 1,
+                property, i;
             for(i = 1; i <= len; i++){
                 var src = arguments[i];
                 for(property in src){
@@ -140,7 +139,6 @@
     console.log(history.pushState ? 'history pushState is supported in your browser' :
         'history pushstate is not supported in your browser');
 
-    //The 'one' global variable.
     var Coccyx = window.Coccyx = window.Coccyx || {},
         historyStarted = false;
 
@@ -185,8 +183,8 @@
     //Creates a hash from an array whose elements are hashes whose properties are 'name' and 'value'.
     function valuesHashFromSerializedArray(valuesArray){
         var len = valuesArray.length,
-            i,
-            valuesHash = {};
+            valuesHash = {},
+            i;
         for(i = 0; i < len; i++){
             valuesHash[valuesArray[i].name] = valuesArray[i].value;
         }
@@ -259,8 +257,8 @@
         ext = Coccyx.helpers.extend,
         replace = Coccyx.helpers.replace,
         propertyChangedEvent = 'MODEL_PROPERTY_CHANGED_EVENT',
-        proto,
-        syntheticId = -1; //0.6.0 Generates synthetic model ids.
+        syntheticId = -1, //0.6.0 Generates synthetic model ids.
+        proto;
 
     //0.6.0 Publishes MODEL_PROPERTY_CHAGED_EVENT event via Coccyx.eventer.
     function publishPropertyChangeEvent(model, propertyPath, value){
@@ -298,9 +296,9 @@
     function extend(modelObject){
         //Create a new object using proto as its prototype and extend that object with modelObject if it was supplied.
         //0.6.0 Added support for Coccyx.eventer.
-        var obj0 = ext(Object.create(Coccyx.eventer.proto), proto);
-        var obj1 =  modelObject ? ext(obj0, modelObject) : obj0;
-        var obj2 = Object.create(obj1);
+        var obj0 = ext(Object.create(Coccyx.eventer.proto), proto),
+            obj1 =  modelObject ? ext(obj0, modelObject) : obj0,
+            obj2 = Object.create(obj1);
         //Decorate the new object with additional properties.
         obj2.isSet = false;
         obj2.isReadOnly = false;
@@ -328,8 +326,8 @@
 
     //0.6.0
     function setAjaxOptions(options){
-        var defOpts = {rawJSON: false};
-        var opts = options ? options : {};
+        var defOpts = {rawJSON: false},
+            opts = options ? options : {};
         return replace(defOpts, opts);
     }
 
@@ -338,8 +336,8 @@
         /*jshint validthis:true*/
         var deferred = $.Deferred(),
             self = this,
-            promise,
-            opts = setAjaxOptions(opt);
+            opts = setAjaxOptions(opt),
+            promise;
         promise = fn(setAjaxSettings.call(this, op));
         promise.done(function(json){
             if(json && !opts.rawJSON){
@@ -484,14 +482,13 @@ define('collections', [], function(){
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
         extendModel = Coccyx.models.extend,
-        eventerProto,
-        proto;
+        eventerProto, proto;
 
     //Extend the application's collection object.
     function extend(collObj){
         //Create a new object using proto as its prototype and extend that object with collObj if it was supplied.
-        var obj0 = Coccyx.helpers.extend(Object.create(eventerProto), proto);
-        var obj1 = collObj ? Coccyx.helpers.extend(obj0, collObj) : obj0;
+        var obj0 = Coccyx.helpers.extend(Object.create(eventerProto), proto),
+            obj1 = collObj ? Coccyx.helpers.extend(obj0, collObj) : obj0;
         //Collections have to know what their models' id property names are. Defaults to 'id', unless provided.
         obj1.modelsIdPropertyName = obj1.model && typeof obj1.model.idPropertyName !== 'undefined' ? obj1.model.idPropertyName : typeof obj1.modelsIdPropertyName !== 'undefined' ? obj1.modelsIdPropertyName : 'id';
         //Collections have to know what their models' endPoints are. Defaults to '/', unless provided.
@@ -515,8 +512,7 @@ define('collections', [], function(){
     }
 
     function compareArrays(a, b){
-        var i,
-            len;
+        var i, len;
         if(Array.isArray(a) && Array.isArray(b)){
             if(a.length !== b.length){
                 return false;
@@ -611,8 +607,7 @@ define('collections', [], function(){
     //If data has all of the above then 'it is' a model and returns true, otherwise it returns false.
     function isAModel(obj){
         var markers = ['isSet', 'isReadOnly', 'isDirty', 'originalData', 'changedData', 'data'],
-            i,
-            len;
+            i, len;
         for(i = 0, len = markers.length; i < len; i++){
             if(!obj.hasOwnProperty(markers[i])){
                 return false;
@@ -632,8 +627,7 @@ define('collections', [], function(){
     //A simple general use, recursive iterator. Makes no assumptions about what args is. Args could be
     //anything - a function's arguments, an Array, an object or even a primitive.
     function iterate(args, callback){
-        var i,
-            len;
+        var i, len;
         //If args is an Array or it has a length property it is iterable.
         if(Array.isArray(args) || args.hasOwnProperty('length')){
             for(i = 0, len = args.length; i < len; i++){
@@ -771,8 +765,8 @@ define('collections', [], function(){
         //Adds one or more models to the beginning of an array and returns the new length of the array. If raw data is passed instead of
         //models, they will be converted to models first, and then added to the collection.
         unshift: function unshift(){
-            var added = argsToModels(this, arguments);
-            var l = [].unshift.apply(this.coll, added);
+            var added = argsToModels(this, arguments),
+                l = [].unshift.apply(this.coll, added);
             this.length = this.coll.length;
             this.emitEvent(Coccyx.collections.addEvent, added);
             return l;
@@ -860,9 +854,9 @@ define('collections', [], function(){
         //Removing models causes a remove event to be fired, and the removed models are passed along as the 2nd
         //argument to the event handler's callback function. Maintains deletedColl.
         remove: function remove(matchingPropertiesHash){
-            var newColl,
-                removed = [],
-                self = this;
+            var removed = [],
+                self = this,
+                newColl;
             if(this.length === 0 || isArrayOrNotObject(matchingPropertiesHash)){
                 return;
             }
@@ -940,17 +934,9 @@ define('collections', [], function(){
     function getRoute(verb, url){
         var routes = Coccyx.controllers.getRoutes(),
             a = url.substring(1).split('/'),
-            route,
-            b,
-            c,
-            i,
-            ii,
-            len,
-            eq,
             params = [],
             rel = false,
-            relUrl,
-            v;
+            route, b, c, i, ii, len, eq, relUrl, v;
         for(route in routes){
             if(routes.hasOwnProperty(route)){
                 //Get the 'veb'.
@@ -1048,8 +1034,7 @@ define('collections', [], function(){
     //using the context of the controller when calling the callbacks.
     //domEventsHash = {controller: controller, events: {'event selector': callback, ...}}.
     function wireDomEvents(domEventsHash, $domTarget, namespace){
-        var prop;
-        var a;
+        var prop, a;
         for(prop in domEventsHash.events){
             if(domEventsHash.events.hasOwnProperty(prop)){
                 a = prop.split(' ');
@@ -1095,8 +1080,8 @@ define('collections', [], function(){
     //0.5.0, 0.6.0
     function extend(viewObject, domEventsHash){
         //Create a new object using the view object as its prototype.
-        var obj1 =  Coccyx.helpers.extend(Object.create(proto), viewObject);
-        var obj2 = Object.create(obj1);
+        var obj1 =  Coccyx.helpers.extend(Object.create(proto), viewObject),
+            obj2 = Object.create(obj1);
         //0.6.0 Set domTarget && $domTarget
         setTarget.call(obj2);
         //0.6.0 Wire up events, if any are declared.

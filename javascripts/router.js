@@ -15,17 +15,9 @@ define('router', [], function() {
     function getRoute(verb, url){
         var routes = Coccyx.controllers.getRoutes(),
             a = url.substring(1).split('/'),
-            route,
-            b,
-            c,
-            i,
-            ii,
-            len,
-            eq,
             params = [],
             rel = false,
-            relUrl,
-            v;
+            route, b, c, i, ii, len, eq, relUrl, v;
         for(route in routes){
             if(routes.hasOwnProperty(route)){
                 //Get the 'veb'.

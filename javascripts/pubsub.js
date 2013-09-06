@@ -34,10 +34,10 @@ define('pubsub', [], function(){
     //0.6.0 added async callback. if options.async is false then the callback will be done synchronously.
     //0.6.0 options hash as optional 3rd argument.
     function subscribe(topic, handler/*, options*/){
-        var token = generateToken();
-        var defaultOptions = {context: null, async: true};
-        var options = arguments.length === 3 ? Coccyx.helpers.extend({}, defaultOptions, arguments[2]) : defaultOptions;
-        var callback = options.context ? handler.bind(options.context) : handler;
+        var token = generateToken(),
+            defaultOptions = {context: null, async: true},
+            options = arguments.length === 3 ? Coccyx.helpers.extend({}, defaultOptions, arguments[2]) : defaultOptions,
+            callback = options.context ? handler.bind(options.context) : handler;
         callback = options.async ? genAsyncCallback(topic, callback) : callback;
         if(!subscribers.hasOwnProperty(topic)){
             subscribers[topic] = {};

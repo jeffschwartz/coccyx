@@ -4,14 +4,13 @@ define('collections', [], function(){
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
         extendModel = Coccyx.models.extend,
-        eventerProto,
-        proto;
+        eventerProto, proto;
 
     //Extend the application's collection object.
     function extend(collObj){
         //Create a new object using proto as its prototype and extend that object with collObj if it was supplied.
-        var obj0 = Coccyx.helpers.extend(Object.create(eventerProto), proto);
-        var obj1 = collObj ? Coccyx.helpers.extend(obj0, collObj) : obj0;
+        var obj0 = Coccyx.helpers.extend(Object.create(eventerProto), proto),
+            obj1 = collObj ? Coccyx.helpers.extend(obj0, collObj) : obj0;
         //Collections have to know what their models' id property names are. Defaults to 'id', unless provided.
         obj1.modelsIdPropertyName = obj1.model && typeof obj1.model.idPropertyName !== 'undefined' ? obj1.model.idPropertyName : typeof obj1.modelsIdPropertyName !== 'undefined' ? obj1.modelsIdPropertyName : 'id';
         //Collections have to know what their models' endPoints are. Defaults to '/', unless provided.
@@ -35,8 +34,7 @@ define('collections', [], function(){
     }
 
     function compareArrays(a, b){
-        var i,
-            len;
+        var i, len;
         if(Array.isArray(a) && Array.isArray(b)){
             if(a.length !== b.length){
                 return false;
@@ -131,8 +129,7 @@ define('collections', [], function(){
     //If data has all of the above then 'it is' a model and returns true, otherwise it returns false.
     function isAModel(obj){
         var markers = ['isSet', 'isReadOnly', 'isDirty', 'originalData', 'changedData', 'data'],
-            i,
-            len;
+            i, len;
         for(i = 0, len = markers.length; i < len; i++){
             if(!obj.hasOwnProperty(markers[i])){
                 return false;
@@ -152,8 +149,7 @@ define('collections', [], function(){
     //A simple general use, recursive iterator. Makes no assumptions about what args is. Args could be
     //anything - a function's arguments, an Array, an object or even a primitive.
     function iterate(args, callback){
-        var i,
-            len;
+        var i, len;
         //If args is an Array or it has a length property it is iterable.
         if(Array.isArray(args) || args.hasOwnProperty('length')){
             for(i = 0, len = args.length; i < len; i++){
@@ -291,8 +287,8 @@ define('collections', [], function(){
         //Adds one or more models to the beginning of an array and returns the new length of the array. If raw data is passed instead of
         //models, they will be converted to models first, and then added to the collection.
         unshift: function unshift(){
-            var added = argsToModels(this, arguments);
-            var l = [].unshift.apply(this.coll, added);
+            var added = argsToModels(this, arguments),
+                l = [].unshift.apply(this.coll, added);
             this.length = this.coll.length;
             this.emitEvent(Coccyx.collections.addEvent, added);
             return l;
@@ -380,9 +376,9 @@ define('collections', [], function(){
         //Removing models causes a remove event to be fired, and the removed models are passed along as the 2nd
         //argument to the event handler's callback function. Maintains deletedColl.
         remove: function remove(matchingPropertiesHash){
-            var newColl,
-                removed = [],
-                self = this;
+            var removed = [],
+                self = this,
+                newColl;
             if(this.length === 0 || isArrayOrNotObject(matchingPropertiesHash)){
                 return;
             }
