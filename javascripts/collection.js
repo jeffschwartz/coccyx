@@ -353,6 +353,21 @@ define('collections', [], function(){
 
         /* Sugar */
 
+        //Loads a collection with data by fetching the data from the server via ajax. Returns a promise. Uses modelsEndPoint as the ajax call's url.
+        fetch: function fetch(){
+            var deferred = $.Deferred(),
+                self = this,
+                promise = Coccyx.ajax.ajaxGet({dataType: 'json', url: this.modelsEndPoint});
+            promise.done(function(data){
+                self.setModels(data);
+                deferred.resolve();
+            });
+            promise.fail(function(json){
+                deferred.reject(json);
+            });
+            return deferred.promise();
+        },
+
         //Sets the readOnly flag on all models in the collection to isReadOnly.
         setReadOnly: function setReadOnly(readOnly){
             this.coll.forEach(function(model){
