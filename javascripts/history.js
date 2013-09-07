@@ -5,7 +5,6 @@ define('history', ['jquery', 'router'], function($) {
     console.log(history.pushState ? 'history pushState is supported in your browser' :
         'history pushstate is not supported in your browser');
 
-    //The 'one' global variable.
     var Coccyx = window.Coccyx = window.Coccyx || {},
         historyStarted = false;
 
@@ -50,8 +49,8 @@ define('history', ['jquery', 'router'], function($) {
     //Creates a hash from an array whose elements are hashes whose properties are 'name' and 'value'.
     function valuesHashFromSerializedArray(valuesArray){
         var len = valuesArray.length,
-            i,
-            valuesHash = {};
+            valuesHash = {},
+            i;
         for(i = 0; i < len; i++){
             valuesHash[valuesArray[i].name] = valuesArray[i].value;
         }

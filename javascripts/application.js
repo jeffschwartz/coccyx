@@ -68,7 +68,6 @@ define('application', ['jquery'], function($){
         return version;
     };
 
-    //Define what a controller is.
     Coccyx.controllers = {
         registerControllers : registerControllers,
         getRoutes: getRoutes,

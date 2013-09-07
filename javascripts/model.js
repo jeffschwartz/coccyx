@@ -15,8 +15,8 @@ define('models', ['jquery'], function($){
         ext = Coccyx.helpers.extend,
         replace = Coccyx.helpers.replace,
         propertyChangedEvent = 'MODEL_PROPERTY_CHANGED_EVENT',
-        proto,
-        syntheticId = -1; //0.6.0 Generates synthetic model ids.
+        syntheticId = -1, //0.6.0 Generates synthetic model ids.
+        proto;
 
     //0.6.0 Publishes MODEL_PROPERTY_CHAGED_EVENT event via Coccyx.eventer.
     function publishPropertyChangeEvent(model, propertyPath, value){
@@ -54,9 +54,9 @@ define('models', ['jquery'], function($){
     function extend(modelObject){
         //Create a new object using proto as its prototype and extend that object with modelObject if it was supplied.
         //0.6.0 Added support for Coccyx.eventer.
-        var obj0 = ext(Object.create(Coccyx.eventer.proto), proto);
-        var obj1 =  modelObject ? ext(obj0, modelObject) : obj0;
-        var obj2 = Object.create(obj1);
+        var obj0 = ext(Object.create(Coccyx.eventer.proto), proto),
+            obj1 =  modelObject ? ext(obj0, modelObject) : obj0,
+            obj2 = Object.create(obj1);
         //Decorate the new object with additional properties.
         obj2.isSet = false;
         obj2.isReadOnly = false;
@@ -84,8 +84,8 @@ define('models', ['jquery'], function($){
 
     //0.6.0
     function setAjaxOptions(options){
-        var defOpts = {rawJSON: false};
-        var opts = options ? options : {};
+        var defOpts = {rawJSON: false},
+            opts = options ? options : {};
         return replace(defOpts, opts);
     }
 
@@ -94,8 +94,8 @@ define('models', ['jquery'], function($){
         /*jshint validthis:true*/
         var deferred = $.Deferred(),
             self = this,
-            promise,
-            opts = setAjaxOptions(opt);
+            opts = setAjaxOptions(opt),
+            promise;
         promise = fn(setAjaxSettings.call(this, op));
         promise.done(function(json){
             if(json && !opts.rawJSON){
@@ -119,7 +119,7 @@ define('models', ['jquery'], function($){
             var o = {empty:false, readOnly:false, dirty:false, validate: false};
             //Merge default options with passed in options.
             if(options){
-                Coccyx.helpers.replace(o, options);
+                replace(o, options);
             }
             //If options validate is true and there is a validate method and it returns false, sets valid to false and returns false.
             //If options validate is true and there is a validate method and it returns true, sets valid to true and proceeds with setting data.

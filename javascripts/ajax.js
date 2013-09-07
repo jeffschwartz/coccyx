@@ -5,7 +5,7 @@ define('ajax', ['jquery'], function($){
         extend = Coccyx.helpers.extend,
         defaultSettings = {cache: false, url: '/'};
 
-        //Mege default setting with user's settings.
+        //Merge default setting with user's settings.
         function mergeSettings(settings){
             return extend({}, defaultSettings, settings);
         }

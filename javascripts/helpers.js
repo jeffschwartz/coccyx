@@ -22,9 +22,8 @@ define('helpers', [], function(){
         },
         //Pass one or more objects as the source objects whose properties are to be copied to the target object.
         extend: function(targetObj){
-            var property,
-                i,
-                len = arguments.length - 1;
+            var len = arguments.length - 1,
+                property, i;
             for(i = 1; i <= len; i++){
                 var src = arguments[i];
                 for(property in src){
