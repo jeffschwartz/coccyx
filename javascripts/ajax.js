@@ -1,4 +1,4 @@
-define('ajax', ['jquery'], function($){
+define('ajax', ['application'], function(){
     'use strict';
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
@@ -15,22 +15,22 @@ define('ajax', ['jquery'], function($){
         //http "GET"
         ajaxGet: function(settings){
             settings.type = 'GET';
-            return $.ajax(mergeSettings(settings));
+            return Coccyx.$.ajax(mergeSettings(settings));
         },
         //http "POST"
         ajaxPost: function(settings){
             settings.type = 'POST';
-            return $.ajax(mergeSettings(settings));
+            return Coccyx.$.ajax(mergeSettings(settings));
         },
         //http "PUT"
         ajaxPut: function(settings){
             settings.type = 'PUT';
-            return $.ajax(mergeSettings(settings));
+            return Coccyx.$.ajax(mergeSettings(settings));
         },
         //http "DELETE"
         ajaxDelete: function(settings){
             settings.type = 'DELETE';
-            return $.ajax(mergeSettings(settings));
+            return Coccyx.$.ajax(mergeSettings(settings));
         }
     };
 

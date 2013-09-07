@@ -1,4 +1,4 @@
-define('history', ['jquery', 'router'], function($) {
+define('history', ['application', 'router'], function() {
     'use strict';
 
     //Verify browser supports pushstate.
@@ -10,8 +10,8 @@ define('history', ['jquery', 'router'], function($) {
 
     //Event handler for click event on anchor tags. Ignores those where the href path doesn't start with
     //a '/' character; this prevents handling external links, allowing those events  to bubble up as normal.
-    $(document).on('click', 'a', function(event){
-        if($(this).attr('href').indexOf('/') === 0){
+    Coccyx.$(document).on('click', 'a', function(event){
+        if(Coccyx.$(this).attr('href').indexOf('/') === 0){
             event.preventDefault();
             //0.6.0 changed target to currentTarget.
             var pathName = event.currentTarget.pathname;
@@ -25,8 +25,8 @@ define('history', ['jquery', 'router'], function($) {
     //Event handler for form submit event. Ignores submit events on forms whose action attributes do not
     //start with a '/' character; this prevents handling form submit events for forms whose action
     //attribute values are external links, allowing those events  to bubble up as normal.
-    $(document).on('submit', 'form', function(event){
-        var $form = $(this),
+    Coccyx.$(document).on('submit', 'form', function(event){
+        var $form = Coccyx.$(this),
             action = $form.attr('action'),
             method = $form.attr('method'),
             valuesHash;
@@ -39,7 +39,7 @@ define('history', ['jquery', 'router'], function($) {
     });
 
     //Event handler for popstate event.
-    $(window).on('popstate', function(event){
+    Coccyx.$(window).on('popstate', function(event){
         //Ignore 'popstate' events without state and until history.start is called.
         if(event.originalEvent.state && started()){
             Coccyx.router.route(event.originalEvent.state.verb , window.location.pathname);

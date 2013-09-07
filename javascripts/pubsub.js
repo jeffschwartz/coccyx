@@ -1,4 +1,4 @@
-define('pubsub', [], function(){
+define('pubsub', ['helpers'], function(){
     /**
      * A purely hash-based backed pubsub implementation.
      */

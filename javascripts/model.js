@@ -1,4 +1,4 @@
-define('models', ['jquery'], function($){
+define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
     'use strict';
 
     /**
@@ -92,7 +92,7 @@ define('models', ['jquery'], function($){
     //0.6.0 Does the heavy lifting
     function ajax(op, opt, fn){
         /*jshint validthis:true*/
-        var deferred = $.Deferred(),
+        var deferred = Coccyx.$.Deferred(),
             self = this,
             opts = setAjaxOptions(opt),
             promise;

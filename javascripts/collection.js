@@ -1,5 +1,5 @@
 //0.6.0
-define('collections', [], function(){
+define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
     'use strict';
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
@@ -201,19 +201,19 @@ define('collections', [], function(){
     eventerProto = {
         //Attach a callback handler to a specific custom event or events fired from 'this' object optionally binding the callback to context.
         handle: function handle(events, callback, context){
-            $(this.eventObject).on(events, context? $.proxy(callback, context) : callback);
+            Coccyx.$(this.eventObject).on(events, context? Coccyx.$.proxy(callback, context) : callback);
         },
         //Like handle but will only fire the event one time and will ignore subsequent events.
         handleOnce: function handleOnce(events, callback, context){
-            $(this.eventObject).one(events, context? $.proxy(callback, context) : callback);
+            Coccyx.$(this.eventObject).one(events, context? Coccyx.$.proxy(callback, context) : callback);
         },
         //Removes the handler.
         removeHandler: function removeHandler(events, callback){
-            $(this.eventObject).off(events, callback);
+            Coccyx.$(this.eventObject).off(events, callback);
         },
         //Fire an event for object optionally passing args if provided.
         emitEvent: function emitEvent(events, args){
-            $(this.eventObject).trigger(events, args);
+            Coccyx.$(this.eventObject).trigger(events, args);
         }
     };
 
@@ -351,7 +351,7 @@ define('collections', [], function(){
 
         //Loads a collection with data by fetching the data from the server via ajax. Returns a promise. Uses modelsEndPoint as the ajax call's url.
         fetch: function fetch(){
-            var deferred = $.Deferred(),
+            var deferred = Coccyx.$.Deferred(),
                 self = this,
                 promise = Coccyx.ajax.ajaxGet({dataType: 'json', url: this.modelsEndPoint});
             promise.done(function(data){
