@@ -480,7 +480,6 @@ define('collections', [], function(){
     'use strict';
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
-        extendModel = Coccyx.models.extend,
         ext = Coccyx.helpers.extend,
         eventerProto, proto;
 
@@ -618,7 +617,7 @@ define('collections', [], function(){
 
     //Makes a model from raw data and returns that model.
     function makeModelFromRaw(collObject, raw){
-        var model = extendModel(collObject.model ? collObject.model :
+        var model = Coccyx.models.extend(collObject.model ? collObject.model :
             {idPropertyName: collObject.modelsIdPropertyName, endPoint: collObject.modelsEndPoint});
         model.setData(raw);
         return model;
@@ -1188,7 +1187,7 @@ define('eventer', ['jquery'], function($){
 
 });
 
-;define('coccyx', ['application', 'helpers', 'history', 'models', 'collections', 'router', 'views', 'eventer'], function () {
+;define('coccyx', ['application', 'helpers', 'history', 'models', 'collections', 'router', 'views', 'eventer', 'ajax'], function () {
     'use strict';
     return window.Coccyx;
 });
