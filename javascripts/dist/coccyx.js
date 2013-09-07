@@ -3,13 +3,13 @@
 //Coccyx.js may be freely distributed under the MIT license.
 //For all details and documentation:
 //http://coccyxjs.jitsu.com
-;define('application', ['jquery'], function($){
+;define('application', ['jquery'], function(){
     'use strict';
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
         controllers = {},
         routes = {},
-        version;
+        VERSION = '0.6.0';
 
      function registerControllers(){
         if(arguments.length !== 1 && !(arguments[0] instanceof Array) && !(arguments[0] instanceof Object)){
@@ -30,7 +30,7 @@
         var namedRoute;
         console.log('Registering controller \'' + controller.name + '\'');
         //controller's local $
-        controller.$ = $;
+        controller.$ = Coccyx.$;
         //Maintain list of controllers for when we need to bind them to route function callbacks.
         controllers[controller.name] = controller;
         //Build the routes array.
@@ -59,7 +59,7 @@
     }
 
     //Provide jQuery in the Coccyx name space.
-    Coccyx.$ = $;
+    Coccyx.$ = jQuery;
 
     //0.6.0 Renamed userspace to application - provides a bucket for application stuff.
     Coccyx.application = Coccyx.application || {};
@@ -67,10 +67,9 @@
     //Provide a bucket for Coccyx library plug-ins.
     Coccyx.plugins = Coccyx.plugins || {};
 
-    //Version stamp
-    version = '0.6.0';
+    //Version stamp.
     Coccyx.getVersion = function(){
-        return version;
+        return VERSION;
     };
 
     Coccyx.controllers = {
@@ -131,7 +130,7 @@
 
 });
 
-;define('history', ['jquery', 'router'], function($) {
+;define('history', ['application', 'router'], function() {
     'use strict';
 
     //Verify browser supports pushstate.
@@ -143,8 +142,8 @@
 
     //Event handler for click event on anchor tags. Ignores those where the href path doesn't start with
     //a '/' character; this prevents handling external links, allowing those events  to bubble up as normal.
-    $(document).on('click', 'a', function(event){
-        if($(this).attr('href').indexOf('/') === 0){
+    Coccyx.$(document).on('click', 'a', function(event){
+        if(Coccyx.$(this).attr('href').indexOf('/') === 0){
             event.preventDefault();
             //0.6.0 changed target to currentTarget.
             var pathName = event.currentTarget.pathname;
@@ -158,8 +157,8 @@
     //Event handler for form submit event. Ignores submit events on forms whose action attributes do not
     //start with a '/' character; this prevents handling form submit events for forms whose action
     //attribute values are external links, allowing those events  to bubble up as normal.
-    $(document).on('submit', 'form', function(event){
-        var $form = $(this),
+    Coccyx.$(document).on('submit', 'form', function(event){
+        var $form = Coccyx.$(this),
             action = $form.attr('action'),
             method = $form.attr('method'),
             valuesHash;
@@ -172,7 +171,7 @@
     });
 
     //Event handler for popstate event.
-    $(window).on('popstate', function(event){
+    Coccyx.$(window).on('popstate', function(event){
         //Ignore 'popstate' events without state and until history.start is called.
         if(event.originalEvent.state && started()){
             Coccyx.router.route(event.originalEvent.state.verb , window.location.pathname);
@@ -239,7 +238,7 @@
 
 });
 
-;define('models', ['jquery'], function($){
+;define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
     'use strict';
 
     /**
@@ -333,7 +332,7 @@
     //0.6.0 Does the heavy lifting
     function ajax(op, opt, fn){
         /*jshint validthis:true*/
-        var deferred = $.Deferred(),
+        var deferred = Coccyx.$.Deferred(),
             self = this,
             opts = setAjaxOptions(opt),
             promise;
@@ -476,7 +475,7 @@
 });
 
 ;//0.6.0
-define('collections', [], function(){
+define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
     'use strict';
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
@@ -678,19 +677,19 @@ define('collections', [], function(){
     eventerProto = {
         //Attach a callback handler to a specific custom event or events fired from 'this' object optionally binding the callback to context.
         handle: function handle(events, callback, context){
-            $(this.eventObject).on(events, context? $.proxy(callback, context) : callback);
+            Coccyx.$(this.eventObject).on(events, context? Coccyx.$.proxy(callback, context) : callback);
         },
         //Like handle but will only fire the event one time and will ignore subsequent events.
         handleOnce: function handleOnce(events, callback, context){
-            $(this.eventObject).one(events, context? $.proxy(callback, context) : callback);
+            Coccyx.$(this.eventObject).one(events, context? Coccyx.$.proxy(callback, context) : callback);
         },
         //Removes the handler.
         removeHandler: function removeHandler(events, callback){
-            $(this.eventObject).off(events, callback);
+            Coccyx.$(this.eventObject).off(events, callback);
         },
         //Fire an event for object optionally passing args if provided.
         emitEvent: function emitEvent(events, args){
-            $(this.eventObject).trigger(events, args);
+            Coccyx.$(this.eventObject).trigger(events, args);
         }
     };
 
@@ -828,7 +827,7 @@ define('collections', [], function(){
 
         //Loads a collection with data by fetching the data from the server via ajax. Returns a promise. Uses modelsEndPoint as the ajax call's url.
         fetch: function fetch(){
-            var deferred = $.Deferred(),
+            var deferred = Coccyx.$.Deferred(),
                 self = this,
                 promise = Coccyx.ajax.ajaxGet({dataType: 'json', url: this.modelsEndPoint});
             promise.done(function(data){
@@ -916,7 +915,7 @@ define('collections', [], function(){
 
 });
 
-;define('router', [], function() {
+;define('router', ['application', 'helpers'], function() {
     'use strict';
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
@@ -1022,7 +1021,7 @@ define('collections', [], function(){
 
 });
 
-;define('views', ['jquery'], function($){
+;define('views', ['application', 'helpers'], function(){
     'use strict';
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
@@ -1098,7 +1097,7 @@ define('collections', [], function(){
             this.$domTarget.off(this.namespace);
             this.$domTarget.empty();
         },
-        $: $
+        $: Coccyx.$
     };
 
     Coccyx.views = {
@@ -1109,7 +1108,7 @@ define('collections', [], function(){
 });
 
 ;//0.6.0
-define('eventer', ['jquery'], function($){
+define('eventer', ['application', 'helpers'], function(){
     'use strict';
 
     //A custom non-dom  based "eventer" based on jQuery's .on() method's ability to use any object as an 'eventer' to generate custom events
@@ -1121,19 +1120,19 @@ define('eventer', ['jquery'], function($){
     proto = {
         //Attach a callback handler to a specific custom event or events fired from 'this' object optionally binding the callback to context.
         handle: function handle(events, callback, context){
-            $(this).on(events, context? $.proxy(callback, context) : callback);
+            Coccyx.$(this).on(events, context? Coccyx.$.proxy(callback, context) : callback);
         },
         //Like handle but will only fire the event one time and will ignore subsequent events.
         handleOnce: function handleOnce(events, callback, context){
-            $(this).one(events, context? $.proxy(callback, context) : callback);
+            Coccyx.$(this).one(events, context? Coccyx.$.proxy(callback, context) : callback);
         },
         //Removes the handler.
         removeHandler: function removeHandler(events, callback){
-            $(this).off(events, callback);
+            Coccyx.$(this).off(events, callback);
         },
         //Fire an event for object optionally passing args if provide.
         emitEvent: function emitEvent(events, args){
-            $(this).trigger(events, args);
+            Coccyx.$(this).trigger(events, args);
         }
     };
 
@@ -1149,7 +1148,7 @@ define('eventer', ['jquery'], function($){
 
 });
 
-;define('ajax', ['jquery'], function($){
+;define('ajax', ['application'], function(){
     'use strict';
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
@@ -1166,28 +1165,28 @@ define('eventer', ['jquery'], function($){
         //http "GET"
         ajaxGet: function(settings){
             settings.type = 'GET';
-            return $.ajax(mergeSettings(settings));
+            return Coccyx.$.ajax(mergeSettings(settings));
         },
         //http "POST"
         ajaxPost: function(settings){
             settings.type = 'POST';
-            return $.ajax(mergeSettings(settings));
+            return Coccyx.$.ajax(mergeSettings(settings));
         },
         //http "PUT"
         ajaxPut: function(settings){
             settings.type = 'PUT';
-            return $.ajax(mergeSettings(settings));
+            return Coccyx.$.ajax(mergeSettings(settings));
         },
         //http "DELETE"
         ajaxDelete: function(settings){
             settings.type = 'DELETE';
-            return $.ajax(mergeSettings(settings));
+            return Coccyx.$.ajax(mergeSettings(settings));
         }
     };
 
 });
 
-;define('coccyx', ['application', 'helpers', 'history', 'models', 'collections', 'router', 'views', 'eventer', 'ajax'], function () {
+;define('coccyx', ['application', 'helpers', 'router', 'history', 'models', 'collections', 'views', 'eventer', 'ajax'], function () {
     'use strict';
     return window.Coccyx;
 });

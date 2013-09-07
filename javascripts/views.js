@@ -1,4 +1,4 @@
-define('views', ['jquery'], function($){
+define('views', ['application', 'helpers'], function(){
     'use strict';
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
@@ -74,7 +74,7 @@ define('views', ['jquery'], function($){
             this.$domTarget.off(this.namespace);
             this.$domTarget.empty();
         },
-        $: $
+        $: Coccyx.$
     };
 
     Coccyx.views = {

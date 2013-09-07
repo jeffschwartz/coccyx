@@ -1,4 +1,4 @@
-define('router', [], function() {
+define('router', ['application', 'helpers'], function() {
     'use strict';
 
     var Coccyx = window.Coccyx = window.Coccyx || {},

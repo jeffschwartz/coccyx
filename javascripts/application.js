@@ -1,10 +1,10 @@
-define('application', ['jquery'], function($){
+define('application', ['jquery'], function(){
     'use strict';
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
         controllers = {},
         routes = {},
-        version;
+        VERSION = '0.6.0';
 
      function registerControllers(){
         if(arguments.length !== 1 && !(arguments[0] instanceof Array) && !(arguments[0] instanceof Object)){
@@ -25,7 +25,7 @@ define('application', ['jquery'], function($){
         var namedRoute;
         console.log('Registering controller \'' + controller.name + '\'');
         //controller's local $
-        controller.$ = $;
+        controller.$ = Coccyx.$;
         //Maintain list of controllers for when we need to bind them to route function callbacks.
         controllers[controller.name] = controller;
         //Build the routes array.
@@ -54,7 +54,7 @@ define('application', ['jquery'], function($){
     }
 
     //Provide jQuery in the Coccyx name space.
-    Coccyx.$ = $;
+    Coccyx.$ = jQuery;
 
     //0.6.0 Renamed userspace to application - provides a bucket for application stuff.
     Coccyx.application = Coccyx.application || {};
@@ -62,10 +62,9 @@ define('application', ['jquery'], function($){
     //Provide a bucket for Coccyx library plug-ins.
     Coccyx.plugins = Coccyx.plugins || {};
 
-    //Version stamp
-    version = '0.6.0';
+    //Version stamp.
     Coccyx.getVersion = function(){
-        return version;
+        return VERSION;
     };
 
     Coccyx.controllers = {
