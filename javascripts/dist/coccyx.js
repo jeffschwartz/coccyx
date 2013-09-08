@@ -290,6 +290,19 @@
         }
     }
 
+    //0.6.0 Deletes the property reachable through the property path.
+    function findAndDeleteProperty(obj, propertyPath){
+        var a = propertyPath.split('.');
+        if(a.length === 1){
+            delete obj[propertyPath];
+        }else{
+            if(!obj.hasOwnProperty(a[0])){
+                obj[a[0]] = {};
+            }
+            findAndDeleteProperty(obj[a[0]], a.slice(1).join('.'));
+        }
+    }
+
     //0.5.0
     function extend(modelObject){
         //Create a new object using proto as its prototype and extend that object with modelObject if it was supplied.
@@ -434,11 +447,19 @@
             //For chaining.
             return this;
         },
-        //0.6.0 Delete a property from this.data.
-        deleteProperty: function deleteProperty(propertyName){
-            if(this.data.hasOwnProperty(propertyName)){
-                delete this.data[propertyName];
+        //0.6.0 Delete a property from this.data via property path.
+        deleteProperty: function deleteProperty(propertyPath){
+            //A model's data properties cannot be deleted if the model hasn't been set yet or if the model is read only.
+            if(this.isSet && !this.isReadOnly){
+                findAndDeleteProperty(this.data, propertyPath);
+                this.changedData[propertyPath] = undefined;
                 this.isDirty = true;
+                if(this.data.hasOwnProperty(this.idPropertyName)){
+                    this.modelId = this.data[this.idPropertyName];
+                }
+                publishPropertyChangeEvent(this, propertyPath, undefined);
+            }else{
+                console.log(!this.isSet ? 'Warning! deleteProperty called on model before set was called.' : 'Warning! deleteProperty called on read only model.');
             }
         },
         //0.6.0 Returns true if model is new, false otherwise.
