@@ -200,8 +200,8 @@
     function start(trigger, controllers){
         Coccyx.controllers.registerControllers(controllers); //0.5.0
         historyStarted = true;
+        history.replaceState({verb: 'get'}, null, window.location.pathname);
         if(trigger){
-            history.replaceState({verb: 'get'}, null, window.location.pathname);
             Coccyx.router.route('get', window.location.pathname);
         }
     }
