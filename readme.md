@@ -20,4 +20,4 @@ CoccyxJS has everything you need to create mobile and desktop browser applicatio
 # Open Source
 CoccyxJS Is Distributed Under The MIT Software License.
 
-Please support the effort by providing bug reports, feedback, and enhancement requests on [GitHub](https://github.com/jeffschwartz/coccyx/issues?page=1&state=open "Title")GitHub.
+Please support the effort by providing bug reports, feedback, and enhancement requests on [GitHub](https://github.com/jeffschwartz/coccyx/issues?page=1&state=open).
