@@ -17,7 +17,7 @@ CoccyxJS has everything you need to create mobile and desktop browser applicatio
 * RequireJS/AMD compatible. Its AMD module name is "coccyx".
 * Can optionally be used from the global name space without RequireJS.
 
-# Open Source
+## Open Source
 CoccyxJS Is Distributed Under The MIT Software License.
 
 Please support the effort by providing bug reports, feedback, and enhancement requests on [GitHub](https://github.com/jeffschwartz/coccyx/issues?page=1&state=open).
