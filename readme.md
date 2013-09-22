@@ -1,7 +1,10 @@
-# Micro!
+#CoccyxJS
+A Simple HTML5/ES5 MVC Micro Library.
+
+## Micro!
 The production version of CoccyxJS is currently 5kb gzipped.
 
-# Full Featured!
+## Full Featured!
 CoccyxJS has everything you need to create mobile and desktop browser applications:
 * HTML5 History Push and Pop State that is automatically wired.
 * REST Based Routing (get, post, put, delete).
@@ -12,7 +15,7 @@ CoccyxJS has everything you need to create mobile and desktop browser applicatio
 * Ajax for easy access to server-based resources.
 * Events for keeping your models, collection and views in sync.
 * RequireJS/AMD compatible. Its AMD module name is "coccyx".
-* Can optionally be used from the global name space without RequireJs.
+* Can optionally be used from the global name space without RequireJS.
 
 # Open Source
 CoccyxJS Is Distributed Under The MIT Software License.
