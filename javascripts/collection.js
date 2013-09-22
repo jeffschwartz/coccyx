@@ -207,12 +207,12 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         handleOnce: function handleOnce(events, callback, context){
             Coccyx.$(this.eventObject).one(events, context? Coccyx.$.proxy(callback, context) : callback);
         },
-        //Removes the handler.
-        removeHandler: function removeHandler(events, callback){
+        //Removes event handler.
+        off: function off(events, callback){
             Coccyx.$(this.eventObject).off(events, callback);
         },
-        //Fire an event for object optionally passing args if provided.
-        emitEvent: function emitEvent(events, args){
+        //Trigger an event for object optionally passing args if provided.
+        trigger: function trigger(events, args){
             Coccyx.$(this.eventObject).trigger(events, args);
         }
     };
@@ -222,7 +222,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         /* Internal model property change event handler */
 
         modelPropertyChangedHandler: function modelPropertyChangedHandler(event, data){
-            this.emitEvent(event, data);
+            this.trigger(event, data);
         },
 
         /* Mutators */
@@ -240,14 +240,14 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
             var m = this.coll.pop();
             this.deletedColl.push(m);
             this.length = this.coll.length;
-            this.emitEvent(Coccyx.collections.removeEvent, m);
+            this.trigger(Coccyx.collections.removeEvent, m);
             return m;
         },
         //Push [models] onto the collection' data property and returns the length of the collection.
         push: function push(models){
             var pushed = addModels(this, models);
             this.length = this.coll.length;
-            this.emitEvent(Coccyx.collections.addEvent, pushed);
+            this.trigger(Coccyx.collections.addEvent, pushed);
             return this.length;
         },
         reverse: function reverse(){
@@ -258,7 +258,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
             var m = this.coll.shift();
             this.deletedColl.push(m);
             this.length = this.coll.length;
-            this.emitEvent(Coccyx.collections.removeEvent, m);
+            this.trigger(Coccyx.collections.removeEvent, m);
             return m;
         },
         //Works the same as Array.sort(function(a,b){...})
@@ -266,7 +266,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
             this.coll.sort(function(a, b){
                 return callback(a, b);
             });
-            this.emitEvent(Coccyx.collections.sortEvent);
+            this.trigger(Coccyx.collections.sortEvent);
         },
         //Adds and optionally removes models. Takes new [modlels] starting with the 3rd parameter. Maintains deletedColl. Fires addEvent and removeEvent. Maintains deletedColl.
         splice: function splice(index, howMany){
@@ -277,10 +277,10 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
             if(m.length){this.deletedColl.push.apply(this.deletedColl, m);}
             this.length = this.coll.length;
             if(aa && aa.length){
-                this.emitEvent(Coccyx.collections.addEvent, aa);
+                this.trigger(Coccyx.collections.addEvent, aa);
             }
             if(howMany !== 0){
-                this.emitEvent(Coccyx.collections.removeEvent, m);
+                this.trigger(Coccyx.collections.removeEvent, m);
             }
             return m;
         },
@@ -290,7 +290,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
             var added = argsToModels(this, arguments),
                 l = [].unshift.apply(this.coll, added);
             this.length = this.coll.length;
-            this.emitEvent(Coccyx.collections.addEvent, added);
+            this.trigger(Coccyx.collections.addEvent, added);
             return l;
         },
 
@@ -392,12 +392,12 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
             if(removed.length){
                 this.deletedColl.push.apply(this.deletedColl, removed);
                 removed.forEach(function(el){
-                    el.removeHandler(Coccyx.models.propertyChangedEvent,
+                    el.off(Coccyx.models.propertyChangedEvent,
                         self.modelPropertyChangedHandler);
                 });
                 this.coll = newColl;
                 this.length = this.coll.length;
-                this.emitEvent(Coccyx.collections.removeEvent, removed);
+                this.trigger(Coccyx.collections.removeEvent, removed);
             }
             return removed;
         },

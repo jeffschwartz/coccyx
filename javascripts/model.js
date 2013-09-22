@@ -20,7 +20,7 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
 
     //0.6.0 Publishes MODEL_PROPERTY_CHAGED_EVENT event via Coccyx.eventer.
     function publishPropertyChangeEvent(model, propertyPath, value){
-        model.emitEvent(propertyChangedEvent, {propertyPath: propertyPath, value: value, model: model});
+        model.trigger(propertyChangedEvent, {propertyPath: propertyPath, value: value, model: model});
     }
 
     //0.6.0 Return the property reachable through the property path or undefined.

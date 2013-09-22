@@ -17,12 +17,12 @@ define('eventer', ['application', 'helpers'], function(){
         handleOnce: function handleOnce(events, callback, context){
             Coccyx.$(this).one(events, context? Coccyx.$.proxy(callback, context) : callback);
         },
-        //Removes the handler.
-        removeHandler: function removeHandler(events, callback){
+        //Removes event handler.
+        off: function off(events, callback){
             Coccyx.$(this).off(events, callback);
         },
-        //Fire an event for object optionally passing args if provide.
-        emitEvent: function emitEvent(events, args){
+        //Trigger an event for object optionally passing args if provide.
+        trigger: function trigger(events, args){
             Coccyx.$(this).trigger(events, args);
         }
     };
