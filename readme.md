@@ -3,10 +3,10 @@ A Simple HTML5/ES5 MVC Micro Library.
 
 [http://coccyxjs.nodejitsu.com](http://coccyxjs.nodejitsu.com)
 
-## Micro!
+## Micro
 The production version of CoccyxJS is currently 5kb gzipped.
 
-## Full Featured!
+## Full Featured
 CoccyxJS has everything you need to create mobile and desktop browser applications:
 * HTML5 History Push and Pop State that is automatically wired.
 * REST Based Routing (get, post, put, delete).
