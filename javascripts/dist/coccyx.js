@@ -9,7 +9,7 @@
     var Coccyx = window.Coccyx = window.Coccyx || {},
         controllers = {},
         routes = {},
-        VERSION = '0.6.0';
+        VERSION = '0.6.1';
 
      function registerControllers(){
         if(arguments.length !== 1 && !(arguments[0] instanceof Array) && !(arguments[0] instanceof Object)){
@@ -948,11 +948,11 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         contains = Coccyx.helpers.contains;
 
     function route(verb, url, valuesHash){
-        //0.6.1 Call application.init() only once before handling
-        //any routing requests. See application.js for details.
-        if(!Coccyx.application.initCalled){
-            Coccyx.application.init();
-            Coccyx.application.initCalled = true;
+        //0.6.1 Call Coccyx.init() only once before handling any routing requests. See application.js for details.
+        if(!Coccyx.initCalled){
+            Coccyx.init();
+            Coccyx.initCalled = true;
+            console.log('Coccyx.init called');
         }
         var rt = getRoute(verb, url);
         if(rt){
