@@ -1,4 +1,4 @@
-//Coccyx.js 0.6.0
+//Coccyx.js 0.6.1
 //(c) 2013 Jeffrey Schwartz
 //Coccyx.js may be freely distributed under the MIT license.
 //For all details and documentation:
@@ -9,7 +9,7 @@
     var Coccyx = window.Coccyx = window.Coccyx || {},
         controllers = {},
         routes = {},
-        VERSION = '0.6.0';
+        VERSION = '0.6.1';
 
      function registerControllers(){
         if(arguments.length !== 1 && !(arguments[0] instanceof Array) && !(arguments[0] instanceof Object)){
@@ -63,6 +63,11 @@
 
     //0.6.0 Renamed userspace to application - provides a bucket for application stuff.
     Coccyx.application = Coccyx.application || {};
+
+    //0.6.1 init will be called only once immediately before the first routing request
+    //is handled by the router. Override init to provide application specific initialization,
+    //such as bootstrapping your application with data.
+    Coccyx.init = function init(){};
 
     //Provide a bucket for Coccyx library plug-ins.
     Coccyx.plugins = Coccyx.plugins || {};
@@ -943,6 +948,12 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         contains = Coccyx.helpers.contains;
 
     function route(verb, url, valuesHash){
+        //0.6.1 Call Coccyx.init() only once before handling any routing requests. See application.js for details.
+        if(!Coccyx.initCalled){
+            Coccyx.init();
+            Coccyx.initCalled = true;
+            console.log('Coccyx.init called');
+        }
         var rt = getRoute(verb, url);
         if(rt){
             routeFound(rt, valuesHash);

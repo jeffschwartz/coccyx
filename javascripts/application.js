@@ -4,7 +4,7 @@ define('application', ['jquery'], function(){
     var Coccyx = window.Coccyx = window.Coccyx || {},
         controllers = {},
         routes = {},
-        VERSION = '0.6.0';
+        VERSION = '0.6.1';
 
      function registerControllers(){
         if(arguments.length !== 1 && !(arguments[0] instanceof Array) && !(arguments[0] instanceof Object)){
@@ -58,6 +58,11 @@ define('application', ['jquery'], function(){
 
     //0.6.0 Renamed userspace to application - provides a bucket for application stuff.
     Coccyx.application = Coccyx.application || {};
+
+    //0.6.1 init will be called only once immediately before the first routing request
+    //is handled by the router. Override init to provide application specific initialization,
+    //such as bootstrapping your application with data.
+    Coccyx.init = function init(){};
 
     //Provide a bucket for Coccyx library plug-ins.
     Coccyx.plugins = Coccyx.plugins || {};
