@@ -5,6 +5,12 @@ define('router', ['application', 'helpers'], function() {
         contains = Coccyx.helpers.contains;
 
     function route(verb, url, valuesHash){
+        //0.6.1 Call Coccyx.init() only once before handling any routing requests. See application.js for details.
+        if(!Coccyx.initCalled){
+            Coccyx.init();
+            Coccyx.initCalled = true;
+            console.log('Coccyx.init called');
+        }
         var rt = getRoute(verb, url);
         if(rt){
             routeFound(rt, valuesHash);
