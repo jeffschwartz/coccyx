@@ -858,10 +858,12 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
                 promise = Coccyx.ajax.ajaxGet({dataType: 'json', url: this.modelsEndPoint});
             promise.done(function(data){
                 self.setModels(data);
-                deferred.resolve();
+                //v0.6.2 return self added.
+                deferred.resolve(self);
             });
+            //v0.6.2 return self added.
             promise.fail(function(json){
-                deferred.reject(json);
+                deferred.reject(self, json);
             });
             return deferred.promise();
         },
