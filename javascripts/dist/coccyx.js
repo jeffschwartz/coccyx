@@ -3,6 +3,15 @@
 //Coccyx.js may be freely distributed under the MIT license.
 //For all details and documentation:
 //http://coccyxjs.jitsu.com
+;(function(){
+    'use strict';
+    if(!(typeof define  === 'function' && define.amd)) {
+        window.define =  function define(){
+            (arguments[arguments.length - 1])();
+        };
+    }
+}());
+
 ;define('application', ['jquery'], function(){
     'use strict';
 
