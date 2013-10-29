@@ -1,15 +1,24 @@
-//Coccyx.js 0.6.1
+//Coccyx.js 0.6.2
 //(c) 2013 Jeffrey Schwartz
 //Coccyx.js may be freely distributed under the MIT license.
 //For all details and documentation:
 //http://coccyxjs.jitsu.com
+;(function(){
+    'use strict';
+    if(!(typeof define  === 'function' && define.amd)) {
+        window.define =  function define(){
+            (arguments[arguments.length - 1])();
+        };
+    }
+}());
+
 ;define('application', ['jquery'], function(){
     'use strict';
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
         controllers = {},
         routes = {},
-        VERSION = '0.6.1';
+        VERSION = '0.6.2';
 
      function registerControllers(){
         if(arguments.length !== 1 && !(arguments[0] instanceof Array) && !(arguments[0] instanceof Object)){
@@ -858,10 +867,12 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
                 promise = Coccyx.ajax.ajaxGet({dataType: 'json', url: this.modelsEndPoint});
             promise.done(function(data){
                 self.setModels(data);
-                deferred.resolve();
+                //v0.6.2 return self added.
+                deferred.resolve(self);
             });
+            //v0.6.2 return self added.
             promise.fail(function(json){
-                deferred.reject(json);
+                deferred.reject(self, json);
             });
             return deferred.promise();
         },

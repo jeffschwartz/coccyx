@@ -10,6 +10,7 @@ module.exports = function ( grunt ) {
             dist    : {
                 src  : [
                     'javascripts/banner.js',
+                    'javascripts/amdshim.js',
                     'javascripts/application.js',
                     'javascripts/helpers.js',
                     'javascripts/history.js',

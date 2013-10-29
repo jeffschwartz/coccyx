@@ -1,4 +1,4 @@
-//Coccyx.js 0.6.1
+//Coccyx.js 0.6.2
 //(c) 2013 Jeffrey Schwartz
 //Coccyx.js may be freely distributed under the MIT license.
 //For all details and documentation:
