@@ -19,9 +19,18 @@ define('eventer', ['application', 'helpers'], function(){
         },
         //Removes event handler.
         off: function off(events, callback){
-            Coccyx.$(this).off(events, callback);
+            if(events && callback){
+                //0.6.0 removes a specific event handler for events
+                Coccyx.$(this).off(events, callback);
+            }else if(events){
+                //0.6.3 removes all event handlers for events
+                Coccyx.$(this).off(events);
+            }else{
+                //0.6.3 removes all event handlers for all events
+                Coccyx.$(this).off();
+            }
         },
-        //Trigger an event for object optionally passing args if provide.
+        //Trigger an event for object optionally passing args if provided.
         trigger: function trigger(events, args){
             Coccyx.$(this).trigger(events, args);
         }
