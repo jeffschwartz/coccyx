@@ -189,7 +189,8 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
         //its value (using a deep copy if typeof data === 'object'). Calling set with a nested object or property is therefore supported. For
         //example, if the property path is address.street and the model's data hash is {name: 'some name'}, the result will be
         //{name: 'some name', address: {street: 'some street'}}; and the changed data hash will be {'address.street': some.street'}.
-        setProperty: function setProperty(propertyPath, val){
+        //0.6.3 added 'silent'. Set 'silent' to true if you do not want to publish a property change event.
+        setProperty: function setProperty(propertyPath, val, silent){
             //A model's data properties cannot be written to if the model hasn't been set yet or if the model is read only.
             if(this.isSet && !this.isReadOnly){
                 findAndSetProperty(this.data, propertyPath, val);
@@ -199,8 +200,11 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
                 if(this.data.hasOwnProperty(this.idPropertyName)){
                     this.modelId = this.data[this.idPropertyName];
                 }
-                //0.6.0
-                publishPropertyChangeEvent(this, propertyPath, val);
+                //0.6.3
+                if(!silent){
+                    //0.6.0
+                    publishPropertyChangeEvent(this, propertyPath, val);
+                }
             }else{
                 console.log(!this.isSet ? 'Warning! setProperty called on model before set was called.' : 'Warning! setProperty called on read only model.');
             }
@@ -208,7 +212,8 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
             return this;
         },
         //0.6.0 Delete a property from this.data via property path.
-        deleteProperty: function deleteProperty(propertyPath){
+        //0.6.3 added 'silent'. Set 'silent' to true if you do not want to publish a property change event.
+        deleteProperty: function deleteProperty(propertyPath, silent){
             //A model's data properties cannot be deleted if the model hasn't been set yet or if the model is read only.
             if(this.isSet && !this.isReadOnly){
                 findAndDeleteProperty(this.data, propertyPath);
@@ -217,7 +222,10 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
                 if(this.data.hasOwnProperty(this.idPropertyName)){
                     this.modelId = this.data[this.idPropertyName];
                 }
-                publishPropertyChangeEvent(this, propertyPath, undefined);
+                //0.6.3
+                if(!silent){
+                    publishPropertyChangeEvent(this, propertyPath, undefined);
+                }
             }else{
                 console.log(!this.isSet ? 'Warning! deleteProperty called on model before set was called.' : 'Warning! deleteProperty called on read only model.');
             }
