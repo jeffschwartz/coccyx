@@ -324,7 +324,6 @@
     function extend(modelObject){
         //Create a new object using proto as its prototype and extend that object with modelObject if it was supplied.
         //0.6.0 Added support for Coccyx.eventer.
-        //0.6.3 Added isSilent.
         var obj0 = ext(Object.create(Coccyx.eventer.proto), proto),
             obj1 =  modelObject ? ext(obj0, modelObject) : obj0,
             obj2 = Object.create(obj1);
@@ -528,6 +527,9 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
 
     var Coccyx = window.Coccyx = window.Coccyx || {},
         ext = Coccyx.helpers.extend,
+        addEvent ='COLLECTION_MODEL_ADDED_EVENT',
+        removeEvent ='COLLECTION_MODEL_REMOVED_EVENT',
+        sortEvent ='COLLECTION_SORTED_EVENT',
         eventerProto, proto;
 
     //Extend the application's collection object.
@@ -541,6 +543,8 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         obj1.modelsEndPoint = obj1.model && typeof obj1.model.endPoint !== 'undefined' ? obj1.model.endPoint : typeof obj1.modelsEndPoint !== 'undefined' ? obj1.modelsEndPoint : '/';
         var obj2 = Object.create(obj1);
         obj2.isReadOnly = false;
+        //0.6.3
+        obj2.isSilent = false;
         obj2.coll = [];
         obj2.deletedColl = [];
         obj2.length = 0;
@@ -737,7 +741,10 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         },
         //Trigger an event for object optionally passing args if provided.
         trigger: function trigger(events, args){
-            Coccyx.$(this.eventObject).trigger(events, args);
+            //0.6.3 added isSilent check.
+            if(!this.getIsSilent()){
+                Coccyx.$(this.eventObject).trigger(events, args);
+            }
         }
     };
 
@@ -952,15 +959,23 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
             });
         },
         //Same as Coccyx.collections.toRaw(models). See above for details.
-        toRaw: toRaw
+        toRaw: toRaw,
+        //0.6.3 Returns this.isSilent (boolean).
+        getIsSilent: function getIsSilent(){
+            return this.isSilent;
+        },
+        //0.6.3 Sets this.isSilent (boolean).
+        setIsSilent: function setIsSilent(isSilent){
+            this.isSilent = isSilent;
+        }
     };
 
     Coccyx.collections = {
         extend: extend,
         toRaw: toRaw,
-        addEvent: 'COLLECTION_MODEL_ADDED_EVENT',
-        removeEvent: 'COLLECTION_MODEL_REMOVED_EVENT',
-        sortEvent: 'COLLECTION_SORTED_EVENT'
+        addEvent: addEvent,
+        removeEvent: removeEvent,
+        sortEvent: sortEvent
     };
 
 });

@@ -70,7 +70,6 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
     function extend(modelObject){
         //Create a new object using proto as its prototype and extend that object with modelObject if it was supplied.
         //0.6.0 Added support for Coccyx.eventer.
-        //0.6.3 Added isSilent.
         var obj0 = ext(Object.create(Coccyx.eventer.proto), proto),
             obj1 =  modelObject ? ext(obj0, modelObject) : obj0,
             obj2 = Object.create(obj1);
