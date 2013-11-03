@@ -274,7 +274,10 @@
 
     //0.6.0 Publishes MODEL_PROPERTY_CHAGED_EVENT event via Coccyx.eventer.
     function publishPropertyChangeEvent(model, propertyPath, value){
-        model.trigger(propertyChangedEvent, {propertyPath: propertyPath, value: value, model: model});
+        //0.6.3 added isSilent check.
+        if(!model.getIsSilent()){
+            model.trigger(propertyChangedEvent, {propertyPath: propertyPath, value: value, model: model});
+        }
     }
 
     //0.6.0 Return the property reachable through the property path or undefined.
@@ -321,6 +324,7 @@
     function extend(modelObject){
         //Create a new object using proto as its prototype and extend that object with modelObject if it was supplied.
         //0.6.0 Added support for Coccyx.eventer.
+        //0.6.3 Added isSilent.
         var obj0 = ext(Object.create(Coccyx.eventer.proto), proto),
             obj1 =  modelObject ? ext(obj0, modelObject) : obj0,
             obj2 = Object.create(obj1);
@@ -328,6 +332,8 @@
         obj2.isSet = false;
         obj2.isReadOnly = false;
         obj2.isDirty = false;
+        //0.6.3
+        obj2.isSilent = false;
         obj2.originalData = {};
         obj2.changedData = {};
         obj2.data = {};
@@ -443,8 +449,7 @@
         //its value (using a deep copy if typeof data === 'object'). Calling set with a nested object or property is therefore supported. For
         //example, if the property path is address.street and the model's data hash is {name: 'some name'}, the result will be
         //{name: 'some name', address: {street: 'some street'}}; and the changed data hash will be {'address.street': some.street'}.
-        //0.6.3 added 'silent'. Set 'silent' to true if you do not want to publish a property change event.
-        setProperty: function setProperty(propertyPath, val, silent){
+        setProperty: function setProperty(propertyPath, val){
             //A model's data properties cannot be written to if the model hasn't been set yet or if the model is read only.
             if(this.isSet && !this.isReadOnly){
                 findAndSetProperty(this.data, propertyPath, val);
@@ -454,11 +459,7 @@
                 if(this.data.hasOwnProperty(this.idPropertyName)){
                     this.modelId = this.data[this.idPropertyName];
                 }
-                //0.6.3
-                if(!silent){
-                    //0.6.0
-                    publishPropertyChangeEvent(this, propertyPath, val);
-                }
+                publishPropertyChangeEvent(this, propertyPath, val);
             }else{
                 console.log(!this.isSet ? 'Warning! setProperty called on model before set was called.' : 'Warning! setProperty called on read only model.');
             }
@@ -466,8 +467,7 @@
             return this;
         },
         //0.6.0 Delete a property from this.data via property path.
-        //0.6.3 added 'silent'. Set 'silent' to true if you do not want to publish a property change event.
-        deleteProperty: function deleteProperty(propertyPath, silent){
+        deleteProperty: function deleteProperty(propertyPath){
             //A model's data properties cannot be deleted if the model hasn't been set yet or if the model is read only.
             if(this.isSet && !this.isReadOnly){
                 findAndDeleteProperty(this.data, propertyPath);
@@ -476,10 +476,7 @@
                 if(this.data.hasOwnProperty(this.idPropertyName)){
                     this.modelId = this.data[this.idPropertyName];
                 }
-                //0.6.3
-                if(!silent){
-                    publishPropertyChangeEvent(this, propertyPath, undefined);
-                }
+                publishPropertyChangeEvent(this, propertyPath, undefined);
             }else{
                 console.log(!this.isSet ? 'Warning! deleteProperty called on model before set was called.' : 'Warning! deleteProperty called on read only model.');
             }
@@ -507,6 +504,14 @@
         //0.6.0 Ajax "DELETE".
         ajaxDelete: function ajaxDelete(options){
             return ajax.call(this, 'delete', options, Coccyx.ajax.ajaxDelete);
+        },
+        //0.6.3 Returns this.isSilent (boolean).
+        getIsSilent: function getIsSilent(){
+            return this.isSilent;
+        },
+        //0.6.3 Sets this.isSilent (boolean).
+        setIsSilent: function setIsSilent(isSilent){
+            this.isSilent = isSilent;
         }
     };
 
