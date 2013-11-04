@@ -1,14 +1,14 @@
 define('router', ['application', 'helpers'], function() {
     'use strict';
 
-    var Coccyx = window.Coccyx = window.Coccyx || {},
-        contains = Coccyx.helpers.contains;
+    var v = window.Coccyx = window.Coccyx || {},
+        contains = v.helpers.contains;
 
     function route(verb, url, valuesHash){
         //0.6.1 Call Coccyx.init() only once before handling any routing requests. See application.js for details.
-        if(!Coccyx.initCalled){
-            Coccyx.init();
-            Coccyx.initCalled = true;
+        if(!v.initCalled){
+            v.init();
+            v.initCalled = true;
             console.log('Coccyx.init called');
         }
         var rt = getRoute(verb, url);
@@ -20,18 +20,18 @@ define('router', ['application', 'helpers'], function() {
     }
 
     function getRoute(verb, url){
-        var routes = Coccyx.controllers.getRoutes(),
+        var routes = v.controllers.getRoutes(),
             a = url.substring(1).split('/'),
             params = [],
             rel = false,
-            route, b, c, i, ii, len, eq, relUrl, v;
+            route, b, c, i, ii, len, eq, relUrl, vrb;
         for(route in routes){
             if(routes.hasOwnProperty(route)){
                 //Get the 'veb'.
-                v = route.substring(0, route.indexOf(' '));
+                vrb = route.substring(0, route.indexOf(' '));
                 //Get the url.
                 b = route.substring(route.indexOf('/') + 1).split('/');
-                if(verb === v && (a.length === b.length || contains(route, '*'))){
+                if(verb === vrb && (a.length === b.length || contains(route, '*'))){
                     eq = true;
                     //The url and the route have the same number of segments so the route
                     //can be either static or it could contain parameterized segments.
@@ -85,7 +85,7 @@ define('router', ['application', 'helpers'], function() {
         //0.6.0 Prior versions called controller.init() when the controller is loaded. Starting with 0.6.0,
         //controller.init() is only called when routing is called to one of their route callbacks. This
         //eliminates unnecessary initialization if the controller is never used.
-        var controller = Coccyx.controllers.getController(route.controllerName);
+        var controller = v.controllers.getController(route.controllerName);
         if(controller.hasOwnProperty('init') && !controller.hasOwnProperty('initCalled')){
             controller.init();
             controller.initCalled = true;
@@ -104,7 +104,7 @@ define('router', ['application', 'helpers'], function() {
         console.log('router::routeNotFound called with route = ' + url);
     }
 
-    Coccyx.router = {
+    v.router = {
         route: route
     };
 

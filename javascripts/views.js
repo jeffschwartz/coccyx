@@ -1,7 +1,7 @@
 define('views', ['application', 'helpers'], function(){
     'use strict';
 
-    var Coccyx = window.Coccyx = window.Coccyx || {},
+    var v = window.Coccyx = window.Coccyx || {},
         domEventTopic = 'DOM_EVENT',
         proto;
 
@@ -34,29 +34,29 @@ define('views', ['application', 'helpers'], function(){
     //for you from $domTarget.
     function setTarget(){
         /*jshint validthis:true*/
-        if(this.$domTarget && this.$domTarget instanceof Coccyx.$){
+        if(this.$domTarget && this.$domTarget instanceof v.$){
             //Use $domTarget.
             this.domTarget = this.$domTarget[0];
         }else if(this.domTarget){
             //Use domTarget.
             this.domTarget = document.createElement(typeof this.domTarget === 'string' ? this.domTarget : this.domTarget());
-            this.$domTarget = Coccyx.$(this.domTarget);
+            this.$domTarget = v.$(this.domTarget);
         }else if(this.domTargetAttrs){
             //Use domTargetAttrs.
-            this.$domTarget = Coccyx.$(document.createElement(this.tagName ?
+            this.$domTarget = v.$(document.createElement(this.tagName ?
                this.tagName : 'div')).attr(this.domTargetAttrs);
             this.domTarget = this.$domTarget[0];
         }else{
             //Default to 'div'.
             this.domTarget = document.createElement('div');
-            this.$domTarget = Coccyx.$(this.domTarget);
+            this.$domTarget = v.$(this.domTarget);
         }
     }
 
     //0.5.0, 0.6.0
     function extend(viewObject, domEventsHash){
         //Create a new object using the view object as its prototype.
-        var obj1 =  Coccyx.helpers.extend(Object.create(proto), viewObject),
+        var obj1 =  v.helpers.extend(Object.create(proto), viewObject),
             obj2 = Object.create(obj1);
         //0.6.0 Set domTarget && $domTarget
         setTarget.call(obj2);
@@ -70,14 +70,14 @@ define('views', ['application', 'helpers'], function(){
 
     //0.6.0
     proto = {
-        remove: function(){
+        remove: function remove(){
             this.$domTarget.off(this.namespace);
             this.$domTarget.empty();
         },
-        $: Coccyx.$
+        $: v.$
     };
 
-    Coccyx.views = {
+    v.views = {
         extend: extend,
         domEventTopic: domEventTopic
     };
