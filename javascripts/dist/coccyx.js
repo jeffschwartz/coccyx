@@ -3,7 +3,7 @@
 //Coccyx.js may be freely distributed under the MIT license.
 //For all details and documentation:
 //http://coccyxjs.jitsu.com
-;(function(){
+(function(){
     'use strict';
     if(!(typeof define  === 'function' && define.amd)) {
         window.define =  function define(){
@@ -12,7 +12,7 @@
     }
 }());
 
-;define('application', ['jquery'], function(){
+define('application', ['jquery'], function(){
     'use strict';
 
     var v = window.Coccyx = window.Coccyx || {},
@@ -94,7 +94,7 @@
 
 });
 
-;define('helpers', [], function(){
+define('helpers', [], function(){
     'use strict';
 
     var v = window.Coccyx = window.Coccyx || {};
@@ -144,7 +144,7 @@
 
 });
 
-;define('history', ['application', 'router'], function() {
+define('history', ['application', 'router'], function() {
     'use strict';
 
     //Verify browser supports pushstate.
@@ -252,7 +252,7 @@
 
 });
 
-;define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
+define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
     'use strict';
 
     /**
@@ -521,7 +521,7 @@
 
 });
 
-;//0.6.0
+//0.6.0
 define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
     'use strict';
 
@@ -980,7 +980,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
 
 });
 
-;define('router', ['application', 'helpers'], function() {
+define('router', ['application', 'helpers'], function() {
     'use strict';
 
     var v = window.Coccyx = window.Coccyx || {},
@@ -1092,7 +1092,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
 
 });
 
-;define('views', ['application', 'helpers'], function(){
+define('views', ['application', 'helpers'], function(){
     'use strict';
 
     var v = window.Coccyx = window.Coccyx || {},
@@ -1178,7 +1178,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
 
 });
 
-;//0.6.0
+//0.6.0
 define('eventer', ['application', 'helpers'], function(){
     'use strict';
 
@@ -1228,7 +1228,7 @@ define('eventer', ['application', 'helpers'], function(){
 
 });
 
-;define('ajax', ['application'], function(){
+define('ajax', ['application'], function(){
     'use strict';
 
     var v = window.Coccyx = window.Coccyx || {},
@@ -1266,7 +1266,7 @@ define('eventer', ['application', 'helpers'], function(){
 
 });
 
-;define('coccyx', ['application', 'helpers', 'router', 'history', 'models', 'collections', 'views', 'eventer', 'ajax'], function () {
+define('coccyx', ['application', 'helpers', 'router', 'history', 'models', 'collections', 'views', 'eventer', 'ajax'], function () {
     'use strict';
     return window.Coccyx;
 });
