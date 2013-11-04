@@ -4,7 +4,7 @@ define('pubsub', ['helpers'], function(){
      */
     'use strict';
 
-    var Coccyx = window.Coccyx = window.Coccyx || {},
+    var v = window.Coccyx = window.Coccyx || {},
         subscribers = {},
         totalSubscribers = 0,
         lastToken = 0;
@@ -36,7 +36,7 @@ define('pubsub', ['helpers'], function(){
     function subscribe(topic, handler/*, options*/){
         var token = generateToken(),
             defaultOptions = {context: null, async: true},
-            options = arguments.length === 3 ? Coccyx.helpers.extend({}, defaultOptions, arguments[2]) : defaultOptions,
+            options = arguments.length === 3 ? v.helpers.extend({}, defaultOptions, arguments[2]) : defaultOptions,
             callback = options.context ? handler.bind(options.context) : handler;
         callback = options.async ? genAsyncCallback(topic, callback) : callback;
         if(!subscribers.hasOwnProperty(topic)){
@@ -90,7 +90,7 @@ define('pubsub', ['helpers'], function(){
         return count;
     }
 
-    Coccyx.pubsub = {
+    v.pubsub = {
         subscribe: subscribe,
         unsubscribe: unsubscribe,
         publish: publish,

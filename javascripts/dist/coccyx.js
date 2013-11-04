@@ -15,7 +15,7 @@
 ;define('application', ['jquery'], function(){
     'use strict';
 
-    var Coccyx = window.Coccyx = window.Coccyx || {},
+    var v = window.Coccyx = window.Coccyx || {},
         controllers = {},
         routes = {},
         VERSION = '0.6.2';
@@ -39,7 +39,7 @@
         var namedRoute;
         console.log('Registering controller \'' + controller.name + '\'');
         //controller's local $
-        controller.$ = Coccyx.$;
+        controller.$ = v.$;
         //Maintain list of controllers for when we need to bind them to route function callbacks.
         controllers[controller.name] = controller;
         //Build the routes array.
@@ -68,25 +68,25 @@
     }
 
     //Provide jQuery in the Coccyx name space.
-    Coccyx.$ = jQuery;
+    v.$ = jQuery;
 
     //0.6.0 Renamed userspace to application - provides a bucket for application stuff.
-    Coccyx.application = Coccyx.application || {};
+    v.application = v.application || {};
 
     //0.6.1 init will be called only once immediately before the first routing request
     //is handled by the router. Override init to provide application specific initialization,
     //such as bootstrapping your application with data.
-    Coccyx.init = function init(){};
+    v.init = function init(){};
 
     //Provide a bucket for Coccyx library plug-ins.
-    Coccyx.plugins = Coccyx.plugins || {};
+    v.plugins = v.plugins || {};
 
     //Version stamp.
-    Coccyx.getVersion = function(){
+    v.getVersion = function(){
         return VERSION;
     };
 
-    Coccyx.controllers = {
+    v.controllers = {
         registerControllers : registerControllers,
         getRoutes: getRoutes,
         getController: getController
@@ -97,11 +97,11 @@
 ;define('helpers', [], function(){
     'use strict';
 
-    var Coccyx = window.Coccyx = window.Coccyx || {};
+    var v = window.Coccyx = window.Coccyx || {};
 
-    Coccyx.helpers = {
+    v.helpers = {
         //Returns true if s1 contains s2, otherwise returns false.
-        contains: function(s1, s2){
+        contains: function contains(s1, s2){
             var i, len;
             if(typeof s1 === 'string'){
                 for(i = 0, len = s1.length; i < len; i++){
@@ -113,11 +113,11 @@
             return false;
         },
         //Returns a deep copy object o.
-        deepCopy: function(o){
+        deepCopy: function deepCopy(o){
             return JSON.parse(JSON.stringify(o));
         },
         //Pass one or more objects as the source objects whose properties are to be copied to the target object.
-        extend: function(targetObj){
+        extend: function extend(targetObj){
             var len = arguments.length - 1,
                 property, i;
             for(i = 1; i <= len; i++){
@@ -131,7 +131,7 @@
             return targetObj;
         },
         //For each matching property name, replaces target's value with source's value.
-        replace: function(target, source){
+        replace: function replace(target, source){
             for(var prop in target){
                 if(target.hasOwnProperty(prop) && source.hasOwnProperty(prop)){
                     target[prop] = source[prop];
@@ -151,18 +151,18 @@
     console.log(history.pushState ? 'history pushState is supported in your browser' :
         'history pushstate is not supported in your browser');
 
-    var Coccyx = window.Coccyx = window.Coccyx || {},
+    var v = window.Coccyx = window.Coccyx || {},
         historyStarted = false;
 
     //Event handler for click event on anchor tags. Ignores those where the href path doesn't start with
     //a '/' character; this prevents handling external links, allowing those events  to bubble up as normal.
-    Coccyx.$(document).on('click', 'a', function(event){
-        if(Coccyx.$(this).attr('href').indexOf('/') === 0){
+    v.$(document).on('click', 'a', function(event){
+        if(v.$(this).attr('href').indexOf('/') === 0){
             event.preventDefault();
             //0.6.0 changed target to currentTarget.
             var pathName = event.currentTarget.pathname;
             //The 'verb' for routes on anchors is always 'get'.
-            Coccyx.router.route('get', pathName);
+            v.router.route('get', pathName);
             //0.6.0 changed target to currentTarget.
             history.pushState({verb: 'get'}, null, event.currentTarget.href);
         }
@@ -171,8 +171,8 @@
     //Event handler for form submit event. Ignores submit events on forms whose action attributes do not
     //start with a '/' character; this prevents handling form submit events for forms whose action
     //attribute values are external links, allowing those events  to bubble up as normal.
-    Coccyx.$(document).on('submit', 'form', function(event){
-        var $form = Coccyx.$(this),
+    v.$(document).on('submit', 'form', function(event){
+        var $form = v.$(this),
             action = $form.attr('action'),
             method = $form.attr('method'),
             valuesHash;
@@ -180,15 +180,15 @@
             event.preventDefault();
             method = method ? method : 'get';
             valuesHash = valuesHashFromSerializedArray($form.serializeArray());
-            Coccyx.router.route(method, action, valuesHash);
+            v.router.route(method, action, valuesHash);
         }
     });
 
     //Event handler for popstate event.
-    Coccyx.$(window).on('popstate', function(event){
+    v.$(window).on('popstate', function(event){
         //Ignore 'popstate' events without state and until history.start is called.
         if(event.originalEvent.state && started()){
-            Coccyx.router.route(event.originalEvent.state.verb , window.location.pathname);
+            v.router.route(event.originalEvent.state.verb , window.location.pathname);
         }
     });
 
@@ -212,11 +212,11 @@
     //buttons to navigate. Pass true for trigger if you want the route function to be called.
     //0.5.0
     function start(trigger, controllers){
-        Coccyx.controllers.registerControllers(controllers); //0.5.0
+        v.controllers.registerControllers(controllers); //0.5.0
         historyStarted = true;
         history.replaceState({verb: 'get'}, null, window.location.pathname);
         if(trigger){
-            Coccyx.router.route('get', window.location.pathname);
+            v.router.route('get', window.location.pathname);
         }
     }
 
@@ -229,7 +229,7 @@
     //push a new one onto the browser's history stack.
     //function navigate(state, title, url, trigger, replace){
     function navigate(options){
-        if(Coccyx.history.started()){
+        if(v.history.started()){
             options = options || {};
             options.state = options.state || null;
             options.title = options.title || document.title;
@@ -239,12 +239,12 @@
             options.replace = options.replace || false;
             window.history[options.replace ? 'replaceState' : 'pushState'](options.state, options.title, options.url);
             if(options.trigger){
-                Coccyx.router.route(options.method, options.url);
+                v.router.route(options.method, options.url);
             }
         }
     }
 
-    Coccyx.history = {
+    v.history = {
         start: start,
         started: started,
         navigate: navigate
@@ -264,10 +264,10 @@
      * changes made in data. If you don't heed this warning bad things _will_ happen!!!
      */
 
-    var Coccyx = window.Coccyx = window.Coccyx || {},
-        deepCopy = Coccyx.helpers.deepCopy,
-        ext = Coccyx.helpers.extend,
-        replace = Coccyx.helpers.replace,
+    var v = window.Coccyx = window.Coccyx || {},
+        deepCopy = v.helpers.deepCopy,
+        ext = v.helpers.extend,
+        replace = v.helpers.replace,
         propertyChangedEvent = 'MODEL_PROPERTY_CHANGED_EVENT',
         syntheticId = -1, //0.6.0 Generates synthetic model ids.
         proto;
@@ -324,7 +324,7 @@
     function extend(modelObject){
         //Create a new object using proto as its prototype and extend that object with modelObject if it was supplied.
         //0.6.0 Added support for Coccyx.eventer.
-        var obj0 = ext(Object.create(Coccyx.eventer.proto), proto),
+        var obj0 = ext(Object.create(v.eventer.proto), proto),
             obj1 =  modelObject ? ext(obj0, modelObject) : obj0,
             obj2 = Object.create(obj1);
         //Decorate the new object with additional properties.
@@ -364,7 +364,7 @@
     //0.6.0 Does the heavy lifting
     function ajax(op, opt, fn){
         /*jshint validthis:true*/
-        var deferred = Coccyx.$.Deferred(),
+        var deferred = v.$.Deferred(),
             self = this,
             opts = setAjaxOptions(opt),
             promise;
@@ -429,20 +429,20 @@
         //Returns the data property reachable through property path. If there is no property reachable through property path
         //return undefined.
         getProperty: function getProperty(propertyPath){
-            var v = findProperty(this.data, propertyPath);
-            return typeof v === 'object' ? deepCopy(v) : v;
+            var p = findProperty(this.data, propertyPath);
+            return typeof p === 'object' ? deepCopy(p) : p;
         },
         //Returns the originalData property reachable through property path. If there is no property reachable through property path
         //return undefined.
-        getOriginalDataProperty: function getProperty(propertyPath){
-            var v = findProperty(this.originalData, propertyPath);
-            return typeof v === 'object' ? deepCopy(v) : v;
+        getOriginalDataProperty: function getOriginalDataProperty(propertyPath){
+            var p = findProperty(this.originalData, propertyPath);
+            return typeof p === 'object' ? deepCopy(p) : p;
         },
         //Returns the changedData property reachable through property path. If there is no property reachable through property path
         //return undefined.
-        getChangedDataProperty: function getProperty(propertyPath){
-            var v = findProperty(this.changedData, propertyPath);
-            return typeof v === 'object' ? deepCopy(v) : v;
+        getChangedDataProperty: function getChangedDataProperty(propertyPath){
+            var p = findProperty(this.changedData, propertyPath);
+            return typeof p === 'object' ? deepCopy(p) : p;
         },
         //Sets a property on an object reachable through the property path. If the property doesn't exits, it will be created and then assigned
         //its value (using a deep copy if typeof data === 'object'). Calling set with a nested object or property is therefore supported. For
@@ -490,19 +490,19 @@
         },
         //0.6.0 Ajax "GET".
         ajaxGet: function ajaxGet(options){
-            return ajax.call(this, 'get', options, Coccyx.ajax.ajaxGet);
+            return ajax.call(this, 'get', options, v.ajax.ajaxGet);
         },
         //0.6.0 Ajax "POST".
         ajaxPost: function ajaxPost(options){
-            return ajax.call(this, 'post', options, Coccyx.ajax.ajaxPost);
+            return ajax.call(this, 'post', options, v.ajax.ajaxPost);
         },
         //0.6.0 Ajax "PUT".
         ajaxPut: function ajaxPut(options){
-            return ajax.call(this, 'put', options, Coccyx.ajax.ajaxPut);
+            return ajax.call(this, 'put', options, v.ajax.ajaxPut);
         },
         //0.6.0 Ajax "DELETE".
         ajaxDelete: function ajaxDelete(options){
-            return ajax.call(this, 'delete', options, Coccyx.ajax.ajaxDelete);
+            return ajax.call(this, 'delete', options, v.ajax.ajaxDelete);
         },
         //0.6.3 Returns this.isSilent (boolean).
         getIsSilent: function getIsSilent(){
@@ -514,7 +514,7 @@
         }
     };
 
-    Coccyx.models = {
+    v.models = {
         extend: extend,
         propertyChangedEvent: propertyChangedEvent
     };
@@ -525,8 +525,8 @@
 define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
     'use strict';
 
-    var Coccyx = window.Coccyx = window.Coccyx || {},
-        ext = Coccyx.helpers.extend,
+    var v = window.Coccyx = window.Coccyx || {},
+        ext = v.helpers.extend,
         addEvent ='COLLECTION_MODEL_ADDED_EVENT',
         removeEvent ='COLLECTION_MODEL_REMOVED_EVENT',
         sortEvent ='COLLECTION_SORTED_EVENT',
@@ -668,7 +668,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
 
     //Makes a model from raw data and returns that model.
     function makeModelFromRaw(collObject, raw){
-        var model = Coccyx.models.extend(collObject.model ? collObject.model :
+        var model = v.models.extend(collObject.model ? collObject.model :
             {idPropertyName: collObject.modelsIdPropertyName, endPoint: collObject.modelsEndPoint});
         model.setData(raw);
         return model;
@@ -691,7 +691,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
 
     //Wire the model's property change event to be handled by this collection.
     function wireModelPropertyChangedHandler(collObject, model){
-        model.handle(Coccyx.models.propertyChangedEvent,
+        model.handle(v.models.propertyChangedEvent,
             collObject.modelPropertyChangedHandler, collObject);
         return model;
     }
@@ -729,21 +729,21 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
     eventerProto = {
         //Attach a callback handler to a specific custom event or events fired from 'this' object optionally binding the callback to context.
         handle: function handle(events, callback, context){
-            Coccyx.$(this.eventObject).on(events, context? Coccyx.$.proxy(callback, context) : callback);
+            v.$(this.eventObject).on(events, context? v.$.proxy(callback, context) : callback);
         },
         //Like handle but will only fire the event one time and will ignore subsequent events.
         handleOnce: function handleOnce(events, callback, context){
-            Coccyx.$(this.eventObject).one(events, context? Coccyx.$.proxy(callback, context) : callback);
+            v.$(this.eventObject).one(events, context? v.$.proxy(callback, context) : callback);
         },
         //Removes event handler.
         off: function off(events, callback){
-            Coccyx.$(this.eventObject).off(events, callback);
+            v.$(this.eventObject).off(events, callback);
         },
         //Trigger an event for object optionally passing args if provided.
         trigger: function trigger(events, args){
             //0.6.3 added isSilent check.
             if(!this.getIsSilent()){
-                Coccyx.$(this.eventObject).trigger(events, args);
+                v.$(this.eventObject).trigger(events, args);
             }
         }
     };
@@ -771,14 +771,14 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
             var m = this.coll.pop();
             this.deletedColl.push(m);
             this.length = this.coll.length;
-            this.trigger(Coccyx.collections.removeEvent, m);
+            this.trigger(v.collections.removeEvent, m);
             return m;
         },
         //Push [models] onto the collection' data property and returns the length of the collection.
         push: function push(models){
             var pushed = addModels(this, models);
             this.length = this.coll.length;
-            this.trigger(Coccyx.collections.addEvent, pushed);
+            this.trigger(v.collections.addEvent, pushed);
             return this.length;
         },
         reverse: function reverse(){
@@ -789,7 +789,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
             var m = this.coll.shift();
             this.deletedColl.push(m);
             this.length = this.coll.length;
-            this.trigger(Coccyx.collections.removeEvent, m);
+            this.trigger(v.collections.removeEvent, m);
             return m;
         },
         //Works the same as Array.sort(function(a,b){...})
@@ -797,7 +797,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
             this.coll.sort(function(a, b){
                 return callback(a, b);
             });
-            this.trigger(Coccyx.collections.sortEvent);
+            this.trigger(v.collections.sortEvent);
         },
         //Adds and optionally removes models. Takes new [modlels] starting with the 3rd parameter. Maintains deletedColl. Fires addEvent and removeEvent. Maintains deletedColl.
         splice: function splice(index, howMany){
@@ -808,10 +808,10 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
             if(m.length){this.deletedColl.push.apply(this.deletedColl, m);}
             this.length = this.coll.length;
             if(aa && aa.length){
-                this.trigger(Coccyx.collections.addEvent, aa);
+                this.trigger(v.collections.addEvent, aa);
             }
             if(howMany !== 0){
-                this.trigger(Coccyx.collections.removeEvent, m);
+                this.trigger(v.collections.removeEvent, m);
             }
             return m;
         },
@@ -821,7 +821,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
             var added = argsToModels(this, arguments),
                 l = [].unshift.apply(this.coll, added);
             this.length = this.coll.length;
-            this.trigger(Coccyx.collections.addEvent, added);
+            this.trigger(v.collections.addEvent, added);
             return l;
         },
 
@@ -882,9 +882,9 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
 
         //Loads a collection with data by fetching the data from the server via ajax. Returns a promise. Uses modelsEndPoint as the ajax call's url.
         fetch: function fetch(){
-            var deferred = Coccyx.$.Deferred(),
+            var deferred = v.$.Deferred(),
                 self = this,
-                promise = Coccyx.ajax.ajaxGet({dataType: 'json', url: this.modelsEndPoint});
+                promise = v.ajax.ajaxGet({dataType: 'json', url: this.modelsEndPoint});
             promise.done(function(data){
                 self.setModels(data);
                 //v0.6.2 return self added.
@@ -925,12 +925,12 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
             if(removed.length){
                 this.deletedColl.push.apply(this.deletedColl, removed);
                 removed.forEach(function(el){
-                    el.off(Coccyx.models.propertyChangedEvent,
+                    el.off(v.models.propertyChangedEvent,
                         self.modelPropertyChangedHandler);
                 });
                 this.coll = newColl;
                 this.length = this.coll.length;
-                this.trigger(Coccyx.collections.removeEvent, removed);
+                this.trigger(v.collections.removeEvent, removed);
             }
             return removed;
         },
@@ -970,7 +970,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         }
     };
 
-    Coccyx.collections = {
+    v.collections = {
         extend: extend,
         toRaw: toRaw,
         addEvent: addEvent,
@@ -983,14 +983,14 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
 ;define('router', ['application', 'helpers'], function() {
     'use strict';
 
-    var Coccyx = window.Coccyx = window.Coccyx || {},
-        contains = Coccyx.helpers.contains;
+    var v = window.Coccyx = window.Coccyx || {},
+        contains = v.helpers.contains;
 
     function route(verb, url, valuesHash){
         //0.6.1 Call Coccyx.init() only once before handling any routing requests. See application.js for details.
-        if(!Coccyx.initCalled){
-            Coccyx.init();
-            Coccyx.initCalled = true;
+        if(!v.initCalled){
+            v.init();
+            v.initCalled = true;
             console.log('Coccyx.init called');
         }
         var rt = getRoute(verb, url);
@@ -1002,18 +1002,18 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
     }
 
     function getRoute(verb, url){
-        var routes = Coccyx.controllers.getRoutes(),
+        var routes = v.controllers.getRoutes(),
             a = url.substring(1).split('/'),
             params = [],
             rel = false,
-            route, b, c, i, ii, len, eq, relUrl, v;
+            route, b, c, i, ii, len, eq, relUrl, vrb;
         for(route in routes){
             if(routes.hasOwnProperty(route)){
                 //Get the 'veb'.
-                v = route.substring(0, route.indexOf(' '));
+                vrb = route.substring(0, route.indexOf(' '));
                 //Get the url.
                 b = route.substring(route.indexOf('/') + 1).split('/');
-                if(verb === v && (a.length === b.length || contains(route, '*'))){
+                if(verb === vrb && (a.length === b.length || contains(route, '*'))){
                     eq = true;
                     //The url and the route have the same number of segments so the route
                     //can be either static or it could contain parameterized segments.
@@ -1067,7 +1067,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         //0.6.0 Prior versions called controller.init() when the controller is loaded. Starting with 0.6.0,
         //controller.init() is only called when routing is called to one of their route callbacks. This
         //eliminates unnecessary initialization if the controller is never used.
-        var controller = Coccyx.controllers.getController(route.controllerName);
+        var controller = v.controllers.getController(route.controllerName);
         if(controller.hasOwnProperty('init') && !controller.hasOwnProperty('initCalled')){
             controller.init();
             controller.initCalled = true;
@@ -1086,7 +1086,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         console.log('router::routeNotFound called with route = ' + url);
     }
 
-    Coccyx.router = {
+    v.router = {
         route: route
     };
 
@@ -1095,7 +1095,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
 ;define('views', ['application', 'helpers'], function(){
     'use strict';
 
-    var Coccyx = window.Coccyx = window.Coccyx || {},
+    var v = window.Coccyx = window.Coccyx || {},
         domEventTopic = 'DOM_EVENT',
         proto;
 
@@ -1128,29 +1128,29 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
     //for you from $domTarget.
     function setTarget(){
         /*jshint validthis:true*/
-        if(this.$domTarget && this.$domTarget instanceof Coccyx.$){
+        if(this.$domTarget && this.$domTarget instanceof v.$){
             //Use $domTarget.
             this.domTarget = this.$domTarget[0];
         }else if(this.domTarget){
             //Use domTarget.
             this.domTarget = document.createElement(typeof this.domTarget === 'string' ? this.domTarget : this.domTarget());
-            this.$domTarget = Coccyx.$(this.domTarget);
+            this.$domTarget = v.$(this.domTarget);
         }else if(this.domTargetAttrs){
             //Use domTargetAttrs.
-            this.$domTarget = Coccyx.$(document.createElement(this.tagName ?
+            this.$domTarget = v.$(document.createElement(this.tagName ?
                this.tagName : 'div')).attr(this.domTargetAttrs);
             this.domTarget = this.$domTarget[0];
         }else{
             //Default to 'div'.
             this.domTarget = document.createElement('div');
-            this.$domTarget = Coccyx.$(this.domTarget);
+            this.$domTarget = v.$(this.domTarget);
         }
     }
 
     //0.5.0, 0.6.0
     function extend(viewObject, domEventsHash){
         //Create a new object using the view object as its prototype.
-        var obj1 =  Coccyx.helpers.extend(Object.create(proto), viewObject),
+        var obj1 =  v.helpers.extend(Object.create(proto), viewObject),
             obj2 = Object.create(obj1);
         //0.6.0 Set domTarget && $domTarget
         setTarget.call(obj2);
@@ -1164,14 +1164,14 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
 
     //0.6.0
     proto = {
-        remove: function(){
+        remove: function remove(){
             this.$domTarget.off(this.namespace);
             this.$domTarget.empty();
         },
-        $: Coccyx.$
+        $: v.$
     };
 
-    Coccyx.views = {
+    v.views = {
         extend: extend,
         domEventTopic: domEventTopic
     };
@@ -1185,54 +1185,54 @@ define('eventer', ['application', 'helpers'], function(){
     //A custom non-dom  based "eventer" based on jQuery's .on() method's ability to use any object as an 'eventer' to generate custom events
     //and to handle emitted custom events. Use this to add eventing to your own objects.
 
-    var Coccyx = window.Coccyx = window.Coccyx || {},
+    var v = window.Coccyx = window.Coccyx || {},
         proto;
 
     proto = {
         //Attach a callback handler to a specific custom event or events fired from 'this' object optionally binding the callback to context.
         handle: function handle(events, callback, context){
-            Coccyx.$(this).on(events, context? Coccyx.$.proxy(callback, context) : callback);
+            v.$(this).on(events, context? v.$.proxy(callback, context) : callback);
         },
         //Like handle but will only fire the event one time and will ignore subsequent events.
         handleOnce: function handleOnce(events, callback, context){
-            Coccyx.$(this).one(events, context? Coccyx.$.proxy(callback, context) : callback);
+            v.$(this).one(events, context? v.$.proxy(callback, context) : callback);
         },
         //Removes event handler.
         off: function off(events, callback){
             if(events && callback){
                 //0.6.0 removes a specific event handler for events
-                Coccyx.$(this).off(events, callback);
+                v.$(this).off(events, callback);
             }else if(events){
                 //0.6.3 removes all event handlers for events
-                Coccyx.$(this).off(events);
+                v.$(this).off(events);
             }else{
                 //0.6.3 removes all event handlers for all events
-                Coccyx.$(this).off();
+                v.$(this).off();
             }
         },
         //Trigger an event for object optionally passing args if provided.
         trigger: function trigger(events, args){
-            Coccyx.$(this).trigger(events, args);
+            v.$(this).trigger(events, args);
         }
     };
 
     function extend(obj){
-        return Coccyx.helpers.extend(Object.create(proto), obj);
+        return v.helpers.extend(Object.create(proto), obj);
     }
 
-    Coccyx.eventer = {
+    v.eventer = {
         extend: extend
     };
 
-    Coccyx.eventer.proto = proto;
+    v.eventer.proto = proto;
 
 });
 
 ;define('ajax', ['application'], function(){
     'use strict';
 
-    var Coccyx = window.Coccyx = window.Coccyx || {},
-        extend = Coccyx.helpers.extend,
+    var v = window.Coccyx = window.Coccyx || {},
+        extend = v.helpers.extend,
         defaultSettings = {cache: false, url: '/'};
 
         //Merge default setting with user's settings.
@@ -1241,26 +1241,26 @@ define('eventer', ['application', 'helpers'], function(){
         }
 
     //A simple promise-based wrapper around jQuery Ajax. All methods return a Promise.
-    Coccyx.ajax = {
+    v.ajax = {
         //http "GET"
-        ajaxGet: function(settings){
+        ajaxGet: function ajaxGet(settings){
             settings.type = 'GET';
-            return Coccyx.$.ajax(mergeSettings(settings));
+            return v.$.ajax(mergeSettings(settings));
         },
         //http "POST"
-        ajaxPost: function(settings){
+        ajaxPost: function ajaxPost(settings){
             settings.type = 'POST';
-            return Coccyx.$.ajax(mergeSettings(settings));
+            return v.$.ajax(mergeSettings(settings));
         },
         //http "PUT"
-        ajaxPut: function(settings){
+        ajaxPut: function ajaxPut(settings){
             settings.type = 'PUT';
-            return Coccyx.$.ajax(mergeSettings(settings));
+            return v.$.ajax(mergeSettings(settings));
         },
         //http "DELETE"
-        ajaxDelete: function(settings){
+        ajaxDelete: function ajaxDelete(settings){
             settings.type = 'DELETE';
-            return Coccyx.$.ajax(mergeSettings(settings));
+            return v.$.ajax(mergeSettings(settings));
         }
     };
 

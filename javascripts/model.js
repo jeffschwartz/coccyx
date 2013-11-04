@@ -10,10 +10,10 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
      * changes made in data. If you don't heed this warning bad things _will_ happen!!!
      */
 
-    var Coccyx = window.Coccyx = window.Coccyx || {},
-        deepCopy = Coccyx.helpers.deepCopy,
-        ext = Coccyx.helpers.extend,
-        replace = Coccyx.helpers.replace,
+    var v = window.Coccyx = window.Coccyx || {},
+        deepCopy = v.helpers.deepCopy,
+        ext = v.helpers.extend,
+        replace = v.helpers.replace,
         propertyChangedEvent = 'MODEL_PROPERTY_CHANGED_EVENT',
         syntheticId = -1, //0.6.0 Generates synthetic model ids.
         proto;
@@ -70,7 +70,7 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
     function extend(modelObject){
         //Create a new object using proto as its prototype and extend that object with modelObject if it was supplied.
         //0.6.0 Added support for Coccyx.eventer.
-        var obj0 = ext(Object.create(Coccyx.eventer.proto), proto),
+        var obj0 = ext(Object.create(v.eventer.proto), proto),
             obj1 =  modelObject ? ext(obj0, modelObject) : obj0,
             obj2 = Object.create(obj1);
         //Decorate the new object with additional properties.
@@ -110,7 +110,7 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
     //0.6.0 Does the heavy lifting
     function ajax(op, opt, fn){
         /*jshint validthis:true*/
-        var deferred = Coccyx.$.Deferred(),
+        var deferred = v.$.Deferred(),
             self = this,
             opts = setAjaxOptions(opt),
             promise;
@@ -175,20 +175,20 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
         //Returns the data property reachable through property path. If there is no property reachable through property path
         //return undefined.
         getProperty: function getProperty(propertyPath){
-            var v = findProperty(this.data, propertyPath);
-            return typeof v === 'object' ? deepCopy(v) : v;
+            var p = findProperty(this.data, propertyPath);
+            return typeof p === 'object' ? deepCopy(p) : p;
         },
         //Returns the originalData property reachable through property path. If there is no property reachable through property path
         //return undefined.
-        getOriginalDataProperty: function getProperty(propertyPath){
-            var v = findProperty(this.originalData, propertyPath);
-            return typeof v === 'object' ? deepCopy(v) : v;
+        getOriginalDataProperty: function getOriginalDataProperty(propertyPath){
+            var p = findProperty(this.originalData, propertyPath);
+            return typeof p === 'object' ? deepCopy(p) : p;
         },
         //Returns the changedData property reachable through property path. If there is no property reachable through property path
         //return undefined.
-        getChangedDataProperty: function getProperty(propertyPath){
-            var v = findProperty(this.changedData, propertyPath);
-            return typeof v === 'object' ? deepCopy(v) : v;
+        getChangedDataProperty: function getChangedDataProperty(propertyPath){
+            var p = findProperty(this.changedData, propertyPath);
+            return typeof p === 'object' ? deepCopy(p) : p;
         },
         //Sets a property on an object reachable through the property path. If the property doesn't exits, it will be created and then assigned
         //its value (using a deep copy if typeof data === 'object'). Calling set with a nested object or property is therefore supported. For
@@ -236,19 +236,19 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
         },
         //0.6.0 Ajax "GET".
         ajaxGet: function ajaxGet(options){
-            return ajax.call(this, 'get', options, Coccyx.ajax.ajaxGet);
+            return ajax.call(this, 'get', options, v.ajax.ajaxGet);
         },
         //0.6.0 Ajax "POST".
         ajaxPost: function ajaxPost(options){
-            return ajax.call(this, 'post', options, Coccyx.ajax.ajaxPost);
+            return ajax.call(this, 'post', options, v.ajax.ajaxPost);
         },
         //0.6.0 Ajax "PUT".
         ajaxPut: function ajaxPut(options){
-            return ajax.call(this, 'put', options, Coccyx.ajax.ajaxPut);
+            return ajax.call(this, 'put', options, v.ajax.ajaxPut);
         },
         //0.6.0 Ajax "DELETE".
         ajaxDelete: function ajaxDelete(options){
-            return ajax.call(this, 'delete', options, Coccyx.ajax.ajaxDelete);
+            return ajax.call(this, 'delete', options, v.ajax.ajaxDelete);
         },
         //0.6.3 Returns this.isSilent (boolean).
         getIsSilent: function getIsSilent(){
@@ -260,7 +260,7 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
         }
     };
 
-    Coccyx.models = {
+    v.models = {
         extend: extend,
         propertyChangedEvent: propertyChangedEvent
     };
