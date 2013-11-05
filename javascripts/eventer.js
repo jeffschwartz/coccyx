@@ -41,9 +41,8 @@ define('eventer', ['application', 'helpers'], function(){
     }
 
     v.eventer = {
-        extend: extend
+        extend: extend,
+        proto: proto
     };
-
-    v.eventer.proto = proto;
 
 });

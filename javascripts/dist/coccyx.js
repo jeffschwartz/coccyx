@@ -530,12 +530,12 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         addEvent ='COLLECTION_MODEL_ADDED_EVENT',
         removeEvent ='COLLECTION_MODEL_REMOVED_EVENT',
         sortEvent ='COLLECTION_SORTED_EVENT',
-        eventerProto, proto;
+        proto;
 
     //Extend the application's collection object.
     function extend(collObj){
         //Create a new object using proto as its prototype and extend that object with collObj if it was supplied.
-        var obj0 = ext(Object.create(eventerProto), proto),
+        var obj0 = ext(Object.create(v.eventer.proto), proto),
             obj1 = collObj ? ext(obj0, collObj) : obj0;
         //Collections have to know what their models' id property names are. Defaults to 'id', unless provided.
         obj1.modelsIdPropertyName = obj1.model && typeof obj1.model.idPropertyName !== 'undefined' ? obj1.model.idPropertyName : typeof obj1.modelsIdPropertyName !== 'undefined' ? obj1.modelsIdPropertyName : 'id';
@@ -547,8 +547,6 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         obj2.isSilent = false;
         obj2.coll = [];
         obj2.deletedColl = [];
-        obj2.length = 0;
-        obj2.eventObject = {};
         return obj2;
     }
 
@@ -684,7 +682,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
                 iterate(args[i], callback);
             }
         }else{
-            //Not iterabe.
+            //Not iterable.
             callback(args);
         }
     }
@@ -725,35 +723,20 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         return models;
     }
 
-    //Eventer prototype properties...
-    eventerProto = {
-        //Attach a callback handler to a specific custom event or events fired from 'this' object optionally binding the callback to context.
-        handle: function handle(events, callback, context){
-            v.$(this.eventObject).on(events, context? v.$.proxy(callback, context) : callback);
-        },
-        //Like handle but will only fire the event one time and will ignore subsequent events.
-        handleOnce: function handleOnce(events, callback, context){
-            v.$(this.eventObject).one(events, context? v.$.proxy(callback, context) : callback);
-        },
-        //Removes event handler.
-        off: function off(events, callback){
-            v.$(this.eventObject).off(events, callback);
-        },
-        //Trigger an event for object optionally passing args if provided.
-        trigger: function trigger(events, args){
-            //0.6.3 added isSilent check.
-            if(!this.getIsSilent()){
-                v.$(this.eventObject).trigger(events, args);
-            }
+    //0.6.3 Triggers an event via Eventer.
+    function triggerEvent(event, args){
+        /*jshint validthis:true*/
+        if(!this.getIsSilent()){
+            this.trigger(event, args);
         }
-    };
+    }
 
     //Collection prototype properties...
     proto = {
         /* Internal model property change event handler */
 
         modelPropertyChangedHandler: function modelPropertyChangedHandler(event, data){
-            this.trigger(event, data);
+            triggerEvent.call(this, event, data);
         },
 
         /* Mutators */
@@ -763,23 +746,20 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
             this.coll = [];
             addModels(this, models);
             this.isReadOnly = options && options.readOnly;
-            this.length = this.coll.length;
             return this;
         },
         //Pops the last model from the collection's data property and returns that model. Fires the removeEvent. Maintains deletedColl.
         pop: function pop(){
             var m = this.coll.pop();
             this.deletedColl.push(m);
-            this.length = this.coll.length;
-            this.trigger(v.collections.removeEvent, m);
+            triggerEvent.call(this, v.collections.removeEvent, m);
             return m;
         },
         //Push [models] onto the collection' data property and returns the length of the collection.
         push: function push(models){
             var pushed = addModels(this, models);
-            this.length = this.coll.length;
-            this.trigger(v.collections.addEvent, pushed);
-            return this.length;
+            triggerEvent.call(this, v.collections.addEvent, pushed);
+            return this.coll.length;
         },
         reverse: function reverse(){
             this.coll.reverse();
@@ -788,8 +768,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         shift: function shift(){
             var m = this.coll.shift();
             this.deletedColl.push(m);
-            this.length = this.coll.length;
-            this.trigger(v.collections.removeEvent, m);
+            triggerEvent.call(this, v.collections.removeEvent, m);
             return m;
         },
         //Works the same as Array.sort(function(a,b){...})
@@ -797,7 +776,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
             this.coll.sort(function(a, b){
                 return callback(a, b);
             });
-            this.trigger(v.collections.sortEvent);
+            triggerEvent.call(this, v.collections.sortEvent);
         },
         //Adds and optionally removes models. Takes new [modlels] starting with the 3rd parameter. Maintains deletedColl. Fires addEvent and removeEvent. Maintains deletedColl.
         splice: function splice(index, howMany){
@@ -806,12 +785,11 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
             a = a.concat(aa);
             var m = [].splice.apply(this.coll, a);
             if(m.length){this.deletedColl.push.apply(this.deletedColl, m);}
-            this.length = this.coll.length;
             if(aa && aa.length){
-                this.trigger(v.collections.addEvent, aa);
+                triggerEvent.call(this, v.collections.addEvent, aa);
             }
             if(howMany !== 0){
-                this.trigger(v.collections.removeEvent, m);
+                triggerEvent.call(this, v.collections.removeEvent, m);
             }
             return m;
         },
@@ -820,8 +798,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         unshift: function unshift(){
             var added = argsToModels(this, arguments),
                 l = [].unshift.apply(this.coll, added);
-            this.length = this.coll.length;
-            this.trigger(v.collections.addEvent, added);
+            triggerEvent.call(this, v.collections.addEvent, added);
             return l;
         },
 
@@ -839,7 +816,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         },
         //Find a model by its id and return it.
         findById: function findById(id){
-            for(var i = 0; i < this.length; i++){
+            for(var i = 0, len = this.coll.length; i < len; i++){
                 if(this.at(i).modelId === id){
                     return this.at(i);
                 }
@@ -890,8 +867,8 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
                 //v0.6.2 return self added.
                 deferred.resolve(self);
             });
-            //v0.6.2 return self added.
             promise.fail(function(json){
+                //v0.6.2 return self added.
                 deferred.reject(self, json);
             });
             return deferred.promise();
@@ -912,7 +889,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
             var removed = [],
                 self = this,
                 newColl;
-            if(this.length === 0 || isArrayOrNotObject(matchingPropertiesHash)){
+            if(this.coll.length === 0 || isArrayOrNotObject(matchingPropertiesHash)){
                 return;
             }
             newColl = this.coll.filter(function(el){
@@ -929,8 +906,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
                         self.modelPropertyChangedHandler);
                 });
                 this.coll = newColl;
-                this.length = this.coll.length;
-                this.trigger(v.collections.removeEvent, removed);
+                triggerEvent.call(this, v.collections.removeEvent, removed);
             }
             return removed;
         },
@@ -967,6 +943,10 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         //0.6.3 Sets this.isSilent (boolean).
         setIsSilent: function setIsSilent(isSilent){
             this.isSilent = isSilent;
+        },
+        //0.6.3 Returns the length of this.coll.
+        getLength: function getLength(){
+            return this.coll.length;
         }
     };
 
@@ -1221,10 +1201,9 @@ define('eventer', ['application', 'helpers'], function(){
     }
 
     v.eventer = {
-        extend: extend
+        extend: extend,
+        proto: proto
     };
-
-    v.eventer.proto = proto;
 
 });
 
