@@ -6,9 +6,8 @@ define('helpers', [], function(){
     v.helpers = {
         //Returns true if s1 contains s2, otherwise returns false.
         contains: function contains(s1, s2){
-            var i, len;
             if(typeof s1 === 'string'){
-                for(i = 0, len = s1.length; i < len; i++){
+                for(var i = 0, len = s1.length; i < len; i++){
                     if(s1[i] === s2) {
                         return true;
                     }
@@ -22,13 +21,11 @@ define('helpers', [], function(){
         },
         //Pass one or more objects as the source objects whose properties are to be copied to the target object.
         extend: function extend(targetObj){
-            var len = arguments.length - 1,
-                property, i;
-            for(i = 1; i <= len; i++){
-                var src = arguments[i];
-                for(property in src){
-                    if(src.hasOwnProperty(property)){
-                        targetObj[property] = src[property];
+            var property;
+            for(var i = 1, len = arguments.length - 1; i <= len; i++){
+                for(property in arguments[i]){
+                    if(arguments[i].hasOwnProperty(property)){
+                        targetObj[property] = arguments[i][property];
                     }
                 }
             }
