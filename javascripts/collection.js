@@ -9,10 +9,8 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         sortEvent ='COLLECTION_SORTED_EVENT',
         proto;
 
-    //Extend the application's collection object.
     function extend(collObj){
-        //Create a new object using proto as its prototype and extend that object with collObj if it was supplied.
-        var obj0 = ext(Object.create(v.eventer.proto), proto),
+        var obj0 = Object.create(proto),
             obj1 = collObj ? ext(obj0, collObj) : obj0;
         //Collections have to know what their models' id property names are. Defaults to 'id', unless provided.
         obj1.modelsIdPropertyName = obj1.model && typeof obj1.model.idPropertyName !== 'undefined' ? obj1.model.idPropertyName : typeof obj1.modelsIdPropertyName !== 'undefined' ? obj1.modelsIdPropertyName : 'id';
@@ -20,10 +18,12 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         obj1.modelsEndPoint = obj1.model && typeof obj1.model.endPoint !== 'undefined' ? obj1.model.endPoint : typeof obj1.modelsEndPoint !== 'undefined' ? obj1.modelsEndPoint : '/';
         var obj2 = Object.create(obj1);
         obj2.isReadOnly = false;
-        //0.6.3
+        //0.6.3 Added isSilent
         obj2.isSilent = false;
         obj2.coll = [];
         obj2.deletedColl = [];
+        //0.6.3 Eventer no longer placed on prototype as in prior versions. Its methods are now mixed in with the final object.
+        obj2 = v.eventer.extend(obj2);
         return obj2;
     }
 
@@ -208,6 +208,22 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         }
     }
 
+    //0.6.3 Removes propertyChangedEvents from models.
+    function removePropertyChangedEvents(models){
+        /*jshint validthis:true*/
+        var self = this;
+        if(models){
+            if(Array.isArray(models)){
+                models.forEach(function(m){
+                    m.off(v.models.propertyChangedEvent, self.modelPropertyChangedHandler);
+                });
+            }else{
+                models.off(v.models.propertyChangedEvent, this.modelPropertyChangedHandler);
+            }
+        }
+        return models;
+    }
+
     //Collection prototype properties...
     proto = {
         /* Internal model property change event handler */
@@ -225,42 +241,43 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
             this.isReadOnly = options && options.readOnly;
             return this;
         },
-        //Pops the last model from the collection's data property and returns that model. Fires the removeEvent. Maintains deletedColl.
+        //Works like [].pop. Fires removeEvent. Maintains deletedColl.
         pop: function pop(){
-            var m = this.coll.pop();
+            var m = removePropertyChangedEvents.call(this, this.coll.pop());
             this.deletedColl.push(m);
             triggerEvent.call(this, v.collections.removeEvent, m);
             return m;
         },
-        //Push [models] onto the collection' data property and returns the length of the collection.
+        //Works like [].push. Fires addEvent.
         push: function push(models){
             var pushed = addModels(this, models);
             triggerEvent.call(this, v.collections.addEvent, pushed);
             return this.coll.length;
         },
+        //Works like [].reverse.
         reverse: function reverse(){
             this.coll.reverse();
         },
-        //Removes the first model from the collection's data property and returns that model. Fires the removeEvent. Maintains deletedColl.
+        //Works like [].shift. Fires removeEvent. Maintains deletedColl.
         shift: function shift(){
-            var m = this.coll.shift();
+            var m = removePropertyChangedEvents.call(this, this.coll.shift());
             this.deletedColl.push(m);
             triggerEvent.call(this, v.collections.removeEvent, m);
             return m;
         },
-        //Works the same as Array.sort(function(a,b){...})
+        //Works like [].sort(function(a,b){...}). Fires sortEvent.
         sort: function sort(callback){
             this.coll.sort(function(a, b){
                 return callback(a, b);
             });
             triggerEvent.call(this, v.collections.sortEvent);
         },
-        //Adds and optionally removes models. Takes new [modlels] starting with the 3rd parameter. Maintains deletedColl. Fires addEvent and removeEvent. Maintains deletedColl.
+        //Works like [].splice. Takes new [modlels] starting with the 3rd parameter. Maintains deletedColl. Fires addEvent and removeEvent.
         splice: function splice(index, howMany){
             var a =[index, howMany],
                 aa = argsToModels(this, [].slice.call(arguments, 2));
             a = a.concat(aa);
-            var m = [].splice.apply(this.coll, a);
+            var m = removePropertyChangedEvents.call(this, [].splice.apply(this.coll, a));
             if(m.length){this.deletedColl.push.apply(this.deletedColl, m);}
             if(aa && aa.length){
                 triggerEvent.call(this, v.collections.addEvent, aa);
@@ -270,8 +287,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
             }
             return m;
         },
-        //Adds one or more models to the beginning of an array and returns the new length of the array. If raw data is passed instead of
-        //models, they will be converted to models first, and then added to the collection.
+        //Works like [].unshift. If raw data is passed it/they will first be converted to models.
         unshift: function unshift(){
             var added = argsToModels(this, arguments),
                 l = [].unshift.apply(this.coll, added);
@@ -299,7 +315,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
                 }
             }
         },
-        //Returns a copy of a portion of the models in the collection.
+        //Works like [].slice.
         slice: function slice(){
             var self = this;
             return [].slice.apply(this.coll, arguments).map(function(model){
@@ -363,9 +379,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         //Removing models causes a remove event to be fired, and the removed models are passed along as the 2nd
         //argument to the event handler's callback function. Maintains deletedColl.
         remove: function remove(matchingPropertiesHash){
-            var removed = [],
-                self = this,
-                newColl;
+            var removed = [], newColl;
             if(this.coll.length === 0 || isArrayOrNotObject(matchingPropertiesHash)){
                 return;
             }
@@ -377,11 +391,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
                 return true;
             });
             if(removed.length){
-                this.deletedColl.push.apply(this.deletedColl, removed);
-                removed.forEach(function(el){
-                    el.off(v.models.propertyChangedEvent,
-                        self.modelPropertyChangedHandler);
-                });
+                this.deletedColl.push.apply(this.deletedColl, removePropertyChangedEvents.call(this, removed));
                 this.coll = newColl;
                 triggerEvent.call(this, v.collections.removeEvent, removed);
             }

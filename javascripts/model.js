@@ -67,21 +67,22 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
     }
 
     //0.5.0
+    //0.6.0 Added support for Coccyx.eventer.
     function extend(modelObject){
-        //Create a new object using proto as its prototype and extend that object with modelObject if it was supplied.
-        //0.6.0 Added support for Coccyx.eventer.
-        var obj0 = ext(Object.create(v.eventer.proto), proto),
-            obj1 =  modelObject ? ext(obj0, modelObject) : obj0,
-            obj2 = Object.create(obj1);
+        var obj0 = Object.create(proto),
+            obj1 = modelObject ? ext(obj0, modelObject) : obj0,
+            obj2 = modelObject ? Object.create(obj1) : obj1;
         //Decorate the new object with additional properties.
         obj2.isSet = false;
         obj2.isReadOnly = false;
         obj2.isDirty = false;
-        //0.6.3
+        //0.6.3 Added isSilent
         obj2.isSilent = false;
         obj2.originalData = {};
         obj2.changedData = {};
         obj2.data = {};
+        //0.6.3 Eventer no longer placed on prototype as in prior versions. Its methods are now mixed in with the final object.
+        obj2 = v.eventer.extend(obj2);
         return obj2;
     }
 

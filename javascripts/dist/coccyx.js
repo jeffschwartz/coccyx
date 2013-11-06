@@ -102,9 +102,8 @@ define('helpers', [], function(){
     v.helpers = {
         //Returns true if s1 contains s2, otherwise returns false.
         contains: function contains(s1, s2){
-            var i, len;
             if(typeof s1 === 'string'){
-                for(i = 0, len = s1.length; i < len; i++){
+                for(var i = 0, len = s1.length; i < len; i++){
                     if(s1[i] === s2) {
                         return true;
                     }
@@ -118,13 +117,11 @@ define('helpers', [], function(){
         },
         //Pass one or more objects as the source objects whose properties are to be copied to the target object.
         extend: function extend(targetObj){
-            var len = arguments.length - 1,
-                property, i;
-            for(i = 1; i <= len; i++){
-                var src = arguments[i];
-                for(property in src){
-                    if(src.hasOwnProperty(property)){
-                        targetObj[property] = src[property];
+            var property;
+            for(var i = 1, len = arguments.length - 1; i <= len; i++){
+                for(property in arguments[i]){
+                    if(arguments[i].hasOwnProperty(property)){
+                        targetObj[property] = arguments[i][property];
                     }
                 }
             }
@@ -321,21 +318,22 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
     }
 
     //0.5.0
+    //0.6.0 Added support for Coccyx.eventer.
     function extend(modelObject){
-        //Create a new object using proto as its prototype and extend that object with modelObject if it was supplied.
-        //0.6.0 Added support for Coccyx.eventer.
-        var obj0 = ext(Object.create(v.eventer.proto), proto),
-            obj1 =  modelObject ? ext(obj0, modelObject) : obj0,
-            obj2 = Object.create(obj1);
+        var obj0 = Object.create(proto),
+            obj1 = modelObject ? ext(obj0, modelObject) : obj0,
+            obj2 = modelObject ? Object.create(obj1) : obj1;
         //Decorate the new object with additional properties.
         obj2.isSet = false;
         obj2.isReadOnly = false;
         obj2.isDirty = false;
-        //0.6.3
+        //0.6.3 Added isSilent
         obj2.isSilent = false;
         obj2.originalData = {};
         obj2.changedData = {};
         obj2.data = {};
+        //0.6.3 Eventer no longer placed on prototype as in prior versions. Its methods are now mixed in with the final object.
+        obj2 = v.eventer.extend(obj2);
         return obj2;
     }
 
@@ -532,10 +530,8 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         sortEvent ='COLLECTION_SORTED_EVENT',
         proto;
 
-    //Extend the application's collection object.
     function extend(collObj){
-        //Create a new object using proto as its prototype and extend that object with collObj if it was supplied.
-        var obj0 = ext(Object.create(v.eventer.proto), proto),
+        var obj0 = Object.create(proto),
             obj1 = collObj ? ext(obj0, collObj) : obj0;
         //Collections have to know what their models' id property names are. Defaults to 'id', unless provided.
         obj1.modelsIdPropertyName = obj1.model && typeof obj1.model.idPropertyName !== 'undefined' ? obj1.model.idPropertyName : typeof obj1.modelsIdPropertyName !== 'undefined' ? obj1.modelsIdPropertyName : 'id';
@@ -543,10 +539,12 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         obj1.modelsEndPoint = obj1.model && typeof obj1.model.endPoint !== 'undefined' ? obj1.model.endPoint : typeof obj1.modelsEndPoint !== 'undefined' ? obj1.modelsEndPoint : '/';
         var obj2 = Object.create(obj1);
         obj2.isReadOnly = false;
-        //0.6.3
+        //0.6.3 Added isSilent
         obj2.isSilent = false;
         obj2.coll = [];
         obj2.deletedColl = [];
+        //0.6.3 Eventer no longer placed on prototype as in prior versions. Its methods are now mixed in with the final object.
+        obj2 = v.eventer.extend(obj2);
         return obj2;
     }
 
@@ -731,6 +729,22 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         }
     }
 
+    //0.6.3 Removes propertyChangedEvents from models.
+    function removePropertyChangedEvents(models){
+        /*jshint validthis:true*/
+        var self = this;
+        if(models){
+            if(Array.isArray(models)){
+                models.forEach(function(m){
+                    m.off(v.models.propertyChangedEvent, self.modelPropertyChangedHandler);
+                });
+            }else{
+                models.off(v.models.propertyChangedEvent, this.modelPropertyChangedHandler);
+            }
+        }
+        return models;
+    }
+
     //Collection prototype properties...
     proto = {
         /* Internal model property change event handler */
@@ -748,42 +762,43 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
             this.isReadOnly = options && options.readOnly;
             return this;
         },
-        //Pops the last model from the collection's data property and returns that model. Fires the removeEvent. Maintains deletedColl.
+        //Works like [].pop. Fires removeEvent. Maintains deletedColl.
         pop: function pop(){
-            var m = this.coll.pop();
+            var m = removePropertyChangedEvents.call(this, this.coll.pop());
             this.deletedColl.push(m);
             triggerEvent.call(this, v.collections.removeEvent, m);
             return m;
         },
-        //Push [models] onto the collection' data property and returns the length of the collection.
+        //Works like [].push. Fires addEvent.
         push: function push(models){
             var pushed = addModels(this, models);
             triggerEvent.call(this, v.collections.addEvent, pushed);
             return this.coll.length;
         },
+        //Works like [].reverse.
         reverse: function reverse(){
             this.coll.reverse();
         },
-        //Removes the first model from the collection's data property and returns that model. Fires the removeEvent. Maintains deletedColl.
+        //Works like [].shift. Fires removeEvent. Maintains deletedColl.
         shift: function shift(){
-            var m = this.coll.shift();
+            var m = removePropertyChangedEvents.call(this, this.coll.shift());
             this.deletedColl.push(m);
             triggerEvent.call(this, v.collections.removeEvent, m);
             return m;
         },
-        //Works the same as Array.sort(function(a,b){...})
+        //Works like [].sort(function(a,b){...}). Fires sortEvent.
         sort: function sort(callback){
             this.coll.sort(function(a, b){
                 return callback(a, b);
             });
             triggerEvent.call(this, v.collections.sortEvent);
         },
-        //Adds and optionally removes models. Takes new [modlels] starting with the 3rd parameter. Maintains deletedColl. Fires addEvent and removeEvent. Maintains deletedColl.
+        //Works like [].splice. Takes new [modlels] starting with the 3rd parameter. Maintains deletedColl. Fires addEvent and removeEvent.
         splice: function splice(index, howMany){
             var a =[index, howMany],
                 aa = argsToModels(this, [].slice.call(arguments, 2));
             a = a.concat(aa);
-            var m = [].splice.apply(this.coll, a);
+            var m = removePropertyChangedEvents.call(this, [].splice.apply(this.coll, a));
             if(m.length){this.deletedColl.push.apply(this.deletedColl, m);}
             if(aa && aa.length){
                 triggerEvent.call(this, v.collections.addEvent, aa);
@@ -793,8 +808,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
             }
             return m;
         },
-        //Adds one or more models to the beginning of an array and returns the new length of the array. If raw data is passed instead of
-        //models, they will be converted to models first, and then added to the collection.
+        //Works like [].unshift. If raw data is passed it/they will first be converted to models.
         unshift: function unshift(){
             var added = argsToModels(this, arguments),
                 l = [].unshift.apply(this.coll, added);
@@ -822,7 +836,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
                 }
             }
         },
-        //Returns a copy of a portion of the models in the collection.
+        //Works like [].slice.
         slice: function slice(){
             var self = this;
             return [].slice.apply(this.coll, arguments).map(function(model){
@@ -886,9 +900,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         //Removing models causes a remove event to be fired, and the removed models are passed along as the 2nd
         //argument to the event handler's callback function. Maintains deletedColl.
         remove: function remove(matchingPropertiesHash){
-            var removed = [],
-                self = this,
-                newColl;
+            var removed = [], newColl;
             if(this.coll.length === 0 || isArrayOrNotObject(matchingPropertiesHash)){
                 return;
             }
@@ -900,11 +912,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
                 return true;
             });
             if(removed.length){
-                this.deletedColl.push.apply(this.deletedColl, removed);
-                removed.forEach(function(el){
-                    el.off(v.models.propertyChangedEvent,
-                        self.modelPropertyChangedHandler);
-                });
+                this.deletedColl.push.apply(this.deletedColl, removePropertyChangedEvents.call(this, removed));
                 this.coll = newColl;
                 triggerEvent.call(this, v.collections.removeEvent, removed);
             }
@@ -1162,47 +1170,48 @@ define('views', ['application', 'helpers'], function(){
 define('eventer', ['application', 'helpers'], function(){
     'use strict';
 
-    //A custom non-dom  based "eventer" based on jQuery's .on() method's ability to use any object as an 'eventer' to generate custom events
-    //and to handle emitted custom events. Use this to add eventing to your own objects.
+    //Coccyx.eventer turns any object into an "eventing" object and is based on jQuery's eventing model.
+    //Example: v.eventer.extend(someObjet); someObject.handle('ping', callback); ... someObject.trigger('ping');
 
-    var v = window.Coccyx = window.Coccyx || {},
-        proto;
+    var v = window.Coccyx = window.Coccyx || {}, eventerApi;
 
-    proto = {
+    eventerApi = {
         //Attach a callback handler to a specific custom event or events fired from 'this' object optionally binding the callback to context.
         handle: function handle(events, callback, context){
-            v.$(this).on(events, context? v.$.proxy(callback, context) : callback);
+            v.$(this._eventedObj).on(events, context? v.$.proxy(callback, context) : callback);
         },
         //Like handle but will only fire the event one time and will ignore subsequent events.
         handleOnce: function handleOnce(events, callback, context){
-            v.$(this).one(events, context? v.$.proxy(callback, context) : callback);
+            v.$(this._eventedObj).one(events, context? v.$.proxy(callback, context) : callback);
         },
         //Removes event handler.
         off: function off(events, callback){
             if(events && callback){
-                //0.6.0 removes a specific event handler for events
-                v.$(this).off(events, callback);
+                v.$(this._eventedObj).off(events, callback);
             }else if(events){
                 //0.6.3 removes all event handlers for events
-                v.$(this).off(events);
+                v.$(this._eventedObj).off(events);
             }else{
                 //0.6.3 removes all event handlers for all events
-                v.$(this).off();
+                v.$(this._eventedObj).off();
             }
         },
         //Trigger an event for object optionally passing args if provided.
         trigger: function trigger(events, args){
-            v.$(this).trigger(events, args);
+            v.$(this._eventedObj).trigger(events, args);
         }
     };
 
     function extend(obj){
-        return v.helpers.extend(Object.create(proto), obj);
+        //0.6.3 Implementation now placed directly on obj instead of added as a prototype.
+        var obj0 = obj._eventedObj ? obj : v.helpers.extend(obj, eventerApi);
+        //0.6.3 Add eventedObj to obj.
+        obj0._eventedObj = obj._eventedObj ? obj._eventedObj : {};
+        return obj0;
     }
 
     v.eventer = {
-        extend: extend,
-        proto: proto
+        extend: extend
     };
 
 });
