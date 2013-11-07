@@ -23,8 +23,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         obj2.coll = [];
         obj2.deletedColl = [];
         //0.6.3 Eventer no longer placed on prototype as in prior versions. Its methods are now mixed in with the final object.
-        obj2 = v.eventer.extend(obj2);
-        return obj2;
+        return v.eventer.extend(obj2);
     }
 
     //Returns an array containing the raw data for each model in the models array.
