@@ -68,7 +68,6 @@ define('views', ['application', 'helpers'], function(){
         return obj2;
     }
 
-    //0.6.0
     proto = {
         remove: function remove(){
             this.$domTarget.off(this.namespace);
@@ -77,9 +76,5 @@ define('views', ['application', 'helpers'], function(){
         $: v.$
     };
 
-    v.views = {
-        extend: extend,
-        domEventTopic: domEventTopic
-    };
-
+    v.views = {extend: extend, domEventTopic: domEventTopic};
 });

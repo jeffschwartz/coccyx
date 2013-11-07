@@ -260,9 +260,5 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
         }
     };
 
-    v.models = {
-        extend: extend,
-        propertyChangedEvent: propertyChangedEvent
-    };
-
+    v.models = {extend: extend, propertyChangedEvent: propertyChangedEvent};
 });

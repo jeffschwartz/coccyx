@@ -24,7 +24,7 @@ define('router', ['application', 'helpers'], function() {
             a = url.substring(1).split('/'),
             params = [],
             rel = false,
-            route, b, c, i, ii, len, eq, relUrl, vrb;
+            route, b, c, eq, vrb;
         for(route in routes){
             if(routes.hasOwnProperty(route)){
                 //Get the 'veb'.
@@ -35,7 +35,7 @@ define('router', ['application', 'helpers'], function() {
                     eq = true;
                     //The url and the route have the same number of segments so the route
                     //can be either static or it could contain parameterized segments.
-                    for(i = 0, len = b.length; i < len; i++){
+                    for(var i = 0, len = b.length; i < len; i++){
                         //If the segments are equal then continue looping.
                         if(a[i] === b[i]){
                             continue;
@@ -70,7 +70,7 @@ define('router', ['application', 'helpers'], function() {
                     }
                     if(rel){
                         //controller name, function to call, function arguments to call with...
-                        for(ii = i, relUrl = ''; ii < a.length; ii++){
+                        for(var ii = i, llen = a.length, relUrl = ''; ii < llen; ii++){
                             relUrl += ('/' + a[ii]);
                         }
                         //controller name, function to call, function arguments to call with...
@@ -104,8 +104,5 @@ define('router', ['application', 'helpers'], function() {
         console.log('router::routeNotFound called with route = ' + url);
     }
 
-    v.router = {
-        route: route
-    };
-
+    v.router = {route: route};
 });

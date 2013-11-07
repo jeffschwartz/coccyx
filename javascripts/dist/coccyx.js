@@ -86,11 +86,7 @@ define('application', ['jquery'], function(){
         return VERSION;
     };
 
-    v.controllers = {
-        registerControllers : registerControllers,
-        getRoutes: getRoutes,
-        getController: getController
-    };
+    v.controllers = {registerControllers : registerControllers, getRoutes: getRoutes, getController: getController};
 
 });
 
@@ -191,10 +187,8 @@ define('history', ['application', 'router'], function() {
 
     //Creates a hash from an array whose elements are hashes whose properties are 'name' and 'value'.
     function valuesHashFromSerializedArray(valuesArray){
-        var len = valuesArray.length,
-            valuesHash = {},
-            i;
-        for(i = 0; i < len; i++){
+        var valuesHash = {};
+        for(var i = 0, len = valuesArray.length; i < len; i++){
             valuesHash[valuesArray[i].name] = valuesArray[i].value;
         }
         return valuesHash;
@@ -241,12 +235,7 @@ define('history', ['application', 'router'], function() {
         }
     }
 
-    v.history = {
-        start: start,
-        started: started,
-        navigate: navigate
-    };
-
+    v.history = {start: start, started: started, navigate: navigate};
 });
 
 define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
@@ -511,11 +500,7 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
         }
     };
 
-    v.models = {
-        extend: extend,
-        propertyChangedEvent: propertyChangedEvent
-    };
-
+    v.models = {extend: extend, propertyChangedEvent: propertyChangedEvent};
 });
 
 //0.6.0
@@ -556,12 +541,11 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
     }
 
     function compareArrays(a, b){
-        var i, len;
         if(Array.isArray(a) && Array.isArray(b)){
             if(a.length !== b.length){
                 return false;
             }
-            for(i = 0, len = a.length; i < len; i++){
+            for(var i = 0, len = a.length; i < len; i++){
                 if(typeof a[i] === 'object' && typeof b[i] === 'object'){
                     if(!compareObjects(a[i], b[i])){
                         return false;
@@ -650,9 +634,8 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
     //isSet, isReadOnly, isDirty, originalData, changedData, data.
     //If data has all of the above then 'it is' a model and returns true, otherwise it returns false.
     function isAModel(obj){
-        var markers = ['isSet', 'isReadOnly', 'isDirty', 'originalData', 'changedData', 'data'],
-            i, len;
-        for(i = 0, len = markers.length; i < len; i++){
+        var markers = ['isSet', 'isReadOnly', 'isDirty', 'originalData', 'changedData', 'data'];
+        for(var i = 0, len = markers.length; i < len; i++){
             if(!obj.hasOwnProperty(markers[i])){
                 return false;
             }
@@ -671,10 +654,9 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
     //A simple general use, recursive iterator. Makes no assumptions about what args is. Args could be
     //anything - a function's arguments, an Array, an object or even a primitive.
     function iterate(args, callback){
-        var i, len;
         //If args is an Array or it has a length property it is iterable.
         if(Array.isArray(args) || args.hasOwnProperty('length')){
-            for(i = 0, len = args.length; i < len; i++){
+            for(var i = 0, len = args.length; i < len; i++){
                 iterate(args[i], callback);
             }
         }else{
@@ -956,13 +938,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         }
     };
 
-    v.collections = {
-        extend: extend,
-        toRaw: toRaw,
-        addEvent: addEvent,
-        removeEvent: removeEvent,
-        sortEvent: sortEvent
-    };
+    v.collections = {extend: extend, toRaw: toRaw, addEvent: addEvent, removeEvent: removeEvent, sortEvent: sortEvent};
 
 });
 
@@ -992,7 +968,7 @@ define('router', ['application', 'helpers'], function() {
             a = url.substring(1).split('/'),
             params = [],
             rel = false,
-            route, b, c, i, ii, len, eq, relUrl, vrb;
+            route, b, c, eq, vrb;
         for(route in routes){
             if(routes.hasOwnProperty(route)){
                 //Get the 'veb'.
@@ -1003,7 +979,7 @@ define('router', ['application', 'helpers'], function() {
                     eq = true;
                     //The url and the route have the same number of segments so the route
                     //can be either static or it could contain parameterized segments.
-                    for(i = 0, len = b.length; i < len; i++){
+                    for(var i = 0, len = b.length; i < len; i++){
                         //If the segments are equal then continue looping.
                         if(a[i] === b[i]){
                             continue;
@@ -1038,7 +1014,7 @@ define('router', ['application', 'helpers'], function() {
                     }
                     if(rel){
                         //controller name, function to call, function arguments to call with...
-                        for(ii = i, relUrl = ''; ii < a.length; ii++){
+                        for(var ii = i, llen = a.length, relUrl = ''; ii < llen; ii++){
                             relUrl += ('/' + a[ii]);
                         }
                         //controller name, function to call, function arguments to call with...
@@ -1072,10 +1048,7 @@ define('router', ['application', 'helpers'], function() {
         console.log('router::routeNotFound called with route = ' + url);
     }
 
-    v.router = {
-        route: route
-    };
-
+    v.router = {route: route};
 });
 
 define('views', ['application', 'helpers'], function(){
@@ -1148,7 +1121,6 @@ define('views', ['application', 'helpers'], function(){
         return obj2;
     }
 
-    //0.6.0
     proto = {
         remove: function remove(){
             this.$domTarget.off(this.namespace);
@@ -1157,11 +1129,7 @@ define('views', ['application', 'helpers'], function(){
         $: v.$
     };
 
-    v.views = {
-        extend: extend,
-        domEventTopic: domEventTopic
-    };
-
+    v.views = {extend: extend, domEventTopic: domEventTopic};
 });
 
 //0.6.0
@@ -1208,10 +1176,7 @@ define('eventer', ['application', 'helpers'], function(){
         return obj0;
     }
 
-    v.eventer = {
-        extend: extend
-    };
-
+    v.eventer = {extend: extend};
 });
 
 define('ajax', ['application'], function(){

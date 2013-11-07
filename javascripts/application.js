@@ -72,10 +72,6 @@ define('application', ['jquery'], function(){
         return VERSION;
     };
 
-    v.controllers = {
-        registerControllers : registerControllers,
-        getRoutes: getRoutes,
-        getController: getController
-    };
+    v.controllers = {registerControllers : registerControllers, getRoutes: getRoutes, getController: getController};
 
 });

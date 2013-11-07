@@ -36,12 +36,11 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
     }
 
     function compareArrays(a, b){
-        var i, len;
         if(Array.isArray(a) && Array.isArray(b)){
             if(a.length !== b.length){
                 return false;
             }
-            for(i = 0, len = a.length; i < len; i++){
+            for(var i = 0, len = a.length; i < len; i++){
                 if(typeof a[i] === 'object' && typeof b[i] === 'object'){
                     if(!compareObjects(a[i], b[i])){
                         return false;
@@ -130,9 +129,8 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
     //isSet, isReadOnly, isDirty, originalData, changedData, data.
     //If data has all of the above then 'it is' a model and returns true, otherwise it returns false.
     function isAModel(obj){
-        var markers = ['isSet', 'isReadOnly', 'isDirty', 'originalData', 'changedData', 'data'],
-            i, len;
-        for(i = 0, len = markers.length; i < len; i++){
+        var markers = ['isSet', 'isReadOnly', 'isDirty', 'originalData', 'changedData', 'data'];
+        for(var i = 0, len = markers.length; i < len; i++){
             if(!obj.hasOwnProperty(markers[i])){
                 return false;
             }
@@ -151,10 +149,9 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
     //A simple general use, recursive iterator. Makes no assumptions about what args is. Args could be
     //anything - a function's arguments, an Array, an object or even a primitive.
     function iterate(args, callback){
-        var i, len;
         //If args is an Array or it has a length property it is iterable.
         if(Array.isArray(args) || args.hasOwnProperty('length')){
-            for(i = 0, len = args.length; i < len; i++){
+            for(var i = 0, len = args.length; i < len; i++){
                 iterate(args[i], callback);
             }
         }else{
@@ -436,12 +433,6 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         }
     };
 
-    v.collections = {
-        extend: extend,
-        toRaw: toRaw,
-        addEvent: addEvent,
-        removeEvent: removeEvent,
-        sortEvent: sortEvent
-    };
+    v.collections = {extend: extend, toRaw: toRaw, addEvent: addEvent, removeEvent: removeEvent, sortEvent: sortEvent};
 
 });

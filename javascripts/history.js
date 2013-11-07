@@ -48,10 +48,8 @@ define('history', ['application', 'router'], function() {
 
     //Creates a hash from an array whose elements are hashes whose properties are 'name' and 'value'.
     function valuesHashFromSerializedArray(valuesArray){
-        var len = valuesArray.length,
-            valuesHash = {},
-            i;
-        for(i = 0; i < len; i++){
+        var valuesHash = {};
+        for(var i = 0, len = valuesArray.length; i < len; i++){
             valuesHash[valuesArray[i].name] = valuesArray[i].value;
         }
         return valuesHash;
@@ -98,10 +96,5 @@ define('history', ['application', 'router'], function() {
         }
     }
 
-    v.history = {
-        start: start,
-        started: started,
-        navigate: navigate
-    };
-
+    v.history = {start: start, started: started, navigate: navigate};
 });
