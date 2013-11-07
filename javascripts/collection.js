@@ -94,9 +94,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         return true;
     }
 
-    function compare(a, b){
-        return compareObjects(a, b) && compareObjects(b, a);
-    }
+    function compare(a, b){return compareObjects(a, b) && compareObjects(b, a);}
 
     //Returns true if element has the same properties as source and their values are equal, false otherwise.
     function isMatch(element, source){
@@ -224,9 +222,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
     proto = {
         /* Internal model property change event handler */
 
-        modelPropertyChangedHandler: function modelPropertyChangedHandler(event, data){
-            triggerEvent.call(this, event, data);
-        },
+        modelPropertyChangedHandler: function modelPropertyChangedHandler(event, data){triggerEvent.call(this, event, data);},
 
         /* Mutators */
 
@@ -251,9 +247,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
             return this.coll.length;
         },
         //Works like [].reverse.
-        reverse: function reverse(){
-            this.coll.reverse();
-        },
+        reverse: function reverse(){this.coll.reverse();},
         //Works like [].shift. Fires removeEvent. Maintains deletedColl.
         shift: function shift(){
             var m = removePropertyChangedEvents.call(this, this.coll.shift());
@@ -300,9 +294,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
             });
         },
         //Works like array[i].
-        at: function at(index){
-            return this.coll[index];
-        },
+        at: function at(index){return this.coll[index];},
         //Find a model by its id and return it.
         findById: function findById(id){
             for(var i = 0, len = this.coll.length; i < len; i++){
@@ -324,25 +316,15 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         //Invokes a callback function for each model in the collection with three arguments: the model, the model's
         //index, and the collection object's coll. If supplied, the second parameter will be used as the context for
         //the callback.
-        forEach: function forEach(/*callback, context*/){
-            [].forEach.apply(this.coll, [].slice.call(arguments, 0));
-        },
+        forEach: function forEach(/*callback, context*/){[].forEach.apply(this.coll, [].slice.call(arguments, 0));},
         //Tests whether all models in the collection pass the test implemented by the provided callback.
-        every: function every(/*callback, context*/){
-            return [].every.apply(this.coll, [].slice.call(arguments, 0));
-        },
+        every: function every(/*callback, context*/){return [].every.apply(this.coll, [].slice.call(arguments, 0));},
         //Tests whether some model in the collection passes the test implemented by the provided callback.
-        some: function some(/*callback, context*/){
-            return [].some.apply(this.coll, [].slice.call(arguments, 0));
-        },
+        some: function some(/*callback, context*/){return [].some.apply(this.coll, [].slice.call(arguments, 0));},
         //Returns an array containing all the models that pass the test implemented by the provided callback.
-        filter: function filter(/*callback, context*/){
-            return [].filter.apply(this.coll, [].slice.call(arguments, 0));
-        },
+        filter: function filter(/*callback, context*/){return [].filter.apply(this.coll, [].slice.call(arguments, 0));},
         //Creates a new array with the results of calling a provided function on every model in the collection.
-        map: function map(/*callback, context*/){
-            return [].map.apply(this.coll, [].slice.call(arguments, 0));
-        },
+        map: function map(/*callback, context*/){return [].map.apply(this.coll, [].slice.call(arguments, 0));},
 
         /* Sugar */
 
@@ -420,17 +402,11 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         //Same as Coccyx.collections.toRaw(models). See above for details.
         toRaw: toRaw,
         //0.6.3 Returns this.isSilent (boolean).
-        getIsSilent: function getIsSilent(){
-            return this.isSilent;
-        },
+        getIsSilent: function getIsSilent(){return this.isSilent;},
         //0.6.3 Sets this.isSilent (boolean).
-        setIsSilent: function setIsSilent(isSilent){
-            this.isSilent = isSilent;
-        },
+        setIsSilent: function setIsSilent(isSilent){this.isSilent = isSilent;},
         //0.6.3 Returns the length of this.coll.
-        getLength: function getLength(){
-            return this.coll.length;
-        }
+        getLength: function getLength(){return this.coll.length;}
     };
 
     v.collections = {extend: extend, toRaw: toRaw, addEvent: addEvent, removeEvent: removeEvent, sortEvent: sortEvent};

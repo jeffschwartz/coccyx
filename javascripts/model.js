@@ -161,17 +161,11 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
             this.isSet = true;
             return true;
         },
-        getData: function getData(){
-            return deepCopy(this.data);
-        },
+        getData: function getData(){return deepCopy(this.data);},
         //Returns deep copy of originalData
-        getOriginalData: function getOriginalData(){
-            return deepCopy(this.originalData);
-        },
+        getOriginalData: function getOriginalData(){return deepCopy(this.originalData);},
         //Returns deep copy of changedData
-        getChangedData: function getChangedData(){
-            return deepCopy(this.changedData);
-        },
+        getChangedData: function getChangedData(){return deepCopy(this.changedData);},
         //Returns the data property reachable through property path. If there is no property reachable through property path
         //return undefined.
         getProperty: function getProperty(propertyPath){
@@ -227,37 +221,21 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
             }
         },
         //0.6.0 Returns true if model is new, false otherwise.
-        isNew: function isNew(){
-            return (typeof this.data[this.idPropertyName] === 'undefined');
-        },
+        isNew: function isNew(){return (typeof this.data[this.idPropertyName] === 'undefined');},
         //0.6.0 Returns stringified model's data hash.
-        toJSON: function toJSON(){
-            return JSON.stringify(this.data);
-        },
+        toJSON: function toJSON(){return JSON.stringify(this.data);},
         //0.6.0 Ajax "GET".
-        ajaxGet: function ajaxGet(options){
-            return ajax.call(this, 'get', options, v.ajax.ajaxGet);
-        },
+        ajaxGet: function ajaxGet(options){return ajax.call(this, 'get', options, v.ajax.ajaxGet);},
         //0.6.0 Ajax "POST".
-        ajaxPost: function ajaxPost(options){
-            return ajax.call(this, 'post', options, v.ajax.ajaxPost);
-        },
+        ajaxPost: function ajaxPost(options){return ajax.call(this, 'post', options, v.ajax.ajaxPost);},
         //0.6.0 Ajax "PUT".
-        ajaxPut: function ajaxPut(options){
-            return ajax.call(this, 'put', options, v.ajax.ajaxPut);
-        },
+        ajaxPut: function ajaxPut(options){return ajax.call(this, 'put', options, v.ajax.ajaxPut);},
         //0.6.0 Ajax "DELETE".
-        ajaxDelete: function ajaxDelete(options){
-            return ajax.call(this, 'delete', options, v.ajax.ajaxDelete);
-        },
+        ajaxDelete: function ajaxDelete(options){return ajax.call(this, 'delete', options, v.ajax.ajaxDelete);},
         //0.6.3 Returns this.isSilent (boolean).
-        getIsSilent: function getIsSilent(){
-            return this.isSilent;
-        },
+        getIsSilent: function getIsSilent(){return this.isSilent;},
         //0.6.3 Sets this.isSilent (boolean).
-        setIsSilent: function setIsSilent(isSilent){
-            this.isSilent = isSilent;
-        }
+        setIsSilent: function setIsSilent(isSilent){this.isSilent = isSilent;}
     };
 
     v.models = {extend: extend, propertyChangedEvent: propertyChangedEvent};

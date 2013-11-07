@@ -55,9 +55,7 @@ define('history', ['application', 'router'], function() {
         return valuesHash;
     }
 
-    function started(){
-        return historyStarted;
-    }
+    function started(){return historyStarted;}
 
     //Call Coccyx.history.start to start your application. When called starts responding to
     //'popstate' events which are raised when the user uses the browser's back and forward

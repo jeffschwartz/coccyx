@@ -16,9 +16,7 @@ define('helpers', [], function(){
             return false;
         },
         //Returns a deep copy object o.
-        deepCopy: function deepCopy(o){
-            return JSON.parse(JSON.stringify(o));
-        },
+        deepCopy: function deepCopy(o){return JSON.parse(JSON.stringify(o));},
         //Pass one or more objects as the source objects whose properties are to be copied to the target object.
         extend: function extend(targetObj){
             var property;

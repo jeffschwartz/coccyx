@@ -45,13 +45,9 @@ define('application', ['jquery'], function(){
         }
     }
 
-    function getRoutes(){
-        return routes;
-    }
+    function getRoutes(){return routes;}
 
-    function getController(name){
-        return controllers[name];
-    }
+    function getController(name){return controllers[name];}
 
     //Provide jQuery in the Coccyx name space.
     v.$ = jQuery;
@@ -68,9 +64,7 @@ define('application', ['jquery'], function(){
     v.plugins = v.plugins || {};
 
     //Version stamp.
-    v.getVersion = function(){
-        return VERSION;
-    };
+    v.getVersion = function(){return VERSION;};
 
     v.controllers = {registerControllers : registerControllers, getRoutes: getRoutes, getController: getController};
 

@@ -100,9 +100,7 @@ define('router', ['application', 'helpers'], function() {
         }
     }
 
-    function routeNotFound(url){
-        console.log('router::routeNotFound called with route = ' + url);
-    }
+    function routeNotFound(url){console.log('router::routeNotFound called with route = ' + url);}
 
     v.router = {route: route};
 });

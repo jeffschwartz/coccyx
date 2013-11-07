@@ -59,13 +59,9 @@ define('application', ['jquery'], function(){
         }
     }
 
-    function getRoutes(){
-        return routes;
-    }
+    function getRoutes(){return routes;}
 
-    function getController(name){
-        return controllers[name];
-    }
+    function getController(name){return controllers[name];}
 
     //Provide jQuery in the Coccyx name space.
     v.$ = jQuery;
@@ -82,9 +78,7 @@ define('application', ['jquery'], function(){
     v.plugins = v.plugins || {};
 
     //Version stamp.
-    v.getVersion = function(){
-        return VERSION;
-    };
+    v.getVersion = function(){return VERSION;};
 
     v.controllers = {registerControllers : registerControllers, getRoutes: getRoutes, getController: getController};
 
@@ -108,9 +102,7 @@ define('helpers', [], function(){
             return false;
         },
         //Returns a deep copy object o.
-        deepCopy: function deepCopy(o){
-            return JSON.parse(JSON.stringify(o));
-        },
+        deepCopy: function deepCopy(o){return JSON.parse(JSON.stringify(o));},
         //Pass one or more objects as the source objects whose properties are to be copied to the target object.
         extend: function extend(targetObj){
             var property;
@@ -194,9 +186,7 @@ define('history', ['application', 'router'], function() {
         return valuesHash;
     }
 
-    function started(){
-        return historyStarted;
-    }
+    function started(){return historyStarted;}
 
     //Call Coccyx.history.start to start your application. When called starts responding to
     //'popstate' events which are raised when the user uses the browser's back and forward
@@ -401,17 +391,11 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
             this.isSet = true;
             return true;
         },
-        getData: function getData(){
-            return deepCopy(this.data);
-        },
+        getData: function getData(){return deepCopy(this.data);},
         //Returns deep copy of originalData
-        getOriginalData: function getOriginalData(){
-            return deepCopy(this.originalData);
-        },
+        getOriginalData: function getOriginalData(){return deepCopy(this.originalData);},
         //Returns deep copy of changedData
-        getChangedData: function getChangedData(){
-            return deepCopy(this.changedData);
-        },
+        getChangedData: function getChangedData(){return deepCopy(this.changedData);},
         //Returns the data property reachable through property path. If there is no property reachable through property path
         //return undefined.
         getProperty: function getProperty(propertyPath){
@@ -467,37 +451,21 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
             }
         },
         //0.6.0 Returns true if model is new, false otherwise.
-        isNew: function isNew(){
-            return (typeof this.data[this.idPropertyName] === 'undefined');
-        },
+        isNew: function isNew(){return (typeof this.data[this.idPropertyName] === 'undefined');},
         //0.6.0 Returns stringified model's data hash.
-        toJSON: function toJSON(){
-            return JSON.stringify(this.data);
-        },
+        toJSON: function toJSON(){return JSON.stringify(this.data);},
         //0.6.0 Ajax "GET".
-        ajaxGet: function ajaxGet(options){
-            return ajax.call(this, 'get', options, v.ajax.ajaxGet);
-        },
+        ajaxGet: function ajaxGet(options){return ajax.call(this, 'get', options, v.ajax.ajaxGet);},
         //0.6.0 Ajax "POST".
-        ajaxPost: function ajaxPost(options){
-            return ajax.call(this, 'post', options, v.ajax.ajaxPost);
-        },
+        ajaxPost: function ajaxPost(options){return ajax.call(this, 'post', options, v.ajax.ajaxPost);},
         //0.6.0 Ajax "PUT".
-        ajaxPut: function ajaxPut(options){
-            return ajax.call(this, 'put', options, v.ajax.ajaxPut);
-        },
+        ajaxPut: function ajaxPut(options){return ajax.call(this, 'put', options, v.ajax.ajaxPut);},
         //0.6.0 Ajax "DELETE".
-        ajaxDelete: function ajaxDelete(options){
-            return ajax.call(this, 'delete', options, v.ajax.ajaxDelete);
-        },
+        ajaxDelete: function ajaxDelete(options){return ajax.call(this, 'delete', options, v.ajax.ajaxDelete);},
         //0.6.3 Returns this.isSilent (boolean).
-        getIsSilent: function getIsSilent(){
-            return this.isSilent;
-        },
+        getIsSilent: function getIsSilent(){return this.isSilent;},
         //0.6.3 Sets this.isSilent (boolean).
-        setIsSilent: function setIsSilent(isSilent){
-            this.isSilent = isSilent;
-        }
+        setIsSilent: function setIsSilent(isSilent){this.isSilent = isSilent;}
     };
 
     v.models = {extend: extend, propertyChangedEvent: propertyChangedEvent};
@@ -599,9 +567,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         return true;
     }
 
-    function compare(a, b){
-        return compareObjects(a, b) && compareObjects(b, a);
-    }
+    function compare(a, b){return compareObjects(a, b) && compareObjects(b, a);}
 
     //Returns true if element has the same properties as source and their values are equal, false otherwise.
     function isMatch(element, source){
@@ -729,9 +695,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
     proto = {
         /* Internal model property change event handler */
 
-        modelPropertyChangedHandler: function modelPropertyChangedHandler(event, data){
-            triggerEvent.call(this, event, data);
-        },
+        modelPropertyChangedHandler: function modelPropertyChangedHandler(event, data){triggerEvent.call(this, event, data);},
 
         /* Mutators */
 
@@ -756,9 +720,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
             return this.coll.length;
         },
         //Works like [].reverse.
-        reverse: function reverse(){
-            this.coll.reverse();
-        },
+        reverse: function reverse(){this.coll.reverse();},
         //Works like [].shift. Fires removeEvent. Maintains deletedColl.
         shift: function shift(){
             var m = removePropertyChangedEvents.call(this, this.coll.shift());
@@ -805,9 +767,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
             });
         },
         //Works like array[i].
-        at: function at(index){
-            return this.coll[index];
-        },
+        at: function at(index){return this.coll[index];},
         //Find a model by its id and return it.
         findById: function findById(id){
             for(var i = 0, len = this.coll.length; i < len; i++){
@@ -829,25 +789,15 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         //Invokes a callback function for each model in the collection with three arguments: the model, the model's
         //index, and the collection object's coll. If supplied, the second parameter will be used as the context for
         //the callback.
-        forEach: function forEach(/*callback, context*/){
-            [].forEach.apply(this.coll, [].slice.call(arguments, 0));
-        },
+        forEach: function forEach(/*callback, context*/){[].forEach.apply(this.coll, [].slice.call(arguments, 0));},
         //Tests whether all models in the collection pass the test implemented by the provided callback.
-        every: function every(/*callback, context*/){
-            return [].every.apply(this.coll, [].slice.call(arguments, 0));
-        },
+        every: function every(/*callback, context*/){return [].every.apply(this.coll, [].slice.call(arguments, 0));},
         //Tests whether some model in the collection passes the test implemented by the provided callback.
-        some: function some(/*callback, context*/){
-            return [].some.apply(this.coll, [].slice.call(arguments, 0));
-        },
+        some: function some(/*callback, context*/){return [].some.apply(this.coll, [].slice.call(arguments, 0));},
         //Returns an array containing all the models that pass the test implemented by the provided callback.
-        filter: function filter(/*callback, context*/){
-            return [].filter.apply(this.coll, [].slice.call(arguments, 0));
-        },
+        filter: function filter(/*callback, context*/){return [].filter.apply(this.coll, [].slice.call(arguments, 0));},
         //Creates a new array with the results of calling a provided function on every model in the collection.
-        map: function map(/*callback, context*/){
-            return [].map.apply(this.coll, [].slice.call(arguments, 0));
-        },
+        map: function map(/*callback, context*/){return [].map.apply(this.coll, [].slice.call(arguments, 0));},
 
         /* Sugar */
 
@@ -925,17 +875,11 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         //Same as Coccyx.collections.toRaw(models). See above for details.
         toRaw: toRaw,
         //0.6.3 Returns this.isSilent (boolean).
-        getIsSilent: function getIsSilent(){
-            return this.isSilent;
-        },
+        getIsSilent: function getIsSilent(){return this.isSilent;},
         //0.6.3 Sets this.isSilent (boolean).
-        setIsSilent: function setIsSilent(isSilent){
-            this.isSilent = isSilent;
-        },
+        setIsSilent: function setIsSilent(isSilent){this.isSilent = isSilent;},
         //0.6.3 Returns the length of this.coll.
-        getLength: function getLength(){
-            return this.coll.length;
-        }
+        getLength: function getLength(){return this.coll.length;}
     };
 
     v.collections = {extend: extend, toRaw: toRaw, addEvent: addEvent, removeEvent: removeEvent, sortEvent: sortEvent};
@@ -1044,9 +988,7 @@ define('router', ['application', 'helpers'], function() {
         }
     }
 
-    function routeNotFound(url){
-        console.log('router::routeNotFound called with route = ' + url);
-    }
+    function routeNotFound(url){console.log('router::routeNotFound called with route = ' + url);}
 
     v.router = {route: route};
 });
@@ -1143,13 +1085,9 @@ define('eventer', ['application', 'helpers'], function(){
 
     eventerApi = {
         //Attach a callback handler to a specific custom event or events fired from 'this' object optionally binding the callback to context.
-        handle: function handle(events, callback, context){
-            v.$(this._eventedObj).on(events, context? v.$.proxy(callback, context) : callback);
-        },
+        handle: function handle(events, callback, context){v.$(this._eventedObj).on(events, context? v.$.proxy(callback, context) : callback);},
         //Like handle but will only fire the event one time and will ignore subsequent events.
-        handleOnce: function handleOnce(events, callback, context){
-            v.$(this._eventedObj).one(events, context? v.$.proxy(callback, context) : callback);
-        },
+        handleOnce: function handleOnce(events, callback, context){v.$(this._eventedObj).one(events, context? v.$.proxy(callback, context) : callback);},
         //Removes event handler.
         off: function off(events, callback){
             if(events && callback){
@@ -1163,9 +1101,7 @@ define('eventer', ['application', 'helpers'], function(){
             }
         },
         //Trigger an event for object optionally passing args if provided.
-        trigger: function trigger(events, args){
-            v.$(this._eventedObj).trigger(events, args);
-        }
+        trigger: function trigger(events, args){v.$(this._eventedObj).trigger(events, args);}
     };
 
     function extend(obj){
