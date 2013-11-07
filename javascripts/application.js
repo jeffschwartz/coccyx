@@ -12,9 +12,7 @@ define('application', ['jquery'], function(){
         }
         if(arguments[0] instanceof Array){
             //An array of hashes.
-            arguments[0].forEach(function(controller){
-                loadRoutesFromController(controller);
-            });
+            arguments[0].forEach(function(controller){loadRoutesFromController(controller);});
         }else{
             //A single hash.
             loadRoutesFromController(arguments[0]);

@@ -5,8 +5,7 @@ define('history', ['application', 'router'], function() {
     console.log(history.pushState ? 'history pushState is supported in your browser' :
         'history pushstate is not supported in your browser');
 
-    var v = window.Coccyx = window.Coccyx || {},
-        historyStarted = false;
+    var v = window.Coccyx = window.Coccyx || {}, historyStarted = false;
 
     //Event handler for click event on anchor tags. Ignores those where the href path doesn't start with
     //a '/' character; this prevents handling external links, allowing those events  to bubble up as normal.
@@ -49,9 +48,7 @@ define('history', ['application', 'router'], function() {
     //Creates a hash from an array whose elements are hashes whose properties are 'name' and 'value'.
     function valuesHashFromSerializedArray(valuesArray){
         var valuesHash = {};
-        for(var i = 0, len = valuesArray.length; i < len; i++){
-            valuesHash[valuesArray[i].name] = valuesArray[i].value;
-        }
+        for(var i = 0, len = valuesArray.length; i < len; i++){valuesHash[valuesArray[i].name] = valuesArray[i].value;}
         return valuesHash;
     }
 
@@ -65,9 +62,7 @@ define('history', ['application', 'router'], function() {
         v.controllers.registerControllers(controllers); //0.5.0
         historyStarted = true;
         history.replaceState({verb: 'get'}, null, window.location.pathname);
-        if(trigger){
-            v.router.route('get', window.location.pathname);
-        }
+        if(trigger){v.router.route('get', window.location.pathname);}
     }
 
     //A wrapper for the browser's history.pushState and history.replaceState. Whenever you reach
@@ -88,9 +83,7 @@ define('history', ['application', 'router'], function() {
             options.trigger = options.trigger || false;
             options.replace = options.replace || false;
             window.history[options.replace ? 'replaceState' : 'pushState'](options.state, options.title, options.url);
-            if(options.trigger){
-                v.router.route(options.method, options.url);
-            }
+            if(options.trigger){v.router.route(options.method, options.url);}
         }
     }
 

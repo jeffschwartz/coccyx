@@ -28,40 +28,24 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
 
     //Returns an array containing the raw data for each model in the models array.
     function toRaw(models){
-        if(Array.isArray(models)){
-            return models.map(function(model){
-                return model.getData();
-            });
-        }
+        if(Array.isArray(models)){return models.map(function(model){return model.getData();});}
     }
 
     function compareArrays(a, b){
         if(Array.isArray(a) && Array.isArray(b)){
-            if(a.length !== b.length){
-                return false;
-            }
+            if(a.length !== b.length){return false;}
             for(var i = 0, len = a.length; i < len; i++){
                 if(typeof a[i] === 'object' && typeof b[i] === 'object'){
-                    if(!compareObjects(a[i], b[i])){
-                        return false;
-                    }
+                    if(!compareObjects(a[i], b[i])){return false;}
                     continue;
                 }
-                if(typeof a[i] === 'object' || typeof b[i] === 'object'){
-                    return false;
-                }
+                if(typeof a[i] === 'object' || typeof b[i] === 'object'){return false;}
                 if(Array.isArray(a[i]) && Array.isArray(b[i])){
-                    if(!compareArrays(a[i], b[i])){
-                        return false;
-                    }
+                    if(!compareArrays(a[i], b[i])){return false;}
                     continue;
                 }
-                if(Array.isArray(a[i]) || Array.isArray(b[i])){
-                    return false;
-                }
-                if(a[i] !== b[i]){
-                    return false;
-                }
+                if(Array.isArray(a[i]) || Array.isArray(b[i])){return false;}
+                if(a[i] !== b[i]){return false;}
             }
             return true;
         }
@@ -70,23 +54,15 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
 
     function compareObjects(a, b){
         var prop;
-        if(compareArrays(a, b)){
-            return true;
-        }
+        if(compareArrays(a, b)){return true;}
         for(prop in a){
             if(a.hasOwnProperty(prop) && b.hasOwnProperty(prop)){
                 if(typeof a[prop] === 'object' && typeof b[prop] === 'object'){
-                    if(!compareObjects(a[prop], b[prop])){
-                        return false;
-                    }
+                    if(!compareObjects(a[prop], b[prop])){return false;}
                     continue;
                 }
-                if(typeof a[prop] === 'object' || typeof b[prop] === 'object'){
-                    return false;
-                }
-                if(a[prop] !== b[prop]){
-                    return false;
-                }
+                if(typeof a[prop] === 'object' || typeof b[prop] === 'object'){return false;}
+                if(a[prop] !== b[prop]){return false;}
             }else {
                 return false;
             }
@@ -102,15 +78,11 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         for(prop in source){
             if(source.hasOwnProperty(prop) && element.hasOwnProperty(prop)){
                 if(typeof element[prop] === 'object' && typeof source[prop] === 'object'){
-                    if(!compare(element[prop], source[prop])){
-                        return false;
-                    }
+                    if(!compare(element[prop], source[prop])){return false;}
                 }else if(typeof element[prop] === 'object' || typeof source[prop] === 'object'){
                     return false;
                 }else{
-                    if(source[prop] !== element[prop]){
-                        return false;
-                    }
+                    if(source[prop] !== element[prop]){return false;}
                 }
             }else{
                 return false;
@@ -119,9 +91,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         return true;
     }
 
-    function isArrayOrNotObject(value){
-        return Array.isArray(value) || typeof value !== 'object' ? true : false;
-    }
+    function isArrayOrNotObject(value){return Array.isArray(value) || typeof value !== 'object' ? true : false;}
 
     //If it walks and talks like a duck... Checks for the following properties on a model's data:
     //isSet, isReadOnly, isDirty, originalData, changedData, data.
@@ -129,9 +99,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
     function isAModel(obj){
         var markers = ['isSet', 'isReadOnly', 'isDirty', 'originalData', 'changedData', 'data'];
         for(var i = 0, len = markers.length; i < len; i++){
-            if(!obj.hasOwnProperty(markers[i])){
-                return false;
-            }
+            if(!obj.hasOwnProperty(markers[i])){return false;}
         }
         return true;
     }
@@ -149,9 +117,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
     function iterate(args, callback){
         //If args is an Array or it has a length property it is iterable.
         if(Array.isArray(args) || args.hasOwnProperty('length')){
-            for(var i = 0, len = args.length; i < len; i++){
-                iterate(args[i], callback);
-            }
+            for(var i = 0, len = args.length; i < len; i++){iterate(args[i], callback);}
         }else{
             //Not iterable.
             callback(args);
@@ -160,8 +126,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
 
     //Wire the model's property change event to be handled by this collection.
     function wireModelPropertyChangedHandler(collObject, model){
-        model.handle(v.models.propertyChangedEvent,
-            collObject.modelPropertyChangedHandler, collObject);
+        model.handle(v.models.propertyChangedEvent, collObject.modelPropertyChangedHandler, collObject);
         return model;
     }
 
@@ -197,9 +162,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
     //0.6.3 Triggers an event via Eventer.
     function triggerEvent(event, args){
         /*jshint validthis:true*/
-        if(!this.getIsSilent()){
-            this.trigger(event, args);
-        }
+        if(!this.getIsSilent()){this.trigger(event, args);}
     }
 
     //0.6.3 Removes propertyChangedEvents from models.
@@ -208,9 +171,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         var self = this;
         if(models){
             if(Array.isArray(models)){
-                models.forEach(function(m){
-                    m.off(v.models.propertyChangedEvent, self.modelPropertyChangedHandler);
-                });
+                models.forEach(function(m){m.off(v.models.propertyChangedEvent, self.modelPropertyChangedHandler);});
             }else{
                 models.off(v.models.propertyChangedEvent, this.modelPropertyChangedHandler);
             }
@@ -257,9 +218,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         },
         //Works like [].sort(function(a,b){...}). Fires sortEvent.
         sort: function sort(callback){
-            this.coll.sort(function(a, b){
-                return callback(a, b);
-            });
+            this.coll.sort(function(a, b){return callback(a, b);});
             triggerEvent.call(this, v.collections.sortEvent);
         },
         //Works like [].splice. Takes new [modlels] starting with the 3rd parameter. Maintains deletedColl. Fires addEvent and removeEvent.
@@ -269,12 +228,8 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
             a = a.concat(aa);
             var m = removePropertyChangedEvents.call(this, [].splice.apply(this.coll, a));
             if(m.length){this.deletedColl.push.apply(this.deletedColl, m);}
-            if(aa && aa.length){
-                triggerEvent.call(this, v.collections.addEvent, aa);
-            }
-            if(howMany !== 0){
-                triggerEvent.call(this, v.collections.removeEvent, m);
-            }
+            if(aa && aa.length){triggerEvent.call(this, v.collections.addEvent, aa);}
+            if(howMany !== 0){triggerEvent.call(this, v.collections.removeEvent, m);}
             return m;
         },
         //Works like [].unshift. If raw data is passed it/they will first be converted to models.
@@ -289,18 +244,14 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
 
         //Returns an array of the deep copied data of all models in the collection
         getData: function getData(){
-            return this.map(function(model){
-                return model.getData();
-            });
+            return this.map(function(model){return model.getData();});
         },
         //Works like array[i].
         at: function at(index){return this.coll[index];},
         //Find a model by its id and return it.
         findById: function findById(id){
             for(var i = 0, len = this.coll.length; i < len; i++){
-                if(this.at(i).modelId === id){
-                    return this.at(i);
-                }
+                if(this.at(i).modelId === id){return this.at(i);}
             }
         },
         //Works like [].slice.
@@ -347,9 +298,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
 
         //Sets the readOnly flag on all models in the collection to isReadOnly.
         setReadOnly: function setReadOnly(readOnly){
-            this.coll.forEach(function(model){
-               model.isReadOnly = readOnly;
-            });
+            this.coll.forEach(function(model){model.isReadOnly = readOnly;});
             this.isReadOnly = readOnly;
         },
         //Removes all models from the collection whose data properties matches those of matchingPropertiesHash.
@@ -358,9 +307,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         //argument to the event handler's callback function. Maintains deletedColl.
         remove: function remove(matchingPropertiesHash){
             var removed = [], newColl;
-            if(this.coll.length === 0 || isArrayOrNotObject(matchingPropertiesHash)){
-                return;
-            }
+            if(this.coll.length === 0 || isArrayOrNotObject(matchingPropertiesHash)){return;}
             newColl = this.coll.filter(function(el){
                 if(isMatch(el.data, matchingPropertiesHash)){
                     removed.push(el);
@@ -377,27 +324,17 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         },
         //Returns true if the coll has at least one model whose data properties matches those of matchingPropertiesHash.
         has: function has(matchingPropertiesHash){
-            if(isArrayOrNotObject(matchingPropertiesHash)){
-                return false;
-            }
-            return this.coll.some(function(el){
-                return isMatch(el.data, matchingPropertiesHash);
-            });
+            if(isArrayOrNotObject(matchingPropertiesHash)){return false;}
+            return this.coll.some(function(el){return isMatch(el.data, matchingPropertiesHash);});
         },
         //Returns an array whose elements contain the stringified value of their model's data.
         find: function find(matchingPropertiesHash){
-            if(isArrayOrNotObject(matchingPropertiesHash)){
-                return null;
-            }
-            return this.coll.filter(function(el){
-                return isMatch(el.data, matchingPropertiesHash);
-            });
+            if(isArrayOrNotObject(matchingPropertiesHash)){return null;}
+            return this.coll.filter(function(el){return isMatch(el.data, matchingPropertiesHash);});
         },
         //Stringifies all models data and returns them in an array.
         toJSON: function toJSON(){
-            return  this.coll.map(function(el){
-                return JSON.stringify(el.getData());
-            });
+            return  this.coll.map(function(el){return JSON.stringify(el.getData());});
         },
         //Same as Coccyx.collections.toRaw(models). See above for details.
         toRaw: toRaw,
