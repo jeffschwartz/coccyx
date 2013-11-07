@@ -1184,10 +1184,12 @@ define('ajax', ['application'], function(){
 
     var v = window.Coccyx = window.Coccyx || {},
         extend = v.helpers.extend,
-        defaultSettings = {cache: false, url: '/'};
+        defaultSettings = {cache: false, url: '/'},
+        ajax = v.$.ajax;
 
         //Merge default setting with user's settings.
-        function mergeSettings(settings){
+        function mergeSettings(settings, type){
+            settings.type = type;
             return extend({}, defaultSettings, settings);
         }
 
@@ -1195,23 +1197,19 @@ define('ajax', ['application'], function(){
     v.ajax = {
         //http "GET"
         ajaxGet: function ajaxGet(settings){
-            settings.type = 'GET';
-            return v.$.ajax(mergeSettings(settings));
+            return ajax(mergeSettings(settings, 'GET'));
         },
         //http "POST"
         ajaxPost: function ajaxPost(settings){
-            settings.type = 'POST';
-            return v.$.ajax(mergeSettings(settings));
+            return ajax(mergeSettings(settings, 'POST'));
         },
         //http "PUT"
         ajaxPut: function ajaxPut(settings){
-            settings.type = 'PUT';
-            return v.$.ajax(mergeSettings(settings));
+            return ajax(mergeSettings(settings, 'PUT'));
         },
         //http "DELETE"
         ajaxDelete: function ajaxDelete(settings){
-            settings.type = 'DELETE';
-            return v.$.ajax(mergeSettings(settings));
+            return ajax(mergeSettings(settings, 'DELETE'));
         }
     };
 
