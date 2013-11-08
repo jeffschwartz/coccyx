@@ -84,6 +84,10 @@ define('helpers', [], function(){
     var v = window.Coccyx = window.Coccyx || {};
 
     v.helpers = {
+        //0.6.3 Returns true if options hash passed as last argument and option.silent is true, false otherwise.
+        isSilent: function(args){
+            return args.length && !Array.isArray(args[args.length - 1]) && typeof(args[args.length -1]) === 'object' && args[args.length - 1].silent;
+        },
         //Returns true if s1 contains s2, otherwise returns false.
         contains: function contains(s1, s2){
             if(typeof s1 === 'string'){for(var i = 0, len = s1.length; i < len; i++){if(s1[i] === s2) {return true;}}}
@@ -217,12 +221,12 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
         replace = v.helpers.replace,
         propertyChangedEvent = 'MODEL_PROPERTY_CHANGED_EVENT',
         syntheticId = -1, //0.6.0 Generates synthetic model ids.
+        isSilent = v.helpers.isSilent, //0.6.3
         proto;
 
     //0.6.0 Publishes MODEL_PROPERTY_CHAGED_EVENT event via Coccyx.eventer.
     function publishPropertyChangeEvent(model, propertyPath, value){
-        //0.6.3 added isSilent check.
-        if(!model.getIsSilent()){model.trigger(propertyChangedEvent, {propertyPath: propertyPath, value: value, model: model});}
+        model.trigger(propertyChangedEvent, {propertyPath: propertyPath, value: value, model: model});
     }
 
     //0.6.0 Return the property reachable through the property path or undefined.
@@ -267,8 +271,6 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
         obj2.isSet = false;
         obj2.isReadOnly = false;
         obj2.isDirty = false;
-        //0.6.3 Added isSilent
-        obj2.isSilent = false;
         obj2.originalData = {};
         obj2.changedData = {};
         obj2.data = {};
@@ -367,8 +369,9 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
             var p = findProperty(this.changedData, propertyPath);
             return typeof p === 'object' ? deepCopy(p) : p;
         },
-        //Sets a property on an object reachable through the property path. If the property doesn't exits, it will be created and then assigned
-        //its value (using a deep copy if typeof data === 'object'). Calling set with a nested object or property is therefore supported. For
+        //Sets a property on an object reachable through the property path and fires publishPropertyChangeEvent if options.silent isn't
+        //passed or is false. Maintains deletedColl. If the property doesn't exits, it will be created and then assigned its value
+        //(using a deep copy if typeof data === 'object'). Calling set with a nested object or property is therefore supported. For
         //example, if the property path is address.street and the model's data hash is {name: 'some name'}, the result will be
         //{name: 'some name', address: {street: 'some street'}}; and the changed data hash will be {'address.street': some.street'}.
         setProperty: function setProperty(propertyPath, val){
@@ -379,14 +382,16 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
                 this.isDirty = true;
                 //0.6.0 Maintain id's state when setting properties on data.
                 if(this.data.hasOwnProperty(this.idPropertyName)){this.modelId = this.data[this.idPropertyName];}
-                publishPropertyChangeEvent(this, propertyPath, val);
+                //0.6.3 Check for silent.
+                if(!isSilent(arguments)){publishPropertyChangeEvent(this, propertyPath, val);}
             }else{
                 console.log(!this.isSet ? 'Warning! setProperty called on model before set was called.' : 'Warning! setProperty called on read only model.');
             }
             //For chaining.
             return this;
         },
-        //0.6.0 Delete a property from this.data via property path.
+        //0.6.0 Delete a property from this.data via property path and fires publishPropertyChangeEvent
+        //if options.silent isn't passed or is false. Maintains deletedColl
         deleteProperty: function deleteProperty(propertyPath){
             //A model's data properties cannot be deleted if the model hasn't been set yet or if the model is read only.
             if(this.isSet && !this.isReadOnly){
@@ -394,7 +399,8 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
                 this.changedData[propertyPath] = undefined;
                 this.isDirty = true;
                 if(this.data.hasOwnProperty(this.idPropertyName)){this.modelId = this.data[this.idPropertyName];}
-                publishPropertyChangeEvent(this, propertyPath, undefined);
+                //0.6.3 Check for silent.
+                if(!isSilent(arguments)){publishPropertyChangeEvent(this, propertyPath, undefined);}
             }else{
                 console.log(!this.isSet ? 'Warning! deleteProperty called on model before set was called.' : 'Warning! deleteProperty called on read only model.');
             }
@@ -411,10 +417,6 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
         ajaxPut: function ajaxPut(options){return ajax.call(this, 'put', options, v.ajax.ajaxPut);},
         //0.6.0 Ajax "DELETE".
         ajaxDelete: function ajaxDelete(options){return ajax.call(this, 'delete', options, v.ajax.ajaxDelete);},
-        //0.6.3 Returns this.isSilent (boolean).
-        getIsSilent: function getIsSilent(){return this.isSilent;},
-        //0.6.3 Sets this.isSilent (boolean).
-        setIsSilent: function setIsSilent(isSilent){this.isSilent = isSilent;}
     };
 
     v.models = {extend: extend, propertyChangedEvent: propertyChangedEvent};
@@ -429,6 +431,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         addEvent ='COLLECTION_MODEL_ADDED_EVENT',
         removeEvent ='COLLECTION_MODEL_REMOVED_EVENT',
         sortEvent ='COLLECTION_SORTED_EVENT',
+        isSilent = v.helpers.isSilent, //0.6.3
         proto;
 
     function extend(collObj){
@@ -584,9 +587,6 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         }
         return models;
     }
-
-    //0.6.3 Returns true if options hash passed as last argument and option.silent is true, false otherwise.
-    function isSilent(args){return args.length && !Array.isArray(args[args.length - 1]) && typeof(args[args.length -1]) === 'object' && args[args.length - 1].silent;}
 
     //Collection prototype properties...
     proto = {
