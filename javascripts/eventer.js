@@ -9,13 +9,9 @@ define('eventer', ['application', 'helpers'], function(){
 
     eventerApi = {
         //Attach a callback handler to a specific custom event or events fired from 'this' object optionally binding the callback to context.
-        handle: function handle(events, callback, context){
-            v.$(this._eventedObj).on(events, context? v.$.proxy(callback, context) : callback);
-        },
+        handle: function handle(events, callback, context){v.$(this._eventedObj).on(events, context? v.$.proxy(callback, context) : callback);},
         //Like handle but will only fire the event one time and will ignore subsequent events.
-        handleOnce: function handleOnce(events, callback, context){
-            v.$(this._eventedObj).one(events, context? v.$.proxy(callback, context) : callback);
-        },
+        handleOnce: function handleOnce(events, callback, context){v.$(this._eventedObj).one(events, context? v.$.proxy(callback, context) : callback);},
         //Removes event handler.
         off: function off(events, callback){
             if(events && callback){
@@ -29,9 +25,7 @@ define('eventer', ['application', 'helpers'], function(){
             }
         },
         //Trigger an event for object optionally passing args if provided.
-        trigger: function trigger(events, args){
-            v.$(this._eventedObj).trigger(events, args);
-        }
+        trigger: function trigger(events, args){v.$(this._eventedObj).trigger(events, args);}
     };
 
     function extend(obj){
@@ -42,8 +36,5 @@ define('eventer', ['application', 'helpers'], function(){
         return obj0;
     }
 
-    v.eventer = {
-        extend: extend
-    };
-
+    v.eventer = {extend: extend};
 });

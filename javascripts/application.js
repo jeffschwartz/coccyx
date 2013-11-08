@@ -12,9 +12,7 @@ define('application', ['jquery'], function(){
         }
         if(arguments[0] instanceof Array){
             //An array of hashes.
-            arguments[0].forEach(function(controller){
-                loadRoutesFromController(controller);
-            });
+            arguments[0].forEach(function(controller){loadRoutesFromController(controller);});
         }else{
             //A single hash.
             loadRoutesFromController(arguments[0]);
@@ -45,13 +43,9 @@ define('application', ['jquery'], function(){
         }
     }
 
-    function getRoutes(){
-        return routes;
-    }
+    function getRoutes(){return routes;}
 
-    function getController(name){
-        return controllers[name];
-    }
+    function getController(name){return controllers[name];}
 
     //Provide jQuery in the Coccyx name space.
     v.$ = jQuery;
@@ -68,14 +62,8 @@ define('application', ['jquery'], function(){
     v.plugins = v.plugins || {};
 
     //Version stamp.
-    v.getVersion = function(){
-        return VERSION;
-    };
+    v.getVersion = function(){return VERSION;};
 
-    v.controllers = {
-        registerControllers : registerControllers,
-        getRoutes: getRoutes,
-        getController: getController
-    };
+    v.controllers = {registerControllers : registerControllers, getRoutes: getRoutes, getController: getController};
 
 });

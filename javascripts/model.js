@@ -21,21 +21,15 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
     //0.6.0 Publishes MODEL_PROPERTY_CHAGED_EVENT event via Coccyx.eventer.
     function publishPropertyChangeEvent(model, propertyPath, value){
         //0.6.3 added isSilent check.
-        if(!model.getIsSilent()){
-            model.trigger(propertyChangedEvent, {propertyPath: propertyPath, value: value, model: model});
-        }
+        if(!model.getIsSilent()){model.trigger(propertyChangedEvent, {propertyPath: propertyPath, value: value, model: model});}
     }
 
     //0.6.0 Return the property reachable through the property path or undefined.
     function findProperty(obj, propertyPath){
         //0.6.0 Return false if obj is an array or not an object.
-        if(Array.isArray(obj) || typeof obj !== 'object'){
-            return;
-        }
+        if(Array.isArray(obj) || typeof obj !== 'object'){return;}
         var a = propertyPath.split('.');
-        if(a.length === 1){
-            return obj[propertyPath];
-        }
+        if(a.length === 1){return obj[propertyPath];}
         //Try the next one in the chain.
         return findProperty(obj[a[0]], a.slice(1).join('.'));
     }
@@ -46,9 +40,7 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
         if(a.length === 1){
             obj[propertyPath] = typeof val === 'object' ? deepCopy(val) : val;
         }else{
-            if(!obj.hasOwnProperty(a[0])){
-                obj[a[0]] = {};
-            }
+            if(!obj.hasOwnProperty(a[0])){obj[a[0]] = {};}
             findAndSetProperty(obj[a[0]], a.slice(1).join('.'), val);
         }
     }
@@ -59,9 +51,7 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
         if(a.length === 1){
             delete obj[propertyPath];
         }else{
-            if(!obj.hasOwnProperty(a[0])){
-                obj[a[0]] = {};
-            }
+            if(!obj.hasOwnProperty(a[0])){obj[a[0]] = {};}
             findAndDeleteProperty(obj[a[0]], a.slice(1).join('.'));
         }
     }
@@ -82,8 +72,7 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
         obj2.changedData = {};
         obj2.data = {};
         //0.6.3 Eventer no longer placed on prototype as in prior versions. Its methods are now mixed in with the final object.
-        obj2 = v.eventer.extend(obj2);
-        return obj2;
+        return v.eventer.extend(obj2);
     }
 
     //0.6.0
@@ -91,12 +80,8 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
         /*jshint validthis:true*/
         var settings = {};
         settings.url = this.endPoint;
-        if(verb !== 'post'){
-            settings.url += ('/' + this.data[this.idPropertyName]);
-        }
-        if(verb !== 'get'){
-            settings.data = this.getData();
-        }
+        if(verb !== 'post'){settings.url += ('/' + this.data[this.idPropertyName]);}
+        if(verb !== 'get'){settings.data = this.getData();}
         settings.dataType = this.endPoint.charAt(0) === '/' ? 'json' : 'jsonp';
         return settings;
     }
@@ -137,16 +122,12 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
         setData: function setData (dataHash, options) {
             var o = {empty:false, readOnly:false, dirty:false, validate: false};
             //Merge default options with passed in options.
-            if(options){
-                replace(o, options);
-            }
+            if(options){replace(o, options);}
             //If options validate is true and there is a validate method and it returns false, sets valid to false and returns false.
             //If options validate is true and there is a validate method and it returns true, sets valid to true and proceeds with setting data.
             //If options validate is false or there isn't a validate method set valid to true.
             this.isValid = o.validate && this.validate ? this.validate(dataHash) : true;
-            if(!this.isValid){
-                return false;
-            }
+            if(!this.isValid){return false;}
             //Deep copy.
             this.originalData = o.empty ? {} : deepCopy(dataHash);
             this.isReadOnly = o.readOnly;
@@ -162,17 +143,11 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
             this.isSet = true;
             return true;
         },
-        getData: function getData(){
-            return deepCopy(this.data);
-        },
+        getData: function getData(){return deepCopy(this.data);},
         //Returns deep copy of originalData
-        getOriginalData: function getOriginalData(){
-            return deepCopy(this.originalData);
-        },
+        getOriginalData: function getOriginalData(){return deepCopy(this.originalData);},
         //Returns deep copy of changedData
-        getChangedData: function getChangedData(){
-            return deepCopy(this.changedData);
-        },
+        getChangedData: function getChangedData(){return deepCopy(this.changedData);},
         //Returns the data property reachable through property path. If there is no property reachable through property path
         //return undefined.
         getProperty: function getProperty(propertyPath){
@@ -202,9 +177,7 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
                 this.changedData[propertyPath] = deepCopy(val);
                 this.isDirty = true;
                 //0.6.0 Maintain id's state when setting properties on data.
-                if(this.data.hasOwnProperty(this.idPropertyName)){
-                    this.modelId = this.data[this.idPropertyName];
-                }
+                if(this.data.hasOwnProperty(this.idPropertyName)){this.modelId = this.data[this.idPropertyName];}
                 publishPropertyChangeEvent(this, propertyPath, val);
             }else{
                 console.log(!this.isSet ? 'Warning! setProperty called on model before set was called.' : 'Warning! setProperty called on read only model.');
@@ -219,51 +192,29 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
                 findAndDeleteProperty(this.data, propertyPath);
                 this.changedData[propertyPath] = undefined;
                 this.isDirty = true;
-                if(this.data.hasOwnProperty(this.idPropertyName)){
-                    this.modelId = this.data[this.idPropertyName];
-                }
+                if(this.data.hasOwnProperty(this.idPropertyName)){this.modelId = this.data[this.idPropertyName];}
                 publishPropertyChangeEvent(this, propertyPath, undefined);
             }else{
                 console.log(!this.isSet ? 'Warning! deleteProperty called on model before set was called.' : 'Warning! deleteProperty called on read only model.');
             }
         },
         //0.6.0 Returns true if model is new, false otherwise.
-        isNew: function isNew(){
-            return (typeof this.data[this.idPropertyName] === 'undefined');
-        },
+        isNew: function isNew(){return (typeof this.data[this.idPropertyName] === 'undefined');},
         //0.6.0 Returns stringified model's data hash.
-        toJSON: function toJSON(){
-            return JSON.stringify(this.data);
-        },
+        toJSON: function toJSON(){return JSON.stringify(this.data);},
         //0.6.0 Ajax "GET".
-        ajaxGet: function ajaxGet(options){
-            return ajax.call(this, 'get', options, v.ajax.ajaxGet);
-        },
+        ajaxGet: function ajaxGet(options){return ajax.call(this, 'get', options, v.ajax.ajaxGet);},
         //0.6.0 Ajax "POST".
-        ajaxPost: function ajaxPost(options){
-            return ajax.call(this, 'post', options, v.ajax.ajaxPost);
-        },
+        ajaxPost: function ajaxPost(options){return ajax.call(this, 'post', options, v.ajax.ajaxPost);},
         //0.6.0 Ajax "PUT".
-        ajaxPut: function ajaxPut(options){
-            return ajax.call(this, 'put', options, v.ajax.ajaxPut);
-        },
+        ajaxPut: function ajaxPut(options){return ajax.call(this, 'put', options, v.ajax.ajaxPut);},
         //0.6.0 Ajax "DELETE".
-        ajaxDelete: function ajaxDelete(options){
-            return ajax.call(this, 'delete', options, v.ajax.ajaxDelete);
-        },
+        ajaxDelete: function ajaxDelete(options){return ajax.call(this, 'delete', options, v.ajax.ajaxDelete);},
         //0.6.3 Returns this.isSilent (boolean).
-        getIsSilent: function getIsSilent(){
-            return this.isSilent;
-        },
+        getIsSilent: function getIsSilent(){return this.isSilent;},
         //0.6.3 Sets this.isSilent (boolean).
-        setIsSilent: function setIsSilent(isSilent){
-            this.isSilent = isSilent;
-        }
+        setIsSilent: function setIsSilent(isSilent){this.isSilent = isSilent;}
     };
 
-    v.models = {
-        extend: extend,
-        propertyChangedEvent: propertyChangedEvent
-    };
-
+    v.models = {extend: extend, propertyChangedEvent: propertyChangedEvent};
 });
