@@ -7,6 +7,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         addEvent ='COLLECTION_MODEL_ADDED_EVENT',
         removeEvent ='COLLECTION_MODEL_REMOVED_EVENT',
         sortEvent ='COLLECTION_SORTED_EVENT',
+        isSilent = v.helpers.isSilent, //0.6.3
         proto;
 
     function extend(collObj){
@@ -162,9 +163,6 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         }
         return models;
     }
-
-    //0.6.3 Returns true if options hash passed as last argument and option.silent is true, false otherwise.
-    function isSilent(args){return args.length && !Array.isArray(args[args.length - 1]) && typeof(args[args.length -1]) === 'object' && args[args.length - 1].silent;}
 
     //Collection prototype properties...
     proto = {
