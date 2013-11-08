@@ -762,8 +762,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
 define('router', ['application', 'helpers'], function() {
     'use strict';
 
-    var v = window.Coccyx = window.Coccyx || {},
-        contains = v.helpers.contains;
+    var v = window.Coccyx = window.Coccyx || {}, contains = v.helpers.contains;
 
     function route(verb, url, valuesHash){
         //0.6.1 Call Coccyx.init() only once before handling any routing requests. See application.js for details.
@@ -794,8 +793,7 @@ define('router', ['application', 'helpers'], function() {
                 b = route.substring(route.indexOf('/') + 1).split('/');
                 if(verb === vrb && (a.length === b.length || contains(route, '*'))){
                     eq = true;
-                    //The url and the route have the same number of segments so the route
-                    //can be either static or it could contain parameterized segments.
+                    //The url and the route have the same number of segments so the route can be either static or it could contain parameterized segments.
                     for(var i = 0, len = b.length; i < len; i++){
                         //If the segments are equal then continue looping.
                         if(a[i] === b[i]){continue;}
