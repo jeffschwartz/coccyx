@@ -10,16 +10,13 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         proto;
 
     function extend(collObj){
-        var obj0 = Object.create(proto),
-            obj1 = collObj ? ext(obj0, collObj) : obj0;
+        var obj0 = Object.create(proto), obj1 = collObj ? ext(obj0, collObj) : obj0;
         //Collections have to know what their models' id property names are. Defaults to 'id', unless provided.
         obj1.modelsIdPropertyName = obj1.model && typeof obj1.model.idPropertyName !== 'undefined' ? obj1.model.idPropertyName : typeof obj1.modelsIdPropertyName !== 'undefined' ? obj1.modelsIdPropertyName : 'id';
         //Collections have to know what their models' endPoints are. Defaults to '/', unless provided.
         obj1.modelsEndPoint = obj1.model && typeof obj1.model.endPoint !== 'undefined' ? obj1.model.endPoint : typeof obj1.modelsEndPoint !== 'undefined' ? obj1.modelsEndPoint : '/';
         var obj2 = Object.create(obj1);
         obj2.isReadOnly = false;
-        //0.6.3 Added isSilent
-        obj2.isSilent = false;
         obj2.coll = [];
         obj2.deletedColl = [];
         //0.6.3 Eventer no longer placed on prototype as in prior versions. Its methods are now mixed in with the final object.
@@ -74,8 +71,7 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
 
     //Returns true if element has the same properties as source and their values are equal, false otherwise.
     function isMatch(element, source){
-        var prop;
-        for(prop in source){
+        for(var prop in source){
             if(source.hasOwnProperty(prop) && element.hasOwnProperty(prop)){
                 if(typeof element[prop] === 'object' && typeof source[prop] === 'object'){
                     if(!compare(element[prop], source[prop])){return false;}
@@ -98,16 +94,13 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
     //If data has all of the above then 'it is' a model and returns true, otherwise it returns false.
     function isAModel(obj){
         var markers = ['isSet', 'isReadOnly', 'isDirty', 'originalData', 'changedData', 'data'];
-        for(var i = 0, len = markers.length; i < len; i++){
-            if(!obj.hasOwnProperty(markers[i])){return false;}
-        }
+        for(var i = 0, len = markers.length; i < len; i++){if(!obj.hasOwnProperty(markers[i])){return false;}}
         return true;
     }
 
     //Makes a model from raw data and returns that model.
     function makeModelFromRaw(collObject, raw){
-        var model = v.models.extend(collObject.model ? collObject.model :
-            {idPropertyName: collObject.modelsIdPropertyName, endPoint: collObject.modelsEndPoint});
+        var model = v.models.extend(collObject.model ? collObject.model : {idPropertyName: collObject.modelsIdPropertyName, endPoint: collObject.modelsEndPoint});
         model.setData(raw);
         return model;
     }
@@ -130,20 +123,17 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         return model;
     }
 
-    //Pushes [models] onto the collection. [models] can be either models or raw data. If [models] is raw data,
-    //the raw data will be turned into models first before being pushed into the collection.
-    //Collections proxy model property change events.
+    //Pushes [models] onto the collection. [models] can be either models or raw data. If [models] is raw data, the raw data
+    //will be turned into models first before being pushed into the collection. Collections proxy model property change events.
     function addModels(collObject, models){
         var pushed = [];
         if(Array.isArray(models)){
             models.forEach(function(model){
-                collObject.coll.push(wireModelPropertyChangedHandler(collObject,
-                    isAModel(model) ? model : makeModelFromRaw(collObject, model)));
+                collObject.coll.push(wireModelPropertyChangedHandler(collObject, isAModel(model) ? model : makeModelFromRaw(collObject, model)));
                 pushed.push(collObject.at(collObject.coll.length - 1));
             });
         }else{
-            collObject.coll.push(wireModelPropertyChangedHandler(collObject,
-                isAModel(models) ? models : makeModelFromRaw(collObject, models)));
+            collObject.coll.push(wireModelPropertyChangedHandler(collObject, isAModel(models) ? models : makeModelFromRaw(collObject, models)));
             pushed.push(collObject.at(collObject.coll.length - 1));
         }
         return pushed;
@@ -157,12 +147,6 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
             models.push(wireModelPropertyChangedHandler(collObject, m));
         });
         return models;
-    }
-
-    //0.6.3 Triggers an event via Eventer.
-    function triggerEvent(event, args){
-        /*jshint validthis:true*/
-        if(!this.getIsSilent()){this.trigger(event, args);}
     }
 
     //0.6.3 Removes propertyChangedEvents from models.
@@ -179,11 +163,14 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         return models;
     }
 
+    //0.6.3 Returns true if options hash passed as last argument and option.silent is true, false otherwise.
+    function isSilent(args){return args.length && !Array.isArray(args[args.length - 1]) && typeof(args[args.length -1]) === 'object' && args[args.length - 1].silent;}
+
     //Collection prototype properties...
     proto = {
         /* Internal model property change event handler */
 
-        modelPropertyChangedHandler: function modelPropertyChangedHandler(event, data){triggerEvent.call(this, event, data);},
+        modelPropertyChangedHandler: function modelPropertyChangedHandler(event, data){this.trigger(event, data);},
 
         /* Mutators */
 
@@ -194,49 +181,57 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
             this.isReadOnly = options && options.readOnly;
             return this;
         },
-        //Works like [].pop. Fires removeEvent. Maintains deletedColl.
+        //Works like [].pop. Fires removeEvent if options.silent isn't passed or is false. Maintains deletedColl.
         pop: function pop(){
             var m = removePropertyChangedEvents.call(this, this.coll.pop());
             this.deletedColl.push(m);
-            triggerEvent.call(this, v.collections.removeEvent, m);
+            //0.6.3 Check for silent.
+            if(!isSilent(arguments)){this.trigger(v.collections.removeEvent, m);}
             return m;
         },
-        //Works like [].push. Fires addEvent.
+        //Works like [].push. Fires addEvent if options.silent isn't passed or it is false.
         push: function push(models){
             var pushed = addModels(this, models);
-            triggerEvent.call(this, v.collections.addEvent, pushed);
+            //0.6.3 Check for silent.
+            if(!isSilent(arguments)){this.trigger(v.collections.addEvent, pushed);}
             return this.coll.length;
         },
         //Works like [].reverse.
         reverse: function reverse(){this.coll.reverse();},
-        //Works like [].shift. Fires removeEvent. Maintains deletedColl.
+        //Works like [].shift. Fires removeEvent if options.silent isn't passed or it is false. Maintains deletedColl.
         shift: function shift(){
             var m = removePropertyChangedEvents.call(this, this.coll.shift());
             this.deletedColl.push(m);
-            triggerEvent.call(this, v.collections.removeEvent, m);
+            //0.6.3 Check for silent.
+            if(!isSilent(arguments)){this.trigger(v.collections.removeEvent, m);}
             return m;
         },
-        //Works like [].sort(function(a,b){...}). Fires sortEvent.
+        //Works like [].sort(function(a,b){...}). Fires sortEvent if options.silent isn't passed or it is false.
         sort: function sort(callback){
             this.coll.sort(function(a, b){return callback(a, b);});
-            triggerEvent.call(this, v.collections.sortEvent);
+            //0.6.3 Check for silent.
+            if(!isSilent(arguments)){this.trigger(v.collections.sortEvent);}
         },
-        //Works like [].splice. Takes new [modlels] starting with the 3rd parameter. Maintains deletedColl. Fires addEvent and removeEvent.
-        splice: function splice(index, howMany){
+        //Works like [].splice. Takes model or [modlels] as 3rd parameter. Maintains deletedColl. Fires addEvent and removeEvent if options.silent isn't passed or it is false.
+        splice: function splice(index, howMany, models){
             var a =[index, howMany],
-                aa = argsToModels(this, [].slice.call(arguments, 2));
+                // aa = argsToModels(this, [].slice.call(arguments, 2));
+                aa = argsToModels(this, models);
             a = a.concat(aa);
             var m = removePropertyChangedEvents.call(this, [].splice.apply(this.coll, a));
             if(m.length){this.deletedColl.push.apply(this.deletedColl, m);}
-            if(aa && aa.length){triggerEvent.call(this, v.collections.addEvent, aa);}
-            if(howMany !== 0){triggerEvent.call(this, v.collections.removeEvent, m);}
+            //0.6.3 Check for silent.
+            if(!isSilent(arguments) && aa && aa.length){this.trigger(v.collections.addEvent, aa);}
+            //0.6.3 Check for silent.
+            if(!isSilent(arguments) && howMany !== 0){this.trigger(v.collections.removeEvent, m);}
             return m;
         },
-        //Works like [].unshift. If raw data is passed it/they will first be converted to models.
-        unshift: function unshift(){
-            var added = argsToModels(this, arguments),
-                l = [].unshift.apply(this.coll, added);
-            triggerEvent.call(this, v.collections.addEvent, added);
+        //Works like [].unshift. Takes model or [models] as 1st parameter. If raw data is passed it/they will first be converted to models. Fires addEvent if options.silent isn't passed or it is false.
+        unshift: function unshift(models){
+            // var added = argsToModels(this, arguments),
+            var added = argsToModels(this, models), l = [].unshift.apply(this.coll, added);
+            //0.6.3 Check for silent.
+            if(!isSilent(arguments)){this.trigger(v.collections.addEvent, added);}
             return l;
         },
 
@@ -250,16 +245,12 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         at: function at(index){return this.coll[index];},
         //Find a model by its id and return it.
         findById: function findById(id){
-            for(var i = 0, len = this.coll.length; i < len; i++){
-                if(this.at(i).modelId === id){return this.at(i);}
-            }
+            for(var i = 0, len = this.coll.length; i < len; i++){if(this.at(i).modelId === id){return this.at(i);}}
         },
         //Works like [].slice.
         slice: function slice(){
             var self = this;
-            return [].slice.apply(this.coll, arguments).map(function(model){
-                return makeModelFromRaw(self, model.getData());
-            });
+            return [].slice.apply(this.coll, arguments).map(function(model){return makeModelFromRaw(self, model.getData());});
         },
 
         /* Iterators */
@@ -301,10 +292,10 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
             this.coll.forEach(function(model){model.isReadOnly = readOnly;});
             this.isReadOnly = readOnly;
         },
-        //Removes all models from the collection whose data properties matches those of matchingPropertiesHash.
-        //Any models removed from their collection will also have their property changed event handlers removed.
-        //Removing models causes a remove event to be fired, and the removed models are passed along as the 2nd
-        //argument to the event handler's callback function. Maintains deletedColl.
+        //Removes all models from the collection whose data properties matches those of matchingPropertiesHash. Any models removed from their
+        //collection will also have their property changed event handlers removed. Removing models causes a remove event to be fired if
+        //options.silent isn't passed or is false, and the removed models are passed along as the 2nd argument to the event handler's callback
+        //function. Maintains deletedColl.
         remove: function remove(matchingPropertiesHash){
             var removed = [], newColl;
             if(this.coll.length === 0 || isArrayOrNotObject(matchingPropertiesHash)){return;}
@@ -318,7 +309,8 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
             if(removed.length){
                 this.deletedColl.push.apply(this.deletedColl, removePropertyChangedEvents.call(this, removed));
                 this.coll = newColl;
-                triggerEvent.call(this, v.collections.removeEvent, removed);
+                //0.6.3 Check for silent.
+                if(!isSilent(arguments)){this.trigger(v.collections.removeEvent, removed);}
             }
             return removed;
         },
@@ -338,11 +330,6 @@ define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
         },
         //Same as Coccyx.collections.toRaw(models). See above for details.
         toRaw: toRaw,
-        //0.6.3 Returns this.isSilent (boolean).
-        getIsSilent: function getIsSilent(){return this.isSilent;},
-        //0.6.3 Sets this.isSilent (boolean).
-        setIsSilent: function setIsSilent(isSilent){this.isSilent = isSilent;},
-        //0.6.3 Returns the length of this.coll.
         getLength: function getLength(){return this.coll.length;}
     };
 
