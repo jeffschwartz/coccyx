@@ -1,14 +1,13 @@
 define('router', ['application', 'helpers'], function() {
     'use strict';
 
-    var Coccyx = window.Coccyx = window.Coccyx || {},
-        contains = Coccyx.helpers.contains;
+    var v = window.Coccyx = window.Coccyx || {}, contains = v.helpers.contains;
 
     function route(verb, url, valuesHash){
         //0.6.1 Call Coccyx.init() only once before handling any routing requests. See application.js for details.
-        if(!Coccyx.initCalled){
-            Coccyx.init();
-            Coccyx.initCalled = true;
+        if(!v.initCalled){
+            v.init();
+            v.initCalled = true;
             console.log('Coccyx.init called');
         }
         var rt = getRoute(verb, url);
@@ -20,34 +19,29 @@ define('router', ['application', 'helpers'], function() {
     }
 
     function getRoute(verb, url){
-        var routes = Coccyx.controllers.getRoutes(),
+        var routes = v.controllers.getRoutes(),
             a = url.substring(1).split('/'),
             params = [],
             rel = false,
-            route, b, c, i, ii, len, eq, relUrl, v;
+            route, b, c, eq, vrb;
         for(route in routes){
             if(routes.hasOwnProperty(route)){
                 //Get the 'veb'.
-                v = route.substring(0, route.indexOf(' '));
+                vrb = route.substring(0, route.indexOf(' '));
                 //Get the url.
                 b = route.substring(route.indexOf('/') + 1).split('/');
-                if(verb === v && (a.length === b.length || contains(route, '*'))){
+                if(verb === vrb && (a.length === b.length || contains(route, '*'))){
                     eq = true;
-                    //The url and the route have the same number of segments so the route
-                    //can be either static or it could contain parameterized segments.
-                    for(i = 0, len = b.length; i < len; i++){
+                    //The url and the route have the same number of segments so the route can be either static or it could contain parameterized segments.
+                    for(var i = 0, len = b.length; i < len; i++){
                         //If the segments are equal then continue looping.
-                        if(a[i] === b[i]){
-                            continue;
-                        }
+                        if(a[i] === b[i]){continue;}
                         //If the route segment is parameterized then save the parameter and continue looping.
                         if(contains(b[i],':')){
                             //0.4.0 - checking for 'some:thing'
                             c = b[i].split(':');
                             if(c.length === 2){
-                                if(a[i].substr(0, c[0].length) === c[0]){
-                                    params.push(a[i].substr(c[0].length));
-                                }
+                                if(a[i].substr(0, c[0].length) === c[0]){params.push(a[i].substr(c[0].length));}
                             }else{
                                 params.push(a[i]);
                             }
@@ -70,9 +64,7 @@ define('router', ['application', 'helpers'], function() {
                     }
                     if(rel){
                         //controller name, function to call, function arguments to call with...
-                        for(ii = i, relUrl = ''; ii < a.length; ii++){
-                            relUrl += ('/' + a[ii]);
-                        }
+                        for(var ii = i, llen = a.length, relUrl = ''; ii < llen; ii++){relUrl += ('/' + a[ii]);}
                         //controller name, function to call, function arguments to call with...
                         return {controllerName: /*b[0]*/ routes[route][0], fn: routes[route][1], params: [relUrl]};
                     }
@@ -85,7 +77,7 @@ define('router', ['application', 'helpers'], function() {
         //0.6.0 Prior versions called controller.init() when the controller is loaded. Starting with 0.6.0,
         //controller.init() is only called when routing is called to one of their route callbacks. This
         //eliminates unnecessary initialization if the controller is never used.
-        var controller = Coccyx.controllers.getController(route.controllerName);
+        var controller = v.controllers.getController(route.controllerName);
         if(controller.hasOwnProperty('init') && !controller.hasOwnProperty('initCalled')){
             controller.init();
             controller.initCalled = true;
@@ -100,12 +92,7 @@ define('router', ['application', 'helpers'], function() {
         }
     }
 
-    function routeNotFound(url){
-        console.log('router::routeNotFound called with route = ' + url);
-    }
+    function routeNotFound(url){console.log('router::routeNotFound called with route = ' + url);}
 
-    Coccyx.router = {
-        route: route
-    };
-
+    v.router = {route: route};
 });

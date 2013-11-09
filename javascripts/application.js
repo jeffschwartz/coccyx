@@ -1,10 +1,10 @@
 define('application', ['jquery'], function(){
     'use strict';
 
-    var Coccyx = window.Coccyx = window.Coccyx || {},
+    var v = window.Coccyx = window.Coccyx || {},
         controllers = {},
         routes = {},
-        VERSION = '0.6.2';
+        VERSION = '0.6.3';
 
      function registerControllers(){
         if(arguments.length !== 1 && !(arguments[0] instanceof Array) && !(arguments[0] instanceof Object)){
@@ -12,9 +12,7 @@ define('application', ['jquery'], function(){
         }
         if(arguments[0] instanceof Array){
             //An array of hashes.
-            arguments[0].forEach(function(controller){
-                loadRoutesFromController(controller);
-            });
+            arguments[0].forEach(function(controller){loadRoutesFromController(controller);});
         }else{
             //A single hash.
             loadRoutesFromController(arguments[0]);
@@ -25,7 +23,7 @@ define('application', ['jquery'], function(){
         var namedRoute;
         console.log('Registering controller \'' + controller.name + '\'');
         //controller's local $
-        controller.$ = Coccyx.$;
+        controller.$ = v.$;
         //Maintain list of controllers for when we need to bind them to route function callbacks.
         controllers[controller.name] = controller;
         //Build the routes array.
@@ -45,37 +43,27 @@ define('application', ['jquery'], function(){
         }
     }
 
-    function getRoutes(){
-        return routes;
-    }
+    function getRoutes(){return routes;}
 
-    function getController(name){
-        return controllers[name];
-    }
+    function getController(name){return controllers[name];}
 
     //Provide jQuery in the Coccyx name space.
-    Coccyx.$ = jQuery;
+    v.$ = jQuery;
 
     //0.6.0 Renamed userspace to application - provides a bucket for application stuff.
-    Coccyx.application = Coccyx.application || {};
+    v.application = v.application || {};
 
     //0.6.1 init will be called only once immediately before the first routing request
     //is handled by the router. Override init to provide application specific initialization,
     //such as bootstrapping your application with data.
-    Coccyx.init = function init(){};
+    v.init = function init(){};
 
     //Provide a bucket for Coccyx library plug-ins.
-    Coccyx.plugins = Coccyx.plugins || {};
+    v.plugins = v.plugins || {};
 
     //Version stamp.
-    Coccyx.getVersion = function(){
-        return VERSION;
-    };
+    v.getVersion = function(){return VERSION;};
 
-    Coccyx.controllers = {
-        registerControllers : registerControllers,
-        getRoutes: getRoutes,
-        getController: getController
-    };
+    v.controllers = {registerControllers : registerControllers, getRoutes: getRoutes, getController: getController};
 
 });

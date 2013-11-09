@@ -1,37 +1,27 @@
 define('ajax', ['application'], function(){
     'use strict';
 
-    var Coccyx = window.Coccyx = window.Coccyx || {},
-        extend = Coccyx.helpers.extend,
-        defaultSettings = {cache: false, url: '/'};
+    var v = window.Coccyx = window.Coccyx || {},
+        extend = v.helpers.extend,
+        defaultSettings = {cache: false, url: '/'},
+        ajax = v.$.ajax;
 
         //Merge default setting with user's settings.
-        function mergeSettings(settings){
+        function mergeSettings(settings, type){
+            settings.type = type;
             return extend({}, defaultSettings, settings);
         }
 
     //A simple promise-based wrapper around jQuery Ajax. All methods return a Promise.
-    Coccyx.ajax = {
+    v.ajax = {
         //http "GET"
-        ajaxGet: function(settings){
-            settings.type = 'GET';
-            return Coccyx.$.ajax(mergeSettings(settings));
-        },
+        ajaxGet: function ajaxGet(settings){return ajax(mergeSettings(settings, 'GET'));},
         //http "POST"
-        ajaxPost: function(settings){
-            settings.type = 'POST';
-            return Coccyx.$.ajax(mergeSettings(settings));
-        },
+        ajaxPost: function ajaxPost(settings){return ajax(mergeSettings(settings, 'POST'));},
         //http "PUT"
-        ajaxPut: function(settings){
-            settings.type = 'PUT';
-            return Coccyx.$.ajax(mergeSettings(settings));
-        },
+        ajaxPut: function ajaxPut(settings){return ajax(mergeSettings(settings, 'PUT'));},
         //http "DELETE"
-        ajaxDelete: function(settings){
-            settings.type = 'DELETE';
-            return Coccyx.$.ajax(mergeSettings(settings));
-        }
+        ajaxDelete: function ajaxDelete(settings){return ajax(mergeSettings(settings, 'DELETE'));}
     };
 
 });
