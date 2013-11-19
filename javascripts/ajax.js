@@ -1,10 +1,10 @@
-define('ajax', ['application'], function(){
+define('ajax', ['helpers', 'application'], function(){
     'use strict';
 
     var v = window.Coccyx = window.Coccyx || {},
-        extend = v.helpers.extend,
-        defaultSettings = {cache: false, url: '/'},
-        ajax = v.$.ajax;
+        //v0.6.4 added dataType.
+        defaultSettings = {dataType: 'json', cache: false, url: '/'},
+        extend = v.helpers.extend, ajax = v.$.ajax;
 
         //Merge default setting with user's settings.
         function mergeSettings(settings, type){

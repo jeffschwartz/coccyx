@@ -1,4 +1,4 @@
-define('coccyx', ['application', 'helpers', 'router', 'history', 'models', 'collections', 'views', 'eventer', 'ajax'], function () {
+define('coccyx', ['helpers', 'eventer', 'ajax', 'application', 'router', 'history', 'models', 'collections', 'views'], function () {
     'use strict';
     return window.Coccyx;
 });

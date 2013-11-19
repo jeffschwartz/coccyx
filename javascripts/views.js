@@ -1,4 +1,4 @@
-define('views', ['application', 'helpers'], function(){
+define('views', ['helpers', 'application'], function(){
     'use strict';
 
     var v = window.Coccyx = window.Coccyx || {},

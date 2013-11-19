@@ -1,5 +1,5 @@
 //0.6.0
-define('collections', ['application', 'helpers', 'models', 'ajax'], function(){
+define('collections', ['helpers', 'ajax', 'application', 'models'], function(){
     'use strict';
 
     var v = window.Coccyx = window.Coccyx || {},

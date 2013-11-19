@@ -1,4 +1,4 @@
-define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
+define('models', ['helpers', 'ajax', 'eventer', 'application'], function(){
     'use strict';
 
     /**
@@ -11,13 +11,10 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
      */
 
     var v = window.Coccyx = window.Coccyx || {},
-        deepCopy = v.helpers.deepCopy,
-        ext = v.helpers.extend,
-        replace = v.helpers.replace,
+        ajax = v.ajax, deepCopy = v.helpers.deepCopy, ext = v.helpers.extend, replace = v.helpers.replace, proto,
         propertyChangedEvent = 'MODEL_PROPERTY_CHANGED_EVENT',
         syntheticId = -1, //0.6.0 Generates synthetic model ids.
-        isSilent = v.helpers.isSilent, //0.6.3
-        proto;
+        isSilent = v.helpers.isSilent; //0.6.3
 
     //0.6.0 Publishes MODEL_PROPERTY_CHAGED_EVENT event via Coccyx.eventer.
     function publishPropertyChangeEvent(model, propertyPath, value){
@@ -73,45 +70,33 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
         return v.eventer.extend(obj2);
     }
 
-    //0.6.0
-    function setAjaxSettings(verb){
+    //0.6.0.
+    function setAjaxSettings(settings, verb){
         /*jshint validthis:true*/
-        var settings = {};
+        settings = settings ? settings : {}; //0.6.4.
         settings.url = this.endPoint;
         if(verb !== 'post'){settings.url += ('/' + this.data[this.idPropertyName]);}
         if(verb !== 'get'){settings.data = this.getData();}
-        settings.dataType = this.endPoint.charAt(0) === '/' ? 'json' : 'jsonp';
+        settings.dataType = this.endPoint.charAt(0) === '/' ? settings.dataType : 'jsonp';
         return settings;
     }
 
-    //0.6.0
-    function setAjaxOptions(options){
-        var defOpts = {rawJSON: false},
-            opts = options ? options : {};
-        return replace(defOpts, opts);
-    }
-
-    //0.6.0 Does the heavy lifting
-    function ajax(op, opt, fn){
+    //0.6.0 Does the heavy lifting. Returns a promise. 0.6.4 renamed to doAjax and added settings argument.
+    //0.6.4 removed rawJson option & replaced with model.parse().
+    function doAjax(verb, settings, fn){
         /*jshint validthis:true*/
-        var deferred = v.$.Deferred(),
-            self = this,
-            opts = setAjaxOptions(opt),
-            promise;
-        promise = fn(setAjaxSettings.call(this, op));
-        promise.done(function(json){
-            if(json && !opts.rawJSON){
-                //Set this model's data.
-                self.setData(ext(self.getData(),json));
-            }
-            //Call promise.done.
-            deferred.resolve(opts.rawJSON ? json : self);
+        var deferred = v.$.Deferred(), self = this, promise;
+        promise = fn(setAjaxSettings.call(this, settings, verb));
+        promise.done(function(data){
+            //If data was returned call parse if it exists on this model.
+            data = data && self.parse && typeof this.parse === 'function' ? this.parse(data) : data;
+            //If data was returned set this model's data.
+            if(data){self.setData(ext(self.getData(),data));}
+            //Calls promise.done passing this model.
+            deferred.resolve(self);
         });
-        promise.fail(function(jjqXHR, textStatus, errorThrown){
-            //Call promise.fail.
-            deferred.reject(jjqXHR, textStatus, errorThrown);
-        });
-        //Return a promise.
+        //Calls promise.fail. 0.6.4 now returns this model as 1st argument.
+        promise.fail(function(jqXHR, textStatus, errorThrown){deferred.reject(self, jqXHR, textStatus, errorThrown); });
         return deferred.promise();
     }
 
@@ -204,14 +189,17 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
         isNew: function isNew(){return (typeof this.data[this.idPropertyName] === 'undefined');},
         //0.6.0 Returns stringified model's data hash.
         toJSON: function toJSON(){return JSON.stringify(this.data);},
-        //0.6.0 Ajax "GET".
-        ajaxGet: function ajaxGet(options){return ajax.call(this, 'get', options, v.ajax.ajaxGet);},
+        //0.6.4 For the 4 following ajax methods, options is a hash of which can contain any valid jQuery.ajax setting.
+        //0.6.0 Ajax "GET". 0.6.4 options argument changed to ajax settings argument.
+        ajaxGet: function ajaxGet(ajaxSettings){return doAjax.call(this, 'get', ajaxSettings, ajax.ajaxGet);},
         //0.6.0 Ajax "POST".
-        ajaxPost: function ajaxPost(options){return ajax.call(this, 'post', options, v.ajax.ajaxPost);},
+        ajaxPost: function ajaxPost(ajaxSettings){return doAjax.call(this, 'post', ajaxSettings, ajax.ajaxPost);},
         //0.6.0 Ajax "PUT".
-        ajaxPut: function ajaxPut(options){return ajax.call(this, 'put', options, v.ajax.ajaxPut);},
+        ajaxPut: function ajaxPut(ajaxSettings){return doAjax.call(this, 'put', ajaxSettings, ajax.ajaxPut);},
         //0.6.0 Ajax "DELETE".
-        ajaxDelete: function ajaxDelete(options){return ajax.call(this, 'delete', options, v.ajax.ajaxDelete);},
+        ajaxDelete: function ajaxDelete(ajaxSettings){return doAjax.call(this, 'delete', ajaxSettings, ajax.ajaxDelete);},
+        //0.6.4 Override to transform the data returned from Ajax call and return json.
+        parse: function parse(data){/*jshint unused:false */}
     };
 
     v.models = {extend: extend, propertyChangedEvent: propertyChangedEvent};
