@@ -450,7 +450,6 @@ define('models', ['helpers', 'ajax', 'eventer', 'application'], function(){
         settings.url = this.endPoint;
         if(verb !== 'post'){settings.url += ('/' + this.data[this.idPropertyName]);}
         if(verb !== 'get'){settings.data = this.getData();}
-        settings.dataType = this.endPoint.charAt(0) === '/' ? settings.dataType : 'jsonp';
         return settings;
     }
 
@@ -461,8 +460,8 @@ define('models', ['helpers', 'ajax', 'eventer', 'application'], function(){
         var deferred = v.$.Deferred(), self = this, promise;
         promise = fn(setAjaxSettings.call(this, settings, verb));
         promise.done(function(data){
-            //If data was returned call parse if it exists on this model.
-            data = data && self.parse && typeof this.parse === 'function' ? this.parse(data) : data;
+            //If data was returned call parse.
+            data = data ? self.parse(data) : data;
             //If data was returned set this model's data.
             if(data){self.setData(ext(self.getData(),data));}
             //Calls promise.done passing this model.
@@ -562,8 +561,8 @@ define('models', ['helpers', 'ajax', 'eventer', 'application'], function(){
         isNew: function isNew(){return (typeof this.data[this.idPropertyName] === 'undefined');},
         //0.6.0 Returns stringified model's data hash.
         toJSON: function toJSON(){return JSON.stringify(this.data);},
-        //0.6.4 For the 4 following ajax methods, options is a hash of which can contain any valid jQuery.ajax setting.
-        //0.6.0 Ajax "GET". 0.6.4 options argument changed to ajax settings argument.
+        //0.6.4 For the 4 following ajax methods, ajaxSettings is a hash which can contain any valid jQuery.ajax setting.
+        //0.6.0 Ajax "GET".
         ajaxGet: function ajaxGet(ajaxSettings){return doAjax.call(this, 'get', ajaxSettings, ajax.ajaxGet);},
         //0.6.0 Ajax "POST".
         ajaxPost: function ajaxPost(ajaxSettings){return doAjax.call(this, 'post', ajaxSettings, ajax.ajaxPost);},
@@ -572,7 +571,7 @@ define('models', ['helpers', 'ajax', 'eventer', 'application'], function(){
         //0.6.0 Ajax "DELETE".
         ajaxDelete: function ajaxDelete(ajaxSettings){return doAjax.call(this, 'delete', ajaxSettings, ajax.ajaxDelete);},
         //0.6.4 Override to transform the data returned from Ajax call and return json.
-        parse: function parse(data){/*jshint unused:false */}
+        parse: function parse(data){return data;}
     };
 
     v.models = {extend: extend, propertyChangedEvent: propertyChangedEvent};
