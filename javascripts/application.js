@@ -1,10 +1,7 @@
 define('application', ['jquery'], function(){
     'use strict';
 
-    var v = window.Coccyx = window.Coccyx || {},
-        controllers = {},
-        routes = {},
-        VERSION = '0.6.3';
+    var v = window.Coccyx = window.Coccyx || {}, controllers = {}, routes = {}, VERSION = '0.6.3';
 
      function registerControllers(){
         if(arguments.length !== 1 && !(arguments[0] instanceof Array) && !(arguments[0] instanceof Object)){

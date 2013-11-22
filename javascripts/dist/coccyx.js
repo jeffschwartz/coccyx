@@ -1,12 +1,9 @@
-//Coccyx.js 0.6.3
+//CoccyxJS 0.6.3
 //(c) 2013 Jeffrey Schwartz
-//Coccyx.js may be freely distributed under the MIT license.
+//CoccyxJS may be freely distributed under the MIT license.
 //For all details and documentation:
 //http://coccyxjs.jitsu.com
-(function(){
-    'use strict';
-    if(!(typeof define  === 'function' && define.amd)) {window.define =  function define(){(arguments[arguments.length - 1])();};}
-}());
+(function(){'use strict'; if(!(typeof define  === 'function' && define.amd)) {window.define =  function define(){(arguments[arguments.length - 1])();};} }());
 
 define('helpers', [], function(){
     'use strict';
@@ -15,14 +12,9 @@ define('helpers', [], function(){
 
     v.helpers = {
         //0.6.3 Returns true if options hash passed as last argument and option.silent is true, false otherwise.
-        isSilent: function(args){
-            return args.length && !Array.isArray(args[args.length - 1]) && typeof(args[args.length -1]) === 'object' && args[args.length - 1].silent;
-        },
+        isSilent: function isSilent(args){return args.length && !Array.isArray(args[args.length - 1]) && typeof(args[args.length -1]) === 'object' && args[args.length - 1].silent;},
         //Returns true if s1 contains s2, otherwise returns false.
-        contains: function contains(s1, s2){
-            if(typeof s1 === 'string'){for(var i = 0, len = s1.length; i < len; i++){if(s1[i] === s2) {return true;}}}
-            return false;
-        },
+        contains: function contains(s1, s2){if(typeof s1 === 'string'){for(var i = 0, len = s1.length; i < len; i++){if(s1[i] === s2) {return true;}}} return false;},
         //Returns a deep copy object o.
         deepCopy: function deepCopy(o){return JSON.parse(JSON.stringify(o));},
         //Pass one or more objects as the source objects whose properties are to be copied to the target object.
@@ -44,10 +36,7 @@ define('helpers', [], function(){
 define('application', ['jquery'], function(){
     'use strict';
 
-    var v = window.Coccyx = window.Coccyx || {},
-        controllers = {},
-        routes = {},
-        VERSION = '0.6.3';
+    var v = window.Coccyx = window.Coccyx || {}, controllers = {}, routes = {}, VERSION = '0.6.3';
 
      function registerControllers(){
         if(arguments.length !== 1 && !(arguments[0] instanceof Array) && !(arguments[0] instanceof Object)){
@@ -114,16 +103,11 @@ define('application', ['jquery'], function(){
 define('ajax', ['helpers', 'application'], function(){
     'use strict';
 
-    var v = window.Coccyx = window.Coccyx || {},
-        //v0.6.4 added 'json' as default dataType.
-        defaultSettings = {dataType: 'json', cache: false, url: '/'},
-        extend = v.helpers.extend, ajax = v.$.ajax;
+    //v0.6.4 added 'json' as default dataType.
+    var v = window.Coccyx = window.Coccyx || {}, defaultSettings = {dataType: 'json', cache: false, url: '/'}, extend = v.helpers.extend, ajax = v.$.ajax;
 
     //Merge default setting with user's settings.
-    function mergeSettings(settings, type){
-        settings.type = type;
-        return extend({}, defaultSettings, settings);
-    }
+    function mergeSettings(settings, type){settings.type = type; return extend({}, defaultSettings, settings);}
 
     //A simple promise-based wrapper around jQuery Ajax. All methods return a Promise.
     v.ajax = {
@@ -193,19 +177,12 @@ define('router', ['helpers', 'application'], function() {
             console.log('Coccyx.init called');
         }
         var rt = getRoute(verb, url);
-        if(rt){
-            routeFound(rt, valuesHash);
-        }else{
-            routeNotFound(verb, url);
-        }
+        if(rt){routeFound(rt, valuesHash);}
+        else{routeNotFound(verb, url);}
     }
 
     function getRoute(verb, url){
-        var routes = v.controllers.getRoutes(),
-            a = url.substring(1).split('/'),
-            params = [],
-            rel = false,
-            route, b, c, eq, vrb;
+        var routes = v.controllers.getRoutes(), a = url.substring(1).split('/'), params = [], rel = false, route, b, c, eq, vrb;
         for(route in routes){
             if(routes.hasOwnProperty(route)){
                 //Get the 'veb'.
@@ -222,19 +199,12 @@ define('router', ['helpers', 'application'], function() {
                         if(contains(b[i],':')){
                             //0.4.0 - checking for 'some:thing'
                             c = b[i].split(':');
-                            if(c.length === 2){
-                                if(a[i].substr(0, c[0].length) === c[0]){params.push(a[i].substr(c[0].length));}
-                            }else{
-                                params.push(a[i]);
-                            }
+                            if(c.length === 2){if(a[i].substr(0, c[0].length) === c[0]){params.push(a[i].substr(c[0].length));} }
+                            else{params.push(a[i]);}
                             continue;
                         }
                         //If the route is a relative route, push it onto the array and break out of the loop.
-                        if(contains(b[i], '*')){
-                            rel = true;
-                            eq = false;
-                            break;
-                        }
+                        if(contains(b[i], '*')){rel = true; eq = false; break;}
                         //If none of the above
                         eq = false;
                         break;
@@ -242,13 +212,13 @@ define('router', ['helpers', 'application'], function() {
                     //The route matches the url so attach the params (it could be empty) to the route and return the route.
                     if(eq){
                         //controller name, function to call, function arguments to call with...
-                        return {controllerName: /*b[0]*/ routes[route][0], fn: routes[route][1], params: params};
+                        return {controllerName: routes[route][0], fn: routes[route][1], params: params};
                     }
                     if(rel){
                         //controller name, function to call, function arguments to call with...
                         for(var ii = i, llen = a.length, relUrl = ''; ii < llen; ii++){relUrl += ('/' + a[ii]);}
                         //controller name, function to call, function arguments to call with...
-                        return {controllerName: /*b[0]*/ routes[route][0], fn: routes[route][1], params: [relUrl]};
+                        return {controllerName: routes[route][0], fn: routes[route][1], params: [relUrl]};
                     }
                 }
             }
@@ -265,13 +235,9 @@ define('router', ['helpers', 'application'], function() {
             controller.initCalled = true;
         }
         //Route callbacks are bound (their contexts (their 'this')) to their controllers.
-        if(valuesHash){
-            route.fn.call(controller, valuesHash);
-        }else if(route.params.length){
-            route.fn.apply(controller, route.params);
-        }else{
-            route.fn.call(controller);
-        }
+        if(valuesHash){route.fn.call(controller, valuesHash); }
+        else if(route.params.length){route.fn.apply(controller, route.params); }
+        else{route.fn.call(controller);}
     }
 
     function routeNotFound(url){console.log('router::routeNotFound called with route = ' + url);}
@@ -321,9 +287,7 @@ define('history', ['application', 'router'], function() {
     //Event handler for popstate event.
     v.$(window).on('popstate', function(event){
         //Ignore 'popstate' events without state and until history.start is called.
-        if(event.originalEvent.state && started()){
-            v.router.route(event.originalEvent.state.verb , window.location.pathname);
-        }
+        if(event.originalEvent.state && started()){v.router.route(event.originalEvent.state.verb , window.location.pathname);}
     });
 
     //Creates a hash from an array whose elements are hashes whose properties are 'name' and 'value'.
@@ -383,16 +347,10 @@ define('models', ['helpers', 'ajax', 'eventer', 'application'], function(){
      * changes made in data. If you don't heed this warning bad things _will_ happen!!!
      */
 
-    var v = window.Coccyx = window.Coccyx || {},
-        ajax = v.ajax, deepCopy = v.helpers.deepCopy, ext = v.helpers.extend, replace = v.helpers.replace, proto,
-        propertyChangedEvent = 'MODEL_PROPERTY_CHANGED_EVENT',
-        syntheticId = -1, //0.6.0 Generates synthetic model ids.
-        isSilent = v.helpers.isSilent; //0.6.3
+    var v = window.Coccyx = window.Coccyx || {}, ajax = v.ajax, deepCopy = v.helpers.deepCopy, ext = v.helpers.extend, replace = v.helpers.replace, proto, propertyChangedEvent = 'MODEL_PROPERTY_CHANGED_EVENT', syntheticId = -1, isSilent = v.helpers.isSilent;
 
     //0.6.0 Publishes MODEL_PROPERTY_CHAGED_EVENT event via Coccyx.eventer.
-    function publishPropertyChangeEvent(model, propertyPath, value){
-        model.trigger(propertyChangedEvent, {propertyPath: propertyPath, value: value, model: model});
-    }
+    function publishPropertyChangeEvent(model, propertyPath, value){model.trigger(propertyChangedEvent, {propertyPath: propertyPath, value: value, model: model});}
 
     //0.6.0 Return the property reachable through the property path or undefined.
     function findProperty(obj, propertyPath){
@@ -407,7 +365,7 @@ define('models', ['helpers', 'ajax', 'eventer', 'application'], function(){
     //0.6.0 Sets the property reachable through the property path, creating it first if necessary, with a deep copy of val.
     function findAndSetProperty(obj, propertyPath, val){
         var a = propertyPath.split('.');
-        if(a.length === 1){obj[propertyPath] = typeof val === 'object' ? deepCopy(val) : val; }
+        if(a.length === 1){obj[propertyPath] = typeof val === 'object' ? deepCopy(val) : val;}
         else{
             if(!obj.hasOwnProperty(a[0])){obj[a[0]] = {};}
             findAndSetProperty(obj[a[0]], a.slice(1).join('.'), val);
@@ -417,7 +375,7 @@ define('models', ['helpers', 'ajax', 'eventer', 'application'], function(){
     //0.6.0 Deletes the property reachable through the property path.
     function findAndDeleteProperty(obj, propertyPath){
         var a = propertyPath.split('.');
-        if(a.length === 1){delete obj[propertyPath]; }
+        if(a.length === 1){delete obj[propertyPath];}
         else{
             if(!obj.hasOwnProperty(a[0])){obj[a[0]] = {};}
             findAndDeleteProperty(obj[a[0]], a.slice(1).join('.'));
@@ -500,22 +458,13 @@ define('models', ['helpers', 'ajax', 'eventer', 'application'], function(){
         getChangedData: function getChangedData(){return deepCopy(this.changedData);},
         //Returns the data property reachable through property path. If there is no property reachable through property path
         //return undefined.
-        getProperty: function getProperty(propertyPath){
-            var p = findProperty(this.data, propertyPath);
-            return typeof p === 'object' ? deepCopy(p) : p;
-        },
+        getProperty: function getProperty(propertyPath){var p = findProperty(this.data, propertyPath); return typeof p === 'object' ? deepCopy(p) : p;},
         //Returns the originalData property reachable through property path. If there is no property reachable through property path
         //return undefined.
-        getOriginalDataProperty: function getOriginalDataProperty(propertyPath){
-            var p = findProperty(this.originalData, propertyPath);
-            return typeof p === 'object' ? deepCopy(p) : p;
-        },
+        getOriginalDataProperty: function getOriginalDataProperty(propertyPath){var p = findProperty(this.originalData, propertyPath); return typeof p === 'object' ? deepCopy(p) : p;},
         //Returns the changedData property reachable through property path. If there is no property reachable through property path
         //return undefined.
-        getChangedDataProperty: function getChangedDataProperty(propertyPath){
-            var p = findProperty(this.changedData, propertyPath);
-            return typeof p === 'object' ? deepCopy(p) : p;
-        },
+        getChangedDataProperty: function getChangedDataProperty(propertyPath){var p = findProperty(this.changedData, propertyPath); return typeof p === 'object' ? deepCopy(p) : p;},
         //Sets a property on an object reachable through the property path and fires publishPropertyChangeEvent if options.silent isn't
         //passed or is false. Maintains deletedColl. If the property doesn't exits, it will be created and then assigned its value
         //(using a deep copy if typeof data === 'object'). Calling set with a nested object or property is therefore supported. For
@@ -531,9 +480,8 @@ define('models', ['helpers', 'ajax', 'eventer', 'application'], function(){
                 if(this.data.hasOwnProperty(this.idPropertyName)){this.modelId = this.data[this.idPropertyName];}
                 //0.6.3 Check for silent.
                 if(!isSilent(arguments)){publishPropertyChangeEvent(this, propertyPath, val);}
-            }else{
-                console.log(!this.isSet ? 'Warning! setProperty called on model before set was called.' : 'Warning! setProperty called on read only model.');
             }
+                else{console.log(!this.isSet ? 'Warning! setProperty called on model before set was called.' : 'Warning! setProperty called on read only model.');}
             //For chaining.
             return this;
         },
@@ -548,9 +496,7 @@ define('models', ['helpers', 'ajax', 'eventer', 'application'], function(){
                 if(this.data.hasOwnProperty(this.idPropertyName)){this.modelId = this.data[this.idPropertyName];}
                 //0.6.3 Check for silent.
                 if(!isSilent(arguments)){publishPropertyChangeEvent(this, propertyPath, undefined);}
-            }else{
-                console.log(!this.isSet ? 'Warning! deleteProperty called on model before set was called.' : 'Warning! deleteProperty called on read only model.');
-            }
+            }else{console.log(!this.isSet ? 'Warning! deleteProperty called on model before set was called.' : 'Warning! deleteProperty called on read only model.');}
         },
         //0.6.0 Returns true if model is new, false otherwise.
         isNew: function isNew(){return (typeof this.data[this.idPropertyName] === 'undefined');},
@@ -576,13 +522,8 @@ define('models', ['helpers', 'ajax', 'eventer', 'application'], function(){
 define('collections', ['helpers', 'ajax', 'application', 'models'], function(){
     'use strict';
 
-    var v = window.Coccyx = window.Coccyx || {},
-        ext = v.helpers.extend,
-        addEvent ='COLLECTION_MODEL_ADDED_EVENT',
-        removeEvent ='COLLECTION_MODEL_REMOVED_EVENT',
-        sortEvent ='COLLECTION_SORTED_EVENT',
-        isSilent = v.helpers.isSilent, //0.6.3
-        proto;
+    //0.6.3 added isSilent
+    var v = window.Coccyx = window.Coccyx || {}, ext = v.helpers.extend, addEvent ='COLLECTION_MODEL_ADDED_EVENT', removeEvent ='COLLECTION_MODEL_REMOVED_EVENT', sortEvent ='COLLECTION_SORTED_EVENT', isSilent = v.helpers.isSilent, proto;
 
     function extend(collObj){
         var obj0 = Object.create(proto), obj1 = collObj ? ext(obj0, collObj) : obj0;
@@ -599,23 +540,15 @@ define('collections', ['helpers', 'ajax', 'application', 'models'], function(){
     }
 
     //Returns an array containing the raw data for each model in the models array.
-    function toRaw(models){
-        if(Array.isArray(models)){return models.map(function(model){return model.getData();});}
-    }
+    function toRaw(models){if(Array.isArray(models)){return models.map(function(model){return model.getData();});} }
 
     function compareArrays(a, b){
         if(Array.isArray(a) && Array.isArray(b)){
             if(a.length !== b.length){return false;}
             for(var i = 0, len = a.length; i < len; i++){
-                if(typeof a[i] === 'object' && typeof b[i] === 'object'){
-                    if(!compareObjects(a[i], b[i])){return false;}
-                    continue;
-                }
+                if(typeof a[i] === 'object' && typeof b[i] === 'object'){if(!compareObjects(a[i], b[i])){return false;} continue;}
                 if(typeof a[i] === 'object' || typeof b[i] === 'object'){return false;}
-                if(Array.isArray(a[i]) && Array.isArray(b[i])){
-                    if(!compareArrays(a[i], b[i])){return false;}
-                    continue;
-                }
+                if(Array.isArray(a[i]) && Array.isArray(b[i])){if(!compareArrays(a[i], b[i])){return false;} continue;}
                 if(Array.isArray(a[i]) || Array.isArray(b[i])){return false;}
                 if(a[i] !== b[i]){return false;}
             }
@@ -629,15 +562,10 @@ define('collections', ['helpers', 'ajax', 'application', 'models'], function(){
         if(compareArrays(a, b)){return true;}
         for(prop in a){
             if(a.hasOwnProperty(prop) && b.hasOwnProperty(prop)){
-                if(typeof a[prop] === 'object' && typeof b[prop] === 'object'){
-                    if(!compareObjects(a[prop], b[prop])){return false;}
-                    continue;
-                }
+                if(typeof a[prop] === 'object' && typeof b[prop] === 'object'){if(!compareObjects(a[prop], b[prop])){return false;} continue;}
                 if(typeof a[prop] === 'object' || typeof b[prop] === 'object'){return false;}
                 if(a[prop] !== b[prop]){return false;}
-            }else {
-                return false;
-            }
+            }else {return false;}
         }
         return true;
     }
@@ -648,16 +576,10 @@ define('collections', ['helpers', 'ajax', 'application', 'models'], function(){
     function isMatch(element, source){
         for(var prop in source){
             if(source.hasOwnProperty(prop) && element.hasOwnProperty(prop)){
-                if(typeof element[prop] === 'object' && typeof source[prop] === 'object'){
-                    if(!compare(element[prop], source[prop])){return false;}
-                }else if(typeof element[prop] === 'object' || typeof source[prop] === 'object'){
-                    return false;
-                }else{
-                    if(source[prop] !== element[prop]){return false;}
-                }
-            }else{
-                return false;
-            }
+                if(typeof element[prop] === 'object' && typeof source[prop] === 'object'){if(!compare(element[prop], source[prop])){return false;}}
+                else if(typeof element[prop] === 'object' || typeof source[prop] === 'object'){return false;}
+                else{if(source[prop] !== element[prop]){return false;}}
+            }else{return false;}
         }
         return true;
     }
@@ -684,9 +606,8 @@ define('collections', ['helpers', 'ajax', 'application', 'models'], function(){
     //anything - a function's arguments, an Array, an object or even a primitive.
     function iterate(args, callback){
         //If args is an Array or it has a length property it is iterable.
-        if(Array.isArray(args) || args.hasOwnProperty('length')){
-            for(var i = 0, len = args.length; i < len; i++){iterate(args[i], callback);}
-        }else{
+        if(Array.isArray(args) || args.hasOwnProperty('length')){for(var i = 0, len = args.length; i < len; i++){iterate(args[i], callback);} }
+        else{
             //Not iterable.
             callback(args);
         }
@@ -729,11 +650,8 @@ define('collections', ['helpers', 'ajax', 'application', 'models'], function(){
         /*jshint validthis:true*/
         var self = this;
         if(models){
-            if(Array.isArray(models)){
-                models.forEach(function(m){m.off(v.models.propertyChangedEvent, self.modelPropertyChangedHandler);});
-            }else{
-                models.off(v.models.propertyChangedEvent, this.modelPropertyChangedHandler);
-            }
+            if(Array.isArray(models)){models.forEach(function(m){m.off(v.models.propertyChangedEvent, self.modelPropertyChangedHandler);});}
+            else{models.off(v.models.propertyChangedEvent, this.modelPropertyChangedHandler);}
         }
         return models;
     }
@@ -810,20 +728,13 @@ define('collections', ['helpers', 'ajax', 'application', 'models'], function(){
         /* Accessors */
 
         //Returns an array of the deep copied data of all models in the collection
-        getData: function getData(){
-            return this.map(function(model){return model.getData();});
-        },
+        getData: function getData(){return this.map(function(model){return model.getData();});},
         //Works like array[i].
         at: function at(index){return this.coll[index];},
         //Find a model by its id and return it.
-        findById: function findById(id){
-            for(var i = 0, len = this.coll.length; i < len; i++){if(this.at(i).modelId === id){return this.at(i);}}
-        },
+        findById: function findById(id){for(var i = 0, len = this.coll.length; i < len; i++){if(this.at(i).modelId === id){return this.at(i);}}},
         //Works like [].slice.
-        slice: function slice(){
-            var self = this;
-            return [].slice.apply(this.coll, arguments).map(function(model){return makeModelFromRaw(self, model.getData());});
-        },
+        slice: function slice(){var self = this; return [].slice.apply(this.coll, arguments).map(function(model){return makeModelFromRaw(self, model.getData());});},
 
         /* Iterators */
 
@@ -859,12 +770,8 @@ define('collections', ['helpers', 'ajax', 'application', 'models'], function(){
             promise.fail(function(jqXHR, textStatus, errorThrown){deferred.reject(self, jqXHR, textStatus, errorThrown);});
             return deferred.promise();
         },
-
         //Sets the readOnly flag on all models in the collection to isReadOnly.
-        setReadOnly: function setReadOnly(readOnly){
-            this.coll.forEach(function(model){model.isReadOnly = readOnly;});
-            this.isReadOnly = readOnly;
-        },
+        setReadOnly: function setReadOnly(readOnly){this.coll.forEach(function(model){model.isReadOnly = readOnly;}); this.isReadOnly = readOnly;},
         //Removes all models from the collection whose data properties matches those of matchingPropertiesHash. Any models removed from their
         //collection will also have their property changed event handlers removed. Removing models causes a remove event to be fired if
         //options.silent isn't passed or is false, and the removed models are passed along as the 2nd argument to the event handler's callback
@@ -913,9 +820,7 @@ define('collections', ['helpers', 'ajax', 'application', 'models'], function(){
 define('views', ['helpers', 'application'], function(){
     'use strict';
 
-    var v = window.Coccyx = window.Coccyx || {},
-        domEventTopic = 'DOM_EVENT',
-        proto;
+    var v = window.Coccyx = window.Coccyx || {}, domEventTopic = 'DOM_EVENT', proto;
 
     //0.6.0
     //Wire view dom events to callback methods in the controller using the context of the controller when
@@ -923,10 +828,7 @@ define('views', ['helpers', 'application'], function(){
     function wireDomEvents(domEventsHash, $domTarget, namespace){
         var prop, a;
         for(prop in domEventsHash.events){
-            if(domEventsHash.events.hasOwnProperty(prop)){
-                a = prop.split(' ');
-                $domTarget.on(a[0] + namespace, a[1], domEventsHash.events[prop].bind(domEventsHash.controller));
-            }
+            if(domEventsHash.events.hasOwnProperty(prop)){a = prop.split(' '); $domTarget.on(a[0] + namespace, a[1], domEventsHash.events[prop].bind(domEventsHash.controller));}
         }
     }
 
@@ -978,7 +880,4 @@ define('views', ['helpers', 'application'], function(){
     v.views = {extend: extend, domEventTopic: domEventTopic};
 });
 
-define('coccyx', ['helpers', 'eventer', 'ajax', 'application', 'router', 'history', 'models', 'collections', 'views'], function () {
-    'use strict';
-    return window.Coccyx;
-});
+define('coccyx', ['helpers', 'eventer', 'ajax', 'application', 'router', 'history', 'models', 'collections', 'views'], function () {'use strict'; return window.Coccyx;});

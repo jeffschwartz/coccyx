@@ -10,16 +10,10 @@ define('models', ['helpers', 'ajax', 'eventer', 'application'], function(){
      * changes made in data. If you don't heed this warning bad things _will_ happen!!!
      */
 
-    var v = window.Coccyx = window.Coccyx || {},
-        ajax = v.ajax, deepCopy = v.helpers.deepCopy, ext = v.helpers.extend, replace = v.helpers.replace, proto,
-        propertyChangedEvent = 'MODEL_PROPERTY_CHANGED_EVENT',
-        syntheticId = -1, //0.6.0 Generates synthetic model ids.
-        isSilent = v.helpers.isSilent; //0.6.3
+    var v = window.Coccyx = window.Coccyx || {}, ajax = v.ajax, deepCopy = v.helpers.deepCopy, ext = v.helpers.extend, replace = v.helpers.replace, proto, propertyChangedEvent = 'MODEL_PROPERTY_CHANGED_EVENT', syntheticId = -1, isSilent = v.helpers.isSilent;
 
     //0.6.0 Publishes MODEL_PROPERTY_CHAGED_EVENT event via Coccyx.eventer.
-    function publishPropertyChangeEvent(model, propertyPath, value){
-        model.trigger(propertyChangedEvent, {propertyPath: propertyPath, value: value, model: model});
-    }
+    function publishPropertyChangeEvent(model, propertyPath, value){model.trigger(propertyChangedEvent, {propertyPath: propertyPath, value: value, model: model});}
 
     //0.6.0 Return the property reachable through the property path or undefined.
     function findProperty(obj, propertyPath){
@@ -34,7 +28,7 @@ define('models', ['helpers', 'ajax', 'eventer', 'application'], function(){
     //0.6.0 Sets the property reachable through the property path, creating it first if necessary, with a deep copy of val.
     function findAndSetProperty(obj, propertyPath, val){
         var a = propertyPath.split('.');
-        if(a.length === 1){obj[propertyPath] = typeof val === 'object' ? deepCopy(val) : val; }
+        if(a.length === 1){obj[propertyPath] = typeof val === 'object' ? deepCopy(val) : val;}
         else{
             if(!obj.hasOwnProperty(a[0])){obj[a[0]] = {};}
             findAndSetProperty(obj[a[0]], a.slice(1).join('.'), val);
@@ -44,7 +38,7 @@ define('models', ['helpers', 'ajax', 'eventer', 'application'], function(){
     //0.6.0 Deletes the property reachable through the property path.
     function findAndDeleteProperty(obj, propertyPath){
         var a = propertyPath.split('.');
-        if(a.length === 1){delete obj[propertyPath]; }
+        if(a.length === 1){delete obj[propertyPath];}
         else{
             if(!obj.hasOwnProperty(a[0])){obj[a[0]] = {};}
             findAndDeleteProperty(obj[a[0]], a.slice(1).join('.'));
@@ -127,22 +121,13 @@ define('models', ['helpers', 'ajax', 'eventer', 'application'], function(){
         getChangedData: function getChangedData(){return deepCopy(this.changedData);},
         //Returns the data property reachable through property path. If there is no property reachable through property path
         //return undefined.
-        getProperty: function getProperty(propertyPath){
-            var p = findProperty(this.data, propertyPath);
-            return typeof p === 'object' ? deepCopy(p) : p;
-        },
+        getProperty: function getProperty(propertyPath){var p = findProperty(this.data, propertyPath); return typeof p === 'object' ? deepCopy(p) : p;},
         //Returns the originalData property reachable through property path. If there is no property reachable through property path
         //return undefined.
-        getOriginalDataProperty: function getOriginalDataProperty(propertyPath){
-            var p = findProperty(this.originalData, propertyPath);
-            return typeof p === 'object' ? deepCopy(p) : p;
-        },
+        getOriginalDataProperty: function getOriginalDataProperty(propertyPath){var p = findProperty(this.originalData, propertyPath); return typeof p === 'object' ? deepCopy(p) : p;},
         //Returns the changedData property reachable through property path. If there is no property reachable through property path
         //return undefined.
-        getChangedDataProperty: function getChangedDataProperty(propertyPath){
-            var p = findProperty(this.changedData, propertyPath);
-            return typeof p === 'object' ? deepCopy(p) : p;
-        },
+        getChangedDataProperty: function getChangedDataProperty(propertyPath){var p = findProperty(this.changedData, propertyPath); return typeof p === 'object' ? deepCopy(p) : p;},
         //Sets a property on an object reachable through the property path and fires publishPropertyChangeEvent if options.silent isn't
         //passed or is false. Maintains deletedColl. If the property doesn't exits, it will be created and then assigned its value
         //(using a deep copy if typeof data === 'object'). Calling set with a nested object or property is therefore supported. For
@@ -158,9 +143,8 @@ define('models', ['helpers', 'ajax', 'eventer', 'application'], function(){
                 if(this.data.hasOwnProperty(this.idPropertyName)){this.modelId = this.data[this.idPropertyName];}
                 //0.6.3 Check for silent.
                 if(!isSilent(arguments)){publishPropertyChangeEvent(this, propertyPath, val);}
-            }else{
-                console.log(!this.isSet ? 'Warning! setProperty called on model before set was called.' : 'Warning! setProperty called on read only model.');
             }
+                else{console.log(!this.isSet ? 'Warning! setProperty called on model before set was called.' : 'Warning! setProperty called on read only model.');}
             //For chaining.
             return this;
         },
@@ -175,9 +159,7 @@ define('models', ['helpers', 'ajax', 'eventer', 'application'], function(){
                 if(this.data.hasOwnProperty(this.idPropertyName)){this.modelId = this.data[this.idPropertyName];}
                 //0.6.3 Check for silent.
                 if(!isSilent(arguments)){publishPropertyChangeEvent(this, propertyPath, undefined);}
-            }else{
-                console.log(!this.isSet ? 'Warning! deleteProperty called on model before set was called.' : 'Warning! deleteProperty called on read only model.');
-            }
+            }else{console.log(!this.isSet ? 'Warning! deleteProperty called on model before set was called.' : 'Warning! deleteProperty called on read only model.');}
         },
         //0.6.0 Returns true if model is new, false otherwise.
         isNew: function isNew(){return (typeof this.data[this.idPropertyName] === 'undefined');},

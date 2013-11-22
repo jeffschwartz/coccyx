@@ -2,13 +2,8 @@
 define('collections', ['helpers', 'ajax', 'application', 'models'], function(){
     'use strict';
 
-    var v = window.Coccyx = window.Coccyx || {},
-        ext = v.helpers.extend,
-        addEvent ='COLLECTION_MODEL_ADDED_EVENT',
-        removeEvent ='COLLECTION_MODEL_REMOVED_EVENT',
-        sortEvent ='COLLECTION_SORTED_EVENT',
-        isSilent = v.helpers.isSilent, //0.6.3
-        proto;
+    //0.6.3 added isSilent
+    var v = window.Coccyx = window.Coccyx || {}, ext = v.helpers.extend, addEvent ='COLLECTION_MODEL_ADDED_EVENT', removeEvent ='COLLECTION_MODEL_REMOVED_EVENT', sortEvent ='COLLECTION_SORTED_EVENT', isSilent = v.helpers.isSilent, proto;
 
     function extend(collObj){
         var obj0 = Object.create(proto), obj1 = collObj ? ext(obj0, collObj) : obj0;
@@ -25,23 +20,15 @@ define('collections', ['helpers', 'ajax', 'application', 'models'], function(){
     }
 
     //Returns an array containing the raw data for each model in the models array.
-    function toRaw(models){
-        if(Array.isArray(models)){return models.map(function(model){return model.getData();});}
-    }
+    function toRaw(models){if(Array.isArray(models)){return models.map(function(model){return model.getData();});} }
 
     function compareArrays(a, b){
         if(Array.isArray(a) && Array.isArray(b)){
             if(a.length !== b.length){return false;}
             for(var i = 0, len = a.length; i < len; i++){
-                if(typeof a[i] === 'object' && typeof b[i] === 'object'){
-                    if(!compareObjects(a[i], b[i])){return false;}
-                    continue;
-                }
+                if(typeof a[i] === 'object' && typeof b[i] === 'object'){if(!compareObjects(a[i], b[i])){return false;} continue;}
                 if(typeof a[i] === 'object' || typeof b[i] === 'object'){return false;}
-                if(Array.isArray(a[i]) && Array.isArray(b[i])){
-                    if(!compareArrays(a[i], b[i])){return false;}
-                    continue;
-                }
+                if(Array.isArray(a[i]) && Array.isArray(b[i])){if(!compareArrays(a[i], b[i])){return false;} continue;}
                 if(Array.isArray(a[i]) || Array.isArray(b[i])){return false;}
                 if(a[i] !== b[i]){return false;}
             }
@@ -55,15 +42,10 @@ define('collections', ['helpers', 'ajax', 'application', 'models'], function(){
         if(compareArrays(a, b)){return true;}
         for(prop in a){
             if(a.hasOwnProperty(prop) && b.hasOwnProperty(prop)){
-                if(typeof a[prop] === 'object' && typeof b[prop] === 'object'){
-                    if(!compareObjects(a[prop], b[prop])){return false;}
-                    continue;
-                }
+                if(typeof a[prop] === 'object' && typeof b[prop] === 'object'){if(!compareObjects(a[prop], b[prop])){return false;} continue;}
                 if(typeof a[prop] === 'object' || typeof b[prop] === 'object'){return false;}
                 if(a[prop] !== b[prop]){return false;}
-            }else {
-                return false;
-            }
+            }else {return false;}
         }
         return true;
     }
@@ -74,16 +56,10 @@ define('collections', ['helpers', 'ajax', 'application', 'models'], function(){
     function isMatch(element, source){
         for(var prop in source){
             if(source.hasOwnProperty(prop) && element.hasOwnProperty(prop)){
-                if(typeof element[prop] === 'object' && typeof source[prop] === 'object'){
-                    if(!compare(element[prop], source[prop])){return false;}
-                }else if(typeof element[prop] === 'object' || typeof source[prop] === 'object'){
-                    return false;
-                }else{
-                    if(source[prop] !== element[prop]){return false;}
-                }
-            }else{
-                return false;
-            }
+                if(typeof element[prop] === 'object' && typeof source[prop] === 'object'){if(!compare(element[prop], source[prop])){return false;}}
+                else if(typeof element[prop] === 'object' || typeof source[prop] === 'object'){return false;}
+                else{if(source[prop] !== element[prop]){return false;}}
+            }else{return false;}
         }
         return true;
     }
@@ -110,9 +86,8 @@ define('collections', ['helpers', 'ajax', 'application', 'models'], function(){
     //anything - a function's arguments, an Array, an object or even a primitive.
     function iterate(args, callback){
         //If args is an Array or it has a length property it is iterable.
-        if(Array.isArray(args) || args.hasOwnProperty('length')){
-            for(var i = 0, len = args.length; i < len; i++){iterate(args[i], callback);}
-        }else{
+        if(Array.isArray(args) || args.hasOwnProperty('length')){for(var i = 0, len = args.length; i < len; i++){iterate(args[i], callback);} }
+        else{
             //Not iterable.
             callback(args);
         }
@@ -155,11 +130,8 @@ define('collections', ['helpers', 'ajax', 'application', 'models'], function(){
         /*jshint validthis:true*/
         var self = this;
         if(models){
-            if(Array.isArray(models)){
-                models.forEach(function(m){m.off(v.models.propertyChangedEvent, self.modelPropertyChangedHandler);});
-            }else{
-                models.off(v.models.propertyChangedEvent, this.modelPropertyChangedHandler);
-            }
+            if(Array.isArray(models)){models.forEach(function(m){m.off(v.models.propertyChangedEvent, self.modelPropertyChangedHandler);});}
+            else{models.off(v.models.propertyChangedEvent, this.modelPropertyChangedHandler);}
         }
         return models;
     }
@@ -236,20 +208,13 @@ define('collections', ['helpers', 'ajax', 'application', 'models'], function(){
         /* Accessors */
 
         //Returns an array of the deep copied data of all models in the collection
-        getData: function getData(){
-            return this.map(function(model){return model.getData();});
-        },
+        getData: function getData(){return this.map(function(model){return model.getData();});},
         //Works like array[i].
         at: function at(index){return this.coll[index];},
         //Find a model by its id and return it.
-        findById: function findById(id){
-            for(var i = 0, len = this.coll.length; i < len; i++){if(this.at(i).modelId === id){return this.at(i);}}
-        },
+        findById: function findById(id){for(var i = 0, len = this.coll.length; i < len; i++){if(this.at(i).modelId === id){return this.at(i);}}},
         //Works like [].slice.
-        slice: function slice(){
-            var self = this;
-            return [].slice.apply(this.coll, arguments).map(function(model){return makeModelFromRaw(self, model.getData());});
-        },
+        slice: function slice(){var self = this; return [].slice.apply(this.coll, arguments).map(function(model){return makeModelFromRaw(self, model.getData());});},
 
         /* Iterators */
 
@@ -285,12 +250,8 @@ define('collections', ['helpers', 'ajax', 'application', 'models'], function(){
             promise.fail(function(jqXHR, textStatus, errorThrown){deferred.reject(self, jqXHR, textStatus, errorThrown);});
             return deferred.promise();
         },
-
         //Sets the readOnly flag on all models in the collection to isReadOnly.
-        setReadOnly: function setReadOnly(readOnly){
-            this.coll.forEach(function(model){model.isReadOnly = readOnly;});
-            this.isReadOnly = readOnly;
-        },
+        setReadOnly: function setReadOnly(readOnly){this.coll.forEach(function(model){model.isReadOnly = readOnly;}); this.isReadOnly = readOnly;},
         //Removes all models from the collection whose data properties matches those of matchingPropertiesHash. Any models removed from their
         //collection will also have their property changed event handlers removed. Removing models causes a remove event to be fired if
         //options.silent isn't passed or is false, and the removed models are passed along as the 2nd argument to the event handler's callback
