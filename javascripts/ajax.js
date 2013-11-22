@@ -2,15 +2,15 @@ define('ajax', ['helpers', 'application'], function(){
     'use strict';
 
     var v = window.Coccyx = window.Coccyx || {},
-        //v0.6.4 added dataType.
+        //v0.6.4 added 'json' as default dataType.
         defaultSettings = {dataType: 'json', cache: false, url: '/'},
         extend = v.helpers.extend, ajax = v.$.ajax;
 
-        //Merge default setting with user's settings.
-        function mergeSettings(settings, type){
-            settings.type = type;
-            return extend({}, defaultSettings, settings);
-        }
+    //Merge default setting with user's settings.
+    function mergeSettings(settings, type){
+        settings.type = type;
+        return extend({}, defaultSettings, settings);
+    }
 
     //A simple promise-based wrapper around jQuery Ajax. All methods return a Promise.
     v.ajax = {

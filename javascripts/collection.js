@@ -268,20 +268,21 @@ define('collections', ['helpers', 'ajax', 'application', 'models'], function(){
 
         /* Sugar */
 
-        //Loads a collection with data by fetching the data from the server via ajax. Returns a promise. Uses modelsEndPoint as the ajax call's url.
-        fetch: function fetch(){
-            var deferred = v.$.Deferred(),
-                self = this,
-                promise = v.ajax.ajaxGet({dataType: 'json', url: this.modelsEndPoint});
+        //Loads a collection with data by fetching the data from the server via ajax, uses modelsEndPoint as the url & returns a promise. v0.6.4 Added argument dataType and call to collection.parse().
+        fetch: function fetch(dataType){
+            var options = {url: this.modelsEndPoint}, deferred = v.$.Deferred(), self = this, promise;
+            if(dataType){options.dataType = dataType;}
+            promise = v.ajax.ajaxGet(options);
+            //v0.6.2 return self added.
             promise.done(function(data){
-                self.setModels(data);
-                //v0.6.2 return self added.
+                //0.6.4. If data was returned call parse.
+                data = data ? self.parse(data) : data;
+                //If data was returned set this model's data. 0.6.4 Made call setModels conditional on data.
+                if(data){self.setModels(data);}
                 deferred.resolve(self);
             });
-            promise.fail(function(json){
-                //v0.6.2 return self added.
-                deferred.reject(self, json);
-            });
+            //v0.6.2 return self added. v0.6.4 Now returns jqXHR, textStatus & errorThrown
+            promise.fail(function(jqXHR, textStatus, errorThrown){deferred.reject(self, jqXHR, textStatus, errorThrown);});
             return deferred.promise();
         },
 
@@ -298,10 +299,7 @@ define('collections', ['helpers', 'ajax', 'application', 'models'], function(){
             var removed = [], newColl;
             if(this.coll.length === 0 || isArrayOrNotObject(matchingPropertiesHash)){return;}
             newColl = this.coll.filter(function(el){
-                if(isMatch(el.data, matchingPropertiesHash)){
-                    removed.push(el);
-                    return false;
-                }
+                if(isMatch(el.data, matchingPropertiesHash)){removed.push(el); return false;}
                 return true;
             });
             if(removed.length){
@@ -328,7 +326,10 @@ define('collections', ['helpers', 'ajax', 'application', 'models'], function(){
         },
         //Same as Coccyx.collections.toRaw(models). See above for details.
         toRaw: toRaw,
-        getLength: function getLength(){return this.coll.length;}
+        //Returns the length of the collection.
+        getLength: function getLength(){return this.coll.length;},
+        //0.6.4 Override to transform the data returned from collection.fetch and return json.
+        parse: function parse(data){return data;}
     };
 
     v.collections = {extend: extend, toRaw: toRaw, addEvent: addEvent, removeEvent: removeEvent, sortEvent: sortEvent};

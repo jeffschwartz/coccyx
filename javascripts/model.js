@@ -34,9 +34,8 @@ define('models', ['helpers', 'ajax', 'eventer', 'application'], function(){
     //0.6.0 Sets the property reachable through the property path, creating it first if necessary, with a deep copy of val.
     function findAndSetProperty(obj, propertyPath, val){
         var a = propertyPath.split('.');
-        if(a.length === 1){
-            obj[propertyPath] = typeof val === 'object' ? deepCopy(val) : val;
-        }else{
+        if(a.length === 1){obj[propertyPath] = typeof val === 'object' ? deepCopy(val) : val; }
+        else{
             if(!obj.hasOwnProperty(a[0])){obj[a[0]] = {};}
             findAndSetProperty(obj[a[0]], a.slice(1).join('.'), val);
         }
@@ -45,9 +44,8 @@ define('models', ['helpers', 'ajax', 'eventer', 'application'], function(){
     //0.6.0 Deletes the property reachable through the property path.
     function findAndDeleteProperty(obj, propertyPath){
         var a = propertyPath.split('.');
-        if(a.length === 1){
-            delete obj[propertyPath];
-        }else{
+        if(a.length === 1){delete obj[propertyPath]; }
+        else{
             if(!obj.hasOwnProperty(a[0])){obj[a[0]] = {};}
             findAndDeleteProperty(obj[a[0]], a.slice(1).join('.'));
         }
@@ -56,9 +54,7 @@ define('models', ['helpers', 'ajax', 'eventer', 'application'], function(){
     //0.5.0
     //0.6.0 Added support for Coccyx.eventer.
     function extend(modelObject){
-        var obj0 = Object.create(proto),
-            obj1 = modelObject ? ext(obj0, modelObject) : obj0,
-            obj2 = modelObject ? Object.create(obj1) : obj1;
+        var obj0 = Object.create(proto), obj1 = modelObject ? ext(obj0, modelObject) : obj0, obj2 = modelObject ? Object.create(obj1) : obj1;
         //Decorate the new object with additional properties.
         obj2.isSet = false;
         obj2.isReadOnly = false;
@@ -80,14 +76,13 @@ define('models', ['helpers', 'ajax', 'eventer', 'application'], function(){
         return settings;
     }
 
-    //0.6.0 Does the heavy lifting. Returns a promise. 0.6.4 renamed to doAjax and added settings argument.
-    //0.6.4 removed rawJson option & replaced with model.parse().
+    //0.6.0 Returns a promise. 0.6.4 Renamed to doAjax, added settings argument, removed rawJson option & added call to model.parse().
     function doAjax(verb, settings, fn){
         /*jshint validthis:true*/
         var deferred = v.$.Deferred(), self = this, promise;
         promise = fn(setAjaxSettings.call(this, settings, verb));
         promise.done(function(data){
-            //If data was returned call parse.
+            //0.6.4. If data was returned call parse.
             data = data ? self.parse(data) : data;
             //If data was returned set this model's data.
             if(data){self.setData(ext(self.getData(),data));}
@@ -95,7 +90,7 @@ define('models', ['helpers', 'ajax', 'eventer', 'application'], function(){
             deferred.resolve(self);
         });
         //Calls promise.fail. 0.6.4 now returns this model as 1st argument.
-        promise.fail(function(jqXHR, textStatus, errorThrown){deferred.reject(self, jqXHR, textStatus, errorThrown); });
+        promise.fail(function(jqXHR, textStatus, errorThrown){deferred.reject(self, jqXHR, textStatus, errorThrown);});
         return deferred.promise();
     }
 
