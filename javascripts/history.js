@@ -40,9 +40,7 @@ define('history', ['application', 'router'], function() {
     //Event handler for popstate event.
     v.$(window).on('popstate', function(event){
         //Ignore 'popstate' events without state and until history.start is called.
-        if(event.originalEvent.state && started()){
-            v.router.route(event.originalEvent.state.verb , window.location.pathname);
-        }
+        if(event.originalEvent.state && started()){v.router.route(event.originalEvent.state.verb , window.location.pathname);}
     });
 
     //Creates a hash from an array whose elements are hashes whose properties are 'name' and 'value'.

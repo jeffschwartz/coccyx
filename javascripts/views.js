@@ -1,9 +1,7 @@
-define('views', ['application', 'helpers'], function(){
+define('views', ['helpers', 'application'], function(){
     'use strict';
 
-    var v = window.Coccyx = window.Coccyx || {},
-        domEventTopic = 'DOM_EVENT',
-        proto;
+    var v = window.Coccyx = window.Coccyx || {}, domEventTopic = 'DOM_EVENT', proto;
 
     //0.6.0
     //Wire view dom events to callback methods in the controller using the context of the controller when
@@ -11,10 +9,7 @@ define('views', ['application', 'helpers'], function(){
     function wireDomEvents(domEventsHash, $domTarget, namespace){
         var prop, a;
         for(prop in domEventsHash.events){
-            if(domEventsHash.events.hasOwnProperty(prop)){
-                a = prop.split(' ');
-                $domTarget.on(a[0] + namespace, a[1], domEventsHash.events[prop].bind(domEventsHash.controller));
-            }
+            if(domEventsHash.events.hasOwnProperty(prop)){a = prop.split(' '); $domTarget.on(a[0] + namespace, a[1], domEventsHash.events[prop].bind(domEventsHash.controller));}
         }
     }
 

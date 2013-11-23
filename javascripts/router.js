@@ -1,4 +1,4 @@
-define('router', ['application', 'helpers'], function() {
+define('router', ['helpers', 'application'], function() {
     'use strict';
 
     var v = window.Coccyx = window.Coccyx || {}, contains = v.helpers.contains;
@@ -11,19 +11,12 @@ define('router', ['application', 'helpers'], function() {
             console.log('Coccyx.init called');
         }
         var rt = getRoute(verb, url);
-        if(rt){
-            routeFound(rt, valuesHash);
-        }else{
-            routeNotFound(verb, url);
-        }
+        if(rt){routeFound(rt, valuesHash);}
+        else{routeNotFound(verb, url);}
     }
 
     function getRoute(verb, url){
-        var routes = v.controllers.getRoutes(),
-            a = url.substring(1).split('/'),
-            params = [],
-            rel = false,
-            route, b, c, eq, vrb;
+        var routes = v.controllers.getRoutes(), a = url.substring(1).split('/'), params = [], rel = false, route, b, c, eq, vrb;
         for(route in routes){
             if(routes.hasOwnProperty(route)){
                 //Get the 'veb'.
@@ -40,19 +33,12 @@ define('router', ['application', 'helpers'], function() {
                         if(contains(b[i],':')){
                             //0.4.0 - checking for 'some:thing'
                             c = b[i].split(':');
-                            if(c.length === 2){
-                                if(a[i].substr(0, c[0].length) === c[0]){params.push(a[i].substr(c[0].length));}
-                            }else{
-                                params.push(a[i]);
-                            }
+                            if(c.length === 2){if(a[i].substr(0, c[0].length) === c[0]){params.push(a[i].substr(c[0].length));} }
+                            else{params.push(a[i]);}
                             continue;
                         }
                         //If the route is a relative route, push it onto the array and break out of the loop.
-                        if(contains(b[i], '*')){
-                            rel = true;
-                            eq = false;
-                            break;
-                        }
+                        if(contains(b[i], '*')){rel = true; eq = false; break;}
                         //If none of the above
                         eq = false;
                         break;
@@ -60,13 +46,13 @@ define('router', ['application', 'helpers'], function() {
                     //The route matches the url so attach the params (it could be empty) to the route and return the route.
                     if(eq){
                         //controller name, function to call, function arguments to call with...
-                        return {controllerName: /*b[0]*/ routes[route][0], fn: routes[route][1], params: params};
+                        return {controllerName: routes[route][0], fn: routes[route][1], params: params};
                     }
                     if(rel){
                         //controller name, function to call, function arguments to call with...
                         for(var ii = i, llen = a.length, relUrl = ''; ii < llen; ii++){relUrl += ('/' + a[ii]);}
                         //controller name, function to call, function arguments to call with...
-                        return {controllerName: /*b[0]*/ routes[route][0], fn: routes[route][1], params: [relUrl]};
+                        return {controllerName: routes[route][0], fn: routes[route][1], params: [relUrl]};
                     }
                 }
             }
@@ -83,13 +69,9 @@ define('router', ['application', 'helpers'], function() {
             controller.initCalled = true;
         }
         //Route callbacks are bound (their contexts (their 'this')) to their controllers.
-        if(valuesHash){
-            route.fn.call(controller, valuesHash);
-        }else if(route.params.length){
-            route.fn.apply(controller, route.params);
-        }else{
-            route.fn.call(controller);
-        }
+        if(valuesHash){route.fn.call(controller, valuesHash); }
+        else if(route.params.length){route.fn.apply(controller, route.params); }
+        else{route.fn.call(controller);}
     }
 
     function routeNotFound(url){console.log('router::routeNotFound called with route = ' + url);}

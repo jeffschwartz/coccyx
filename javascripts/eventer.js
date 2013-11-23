@@ -1,5 +1,5 @@
 //0.6.0
-define('eventer', ['application', 'helpers'], function(){
+define('eventer', ['helpers', 'application'], function(){
     'use strict';
 
     //Coccyx.eventer turns any object into an "eventing" object and is based on jQuery's eventing model.
