@@ -1,4 +1,4 @@
-define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
+define('models', ['helpers', 'ajax', 'eventer', 'application'], function(){
     'use strict';
 
     /**
@@ -10,19 +10,10 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
      * changes made in data. If you don't heed this warning bad things _will_ happen!!!
      */
 
-    var v = window.Coccyx = window.Coccyx || {},
-        deepCopy = v.helpers.deepCopy,
-        ext = v.helpers.extend,
-        replace = v.helpers.replace,
-        propertyChangedEvent = 'MODEL_PROPERTY_CHANGED_EVENT',
-        syntheticId = -1, //0.6.0 Generates synthetic model ids.
-        isSilent = v.helpers.isSilent, //0.6.3
-        proto;
+    var v = window.Coccyx = window.Coccyx || {}, ajax = v.ajax, deepCopy = v.helpers.deepCopy, ext = v.helpers.extend, replace = v.helpers.replace, proto, propertyChangedEvent = 'MODEL_PROPERTY_CHANGED_EVENT', syntheticId = -1, isSilent = v.helpers.isSilent;
 
     //0.6.0 Publishes MODEL_PROPERTY_CHAGED_EVENT event via Coccyx.eventer.
-    function publishPropertyChangeEvent(model, propertyPath, value){
-        model.trigger(propertyChangedEvent, {propertyPath: propertyPath, value: value, model: model});
-    }
+    function publishPropertyChangeEvent(model, propertyPath, value){model.trigger(propertyChangedEvent, {propertyPath: propertyPath, value: value, model: model});}
 
     //0.6.0 Return the property reachable through the property path or undefined.
     function findProperty(obj, propertyPath){
@@ -37,9 +28,8 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
     //0.6.0 Sets the property reachable through the property path, creating it first if necessary, with a deep copy of val.
     function findAndSetProperty(obj, propertyPath, val){
         var a = propertyPath.split('.');
-        if(a.length === 1){
-            obj[propertyPath] = typeof val === 'object' ? deepCopy(val) : val;
-        }else{
+        if(a.length === 1){obj[propertyPath] = typeof val === 'object' ? deepCopy(val) : val;}
+        else{
             if(!obj.hasOwnProperty(a[0])){obj[a[0]] = {};}
             findAndSetProperty(obj[a[0]], a.slice(1).join('.'), val);
         }
@@ -48,9 +38,8 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
     //0.6.0 Deletes the property reachable through the property path.
     function findAndDeleteProperty(obj, propertyPath){
         var a = propertyPath.split('.');
-        if(a.length === 1){
-            delete obj[propertyPath];
-        }else{
+        if(a.length === 1){delete obj[propertyPath];}
+        else{
             if(!obj.hasOwnProperty(a[0])){obj[a[0]] = {};}
             findAndDeleteProperty(obj[a[0]], a.slice(1).join('.'));
         }
@@ -59,9 +48,7 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
     //0.5.0
     //0.6.0 Added support for Coccyx.eventer.
     function extend(modelObject){
-        var obj0 = Object.create(proto),
-            obj1 = modelObject ? ext(obj0, modelObject) : obj0,
-            obj2 = modelObject ? Object.create(obj1) : obj1;
+        var obj0 = Object.create(proto), obj1 = modelObject ? ext(obj0, modelObject) : obj0, obj2 = modelObject ? Object.create(obj1) : obj1;
         //Decorate the new object with additional properties.
         obj2.isSet = false;
         obj2.isReadOnly = false;
@@ -73,45 +60,31 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
         return v.eventer.extend(obj2);
     }
 
-    //0.6.0
-    function setAjaxSettings(verb){
+    //0.6.0.
+    function setAjaxSettings(settings, verb){
         /*jshint validthis:true*/
-        var settings = {};
+        settings = settings ? settings : {}; //0.6.4.
         settings.url = this.endPoint;
         if(verb !== 'post'){settings.url += ('/' + this.data[this.idPropertyName]);}
         if(verb !== 'get'){settings.data = this.getData();}
-        settings.dataType = this.endPoint.charAt(0) === '/' ? 'json' : 'jsonp';
         return settings;
     }
 
-    //0.6.0
-    function setAjaxOptions(options){
-        var defOpts = {rawJSON: false},
-            opts = options ? options : {};
-        return replace(defOpts, opts);
-    }
-
-    //0.6.0 Does the heavy lifting
-    function ajax(op, opt, fn){
+    //0.6.0 Returns a promise. 0.6.4 Renamed to doAjax, added settings argument, removed rawJson option & added call to model.parse().
+    function doAjax(verb, settings, fn){
         /*jshint validthis:true*/
-        var deferred = v.$.Deferred(),
-            self = this,
-            opts = setAjaxOptions(opt),
-            promise;
-        promise = fn(setAjaxSettings.call(this, op));
-        promise.done(function(json){
-            if(json && !opts.rawJSON){
-                //Set this model's data.
-                self.setData(ext(self.getData(),json));
-            }
-            //Call promise.done.
-            deferred.resolve(opts.rawJSON ? json : self);
+        var deferred = v.$.Deferred(), self = this, promise;
+        promise = fn(setAjaxSettings.call(this, settings, verb));
+        promise.done(function(data){
+            //0.6.4. If 'get' and data was returned call parse.
+            data = verb === 'get' && data ? self.parse(data) : data;
+            //If data was returned set this model's data.
+            if(data){self.setData(ext(self.getData(),data));}
+            //Calls promise.done passing this model.
+            deferred.resolve(self);
         });
-        promise.fail(function(jjqXHR, textStatus, errorThrown){
-            //Call promise.fail.
-            deferred.reject(jjqXHR, textStatus, errorThrown);
-        });
-        //Return a promise.
+        //Calls promise.fail. 0.6.4 now returns this model as 1st argument.
+        promise.fail(function(jqXHR, textStatus, errorThrown){deferred.reject(self, jqXHR, textStatus, errorThrown);});
         return deferred.promise();
     }
 
@@ -148,22 +121,13 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
         getChangedData: function getChangedData(){return deepCopy(this.changedData);},
         //Returns the data property reachable through property path. If there is no property reachable through property path
         //return undefined.
-        getProperty: function getProperty(propertyPath){
-            var p = findProperty(this.data, propertyPath);
-            return typeof p === 'object' ? deepCopy(p) : p;
-        },
+        getProperty: function getProperty(propertyPath){var p = findProperty(this.data, propertyPath); return typeof p === 'object' ? deepCopy(p) : p;},
         //Returns the originalData property reachable through property path. If there is no property reachable through property path
         //return undefined.
-        getOriginalDataProperty: function getOriginalDataProperty(propertyPath){
-            var p = findProperty(this.originalData, propertyPath);
-            return typeof p === 'object' ? deepCopy(p) : p;
-        },
+        getOriginalDataProperty: function getOriginalDataProperty(propertyPath){var p = findProperty(this.originalData, propertyPath); return typeof p === 'object' ? deepCopy(p) : p;},
         //Returns the changedData property reachable through property path. If there is no property reachable through property path
         //return undefined.
-        getChangedDataProperty: function getChangedDataProperty(propertyPath){
-            var p = findProperty(this.changedData, propertyPath);
-            return typeof p === 'object' ? deepCopy(p) : p;
-        },
+        getChangedDataProperty: function getChangedDataProperty(propertyPath){var p = findProperty(this.changedData, propertyPath); return typeof p === 'object' ? deepCopy(p) : p;},
         //Sets a property on an object reachable through the property path and fires publishPropertyChangeEvent if options.silent isn't
         //passed or is false. Maintains deletedColl. If the property doesn't exits, it will be created and then assigned its value
         //(using a deep copy if typeof data === 'object'). Calling set with a nested object or property is therefore supported. For
@@ -179,9 +143,8 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
                 if(this.data.hasOwnProperty(this.idPropertyName)){this.modelId = this.data[this.idPropertyName];}
                 //0.6.3 Check for silent.
                 if(!isSilent(arguments)){publishPropertyChangeEvent(this, propertyPath, val);}
-            }else{
-                console.log(!this.isSet ? 'Warning! setProperty called on model before set was called.' : 'Warning! setProperty called on read only model.');
             }
+                else{console.log(!this.isSet ? 'Warning! setProperty called on model before set was called.' : 'Warning! setProperty called on read only model.');}
             //For chaining.
             return this;
         },
@@ -196,22 +159,23 @@ define('models', ['application', 'helpers', 'ajax', 'eventer'], function(){
                 if(this.data.hasOwnProperty(this.idPropertyName)){this.modelId = this.data[this.idPropertyName];}
                 //0.6.3 Check for silent.
                 if(!isSilent(arguments)){publishPropertyChangeEvent(this, propertyPath, undefined);}
-            }else{
-                console.log(!this.isSet ? 'Warning! deleteProperty called on model before set was called.' : 'Warning! deleteProperty called on read only model.');
-            }
+            }else{console.log(!this.isSet ? 'Warning! deleteProperty called on model before set was called.' : 'Warning! deleteProperty called on read only model.');}
         },
         //0.6.0 Returns true if model is new, false otherwise.
         isNew: function isNew(){return (typeof this.data[this.idPropertyName] === 'undefined');},
         //0.6.0 Returns stringified model's data hash.
         toJSON: function toJSON(){return JSON.stringify(this.data);},
+        //0.6.4 For the 4 following ajax methods, ajaxSettings is a hash which can contain any valid jQuery.ajax setting.
         //0.6.0 Ajax "GET".
-        ajaxGet: function ajaxGet(options){return ajax.call(this, 'get', options, v.ajax.ajaxGet);},
+        ajaxGet: function ajaxGet(ajaxSettings){return doAjax.call(this, 'get', ajaxSettings, ajax.ajaxGet);},
         //0.6.0 Ajax "POST".
-        ajaxPost: function ajaxPost(options){return ajax.call(this, 'post', options, v.ajax.ajaxPost);},
+        ajaxPost: function ajaxPost(ajaxSettings){return doAjax.call(this, 'post', ajaxSettings, ajax.ajaxPost);},
         //0.6.0 Ajax "PUT".
-        ajaxPut: function ajaxPut(options){return ajax.call(this, 'put', options, v.ajax.ajaxPut);},
+        ajaxPut: function ajaxPut(ajaxSettings){return doAjax.call(this, 'put', ajaxSettings, ajax.ajaxPut);},
         //0.6.0 Ajax "DELETE".
-        ajaxDelete: function ajaxDelete(options){return ajax.call(this, 'delete', options, v.ajax.ajaxDelete);},
+        ajaxDelete: function ajaxDelete(ajaxSettings){return doAjax.call(this, 'delete', ajaxSettings, ajax.ajaxDelete);},
+        //0.6.4 Override to transform the data returned from Ajax call and return json.
+        parse: function parse(data){return data;}
     };
 
     v.models = {extend: extend, propertyChangedEvent: propertyChangedEvent};
