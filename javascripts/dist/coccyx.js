@@ -1,4 +1,4 @@
-//CoccyxJS 0.6.3
+//CoccyxJS 0.6.4
 //(c) 2013 Jeffrey Schwartz
 //CoccyxJS may be freely distributed under the MIT license.
 //For all details and documentation:
@@ -36,7 +36,7 @@ define('helpers', [], function(){
 define('application', ['jquery'], function(){
     'use strict';
 
-    var v = window.Coccyx = window.Coccyx || {}, controllers = {}, routes = {}, VERSION = '0.6.3';
+    var v = window.Coccyx = window.Coccyx || {}, controllers = {}, routes = {}, VERSION = '0.6.4';
 
      function registerControllers(){
         if(arguments.length !== 1 && !(arguments[0] instanceof Array) && !(arguments[0] instanceof Object)){
@@ -413,8 +413,8 @@ define('models', ['helpers', 'ajax', 'eventer', 'application'], function(){
         var deferred = v.$.Deferred(), self = this, promise;
         promise = fn(setAjaxSettings.call(this, settings, verb));
         promise.done(function(data){
-            //0.6.4. If data was returned call parse.
-            data = data ? self.parse(data) : data;
+            //0.6.4. If 'get' and data was returned call parse.
+            data = verb === 'get' && data ? self.parse(data) : data;
             //If data was returned set this model's data.
             if(data){self.setData(ext(self.getData(),data));}
             //Calls promise.done passing this model.

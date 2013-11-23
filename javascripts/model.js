@@ -76,8 +76,8 @@ define('models', ['helpers', 'ajax', 'eventer', 'application'], function(){
         var deferred = v.$.Deferred(), self = this, promise;
         promise = fn(setAjaxSettings.call(this, settings, verb));
         promise.done(function(data){
-            //0.6.4. If data was returned call parse.
-            data = data ? self.parse(data) : data;
+            //0.6.4. If 'get' and data was returned call parse.
+            data = verb === 'get' && data ? self.parse(data) : data;
             //If data was returned set this model's data.
             if(data){self.setData(ext(self.getData(),data));}
             //Calls promise.done passing this model.
