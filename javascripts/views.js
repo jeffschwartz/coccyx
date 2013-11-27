@@ -3,13 +3,15 @@ define('views', ['helpers', 'application'], function(){
 
     var v = window.Coccyx = window.Coccyx || {}, domEventTopic = 'DOM_EVENT', proto;
 
-    //0.6.0
-    //Wire view dom events to callback methods in the controller using the context of the controller when
-    //calling the callbacks. domEventsHash = {controller: controller, events: {'event selector': callback, ...}}.
+    //0.6.0.
+    //0.6.5 Renamed domEventsHash.controller to domEventsHash.context.
+    //Wire view dom events to callback methods in the controller or view (as of 0.6.5) using the context of the controller or view
+    //(as of 0.6.5) when calling the callbacks. domEventsHash = {context: [controller || view], events: {'event selector': callback[, ...]}}.
     function wireDomEvents(domEventsHash, $domTarget, namespace){
+        /*jshint validthis:true*/
         var prop, a;
         for(prop in domEventsHash.events){
-            if(domEventsHash.events.hasOwnProperty(prop)){a = prop.split(' '); $domTarget.on(a[0] + namespace, a[1], domEventsHash.events[prop].bind(domEventsHash.controller));}
+            if(domEventsHash.events.hasOwnProperty(prop)){a = prop.split(' '); $domTarget.on(a[0] + namespace, a[1], domEventsHash.events[prop].bind(domEventsHash.context || this));}
         }
     }
 
@@ -51,7 +53,7 @@ define('views', ['helpers', 'application'], function(){
         //0.6.0 Wire up events, if any are declared.
         if(domEventsHash){
             obj2.namespace = '.' + Date.now().toString();
-            wireDomEvents(typeof domEventsHash === 'function' ? domEventsHash() : domEventsHash, obj2.$domTarget, obj2.namespace);
+            wireDomEvents.call(obj2, typeof domEventsHash === 'function' ? domEventsHash() : domEventsHash, obj2.$domTarget, obj2.namespace);
         }
         return obj2;
     }
