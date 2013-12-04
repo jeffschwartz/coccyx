@@ -1,17 +1,17 @@
 define('views', ['helpers', 'application'], function(){
     'use strict';
 
-    var v = window.Coccyx = window.Coccyx || {}, domEventTopic = 'DOM_EVENT', proto;
+    var v = window.Coccyx = window.Coccyx || {}, domEventTopic = 'DOM_EVENT', uniqueNamespace = v.helpers.uniqueNamespace, proto;
 
     //0.6.0.
     //0.6.5 Renamed domEventsHash.controller to domEventsHash.context.
     //Wire view dom events to callback methods in the controller or view (as of 0.6.5) using the context of the controller or view
     //(as of 0.6.5) when calling the callbacks. domEventsHash = {context: [controller || view], events: {'event selector': callback[, ...]}}.
-    function wireDomEvents(domEventsHash, $domTarget, namespace){
+    function wireDomEvents(domEventsHash){
         /*jshint validthis:true*/
         var prop, a;
         for(prop in domEventsHash.events){
-            if(domEventsHash.events.hasOwnProperty(prop)){a = prop.split(' '); $domTarget.on(a[0] + namespace, a[1], domEventsHash.events[prop].bind(domEventsHash.context || this));}
+            if(domEventsHash.events.hasOwnProperty(prop)){a = prop.split(' '); this.$domTarget.on(a[0] + this.namespace, a[1], domEventsHash.events[prop].bind(domEventsHash.context || this));}
         }
     }
 
@@ -44,7 +44,7 @@ define('views', ['helpers', 'application'], function(){
         }
     }
 
-    //0.5.0, 0.6.0
+    //0.5.0, 0.6.0, 0.6.5.
     function extend(viewObject, domEventsHash){
         //Create a new object using the view object as its prototype.
         var obj1 =  v.helpers.extend(Object.create(proto), viewObject), obj2 = Object.create(obj1);
@@ -52,8 +52,14 @@ define('views', ['helpers', 'application'], function(){
         setTarget.call(obj2);
         //0.6.0 Wire up events, if any are declared.
         if(domEventsHash){
-            obj2.namespace = '.' + Date.now().toString();
-            wireDomEvents.call(obj2, typeof domEventsHash === 'function' ? domEventsHash() : domEventsHash, obj2.$domTarget, obj2.namespace);
+            obj2.namespace = '.view_' + uniqueNamespace();
+            //0.6.5 domEventsHash can now also be an array.
+            if(Array.isArray(domEventsHash)){
+                domEventsHash.forEach(function(deh){
+                    wireDomEvents.call(obj2, typeof deh === 'function' ? deh() : deh);
+                });
+            }
+            wireDomEvents.call(obj2, typeof domEventsHash === 'function' ? domEventsHash() : domEventsHash);
         }
         return obj2;
     }

@@ -21,7 +21,9 @@ define('helpers', [], function(){
             for(var prop in target){if(target.hasOwnProperty(prop) && source.hasOwnProperty(prop)){target[prop] = source[prop];}}
             //0.6.0 Return target.
             return target;
-        }
+        },
+        //0.6.5
+        uniqueNamepspace: (function uniqueNamepspace(){var namespace = 1; return function(){return namespace++;};}())
     };
 
 });
