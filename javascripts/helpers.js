@@ -23,7 +23,7 @@ define('helpers', [], function(){
             return target;
         },
         //0.6.5
-        uniqueNamepspace: (function uniqueNamepspace(){var namespace = 1; return function(){return namespace++;};}())
+        uniqueNamespace: (function uniqueNamespace(){var namespace = 1; return function(){return namespace++;};}())
     };
 
 });
