@@ -86,6 +86,7 @@ define('eventer', ['helpers', 'application'], function(){
             var namespacedEvent = '';
             if(!obj || !event || !callback || !isEventer(obj)){return;}
             namespacedEvent = addNamespaceToEvents(this, event);
+            //Calls proxyOnce to create a proxy for the callback, then $.proxy to bind the call to callback to use this object as the context.
             v.$(obj._eventedObj).one(namespacedEvent, v.$.proxy(proxyOnce(this, obj, namespacedEvent, callback), this));
             addListener(this, obj, namespacedEvent, callback);
         },
