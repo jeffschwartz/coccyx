@@ -21,9 +21,6 @@ define('eventer', ['helpers', 'application'], function(){
         events.split(' ').forEach(function(event){getListeners(self).push({listeningToObj: listeningToObj, event: event, callback: callback});});
     }
 
-    // //0.6.5
-    // function getAllObjects(self){var listeners = getListeners(self), ll = listeners.map(function(l){ll.push(l.listeningToObj); }); return ll;}
-
     //0.6.5
     function addNamespaceToEvents(self, events){
         if(!events){return;}
@@ -66,10 +63,7 @@ define('eventer', ['helpers', 'application'], function(){
 
     //0.6.5 Creates a proxy of the callback that removes the event it is responding to and then calls the callback.
     function proxyOnce(self, listeningToObj, event, callback){
-        return function(){
-            callback.apply(self, [].slice.call(arguments));
-            cleanupListeners(self, {listeningToObj: listeningToObj, events: event, callback: callback});
-        };
+        return function(){callback.apply(self, [].slice.call(arguments)); cleanupListeners(self, {listeningToObj: listeningToObj, events: event, callback: callback});};
     }
 
     eventerApi = {
@@ -103,7 +97,6 @@ define('eventer', ['helpers', 'application'], function(){
         },
         //0.6.5 obj is the object this object is listening to. options is a hash with properties events and callback.
         stopListeningTo: function(obj, options){
-            // var namespacedEvents = options && options.events && addNamespaceToEvents(this, options.events), objs;
             var opts = options || {};
             opts.listeningToObj = obj;
             opts.events = options && options.events && addNamespaceToEvents(this, options.events);
