@@ -152,10 +152,7 @@ define('eventer', ['helpers', 'application'], function(){
     function addNamespaceToEvents(self, events){
         if(!events){return;}
         var namespace = getNamespace(self), namespaced = '';
-        events.split(' ').forEach(function(event){
-            if(namespaced.length){namespaced += ' ';}
-            namespaced += event + '.' + namespace;
-        });
+        events.split(' ').forEach(function(event){if(namespaced.length){namespaced += ' ';} namespaced += event + '.' + namespace;});
         return namespaced;
     }
 
