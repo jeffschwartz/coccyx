@@ -162,20 +162,17 @@ define('eventer', ['helpers', 'application'], function(){
     //0.6.5
     function removeListeners(self, options){
         var ll = getListeners(self), lto = options.listeningToObj, event = options.event, callback = options.callback;
-        if(!options){ll = [];}
-        else{
-            self._eventedObj.listeners = ll.filter(function(l){
-                if((lto && event && callback) && (lto !== l.listeningToObj || event !== l.event || callback !== l.callback)){return true;}
-                if((lto && event && !callback) && (lto !== l.listeningToObj || event !== l.event)){return true;}
-                if((lto && !event && callback) && (lto !== l.listeningToObj || callback !== l.callback)){return true;}
-                if((lto && !event && !callback) && (lto !== l.listeningToObj)){return true;}
-                if((!lto && event && callback) && (event !== l.event || callback !== l.callback)){return true;}
-                if((!lto && event && !callback) && (event !== l.event)){return true;}
-                if((!lto && !event && callback) && (callback !== l.callback)){return true;}
-                removeEvent(l.listeningToObj, l.event, l.callback);
-                return false;
-            });
-        }
+        self._eventedObj.listeners = ll.filter(function(l){
+            if((lto && event && callback) && (lto !== l.listeningToObj || event !== l.event || callback !== l.callback)){return true;}
+            if((lto && event && !callback) && (lto !== l.listeningToObj || event !== l.event)){return true;}
+            if((lto && !event && callback) && (lto !== l.listeningToObj || callback !== l.callback)){return true;}
+            if((lto && !event && !callback) && (lto !== l.listeningToObj)){return true;}
+            if((!lto && event && callback) && (event !== l.event || callback !== l.callback)){return true;}
+            if((!lto && event && !callback) && (event !== l.event)){return true;}
+            if((!lto && !event && callback) && (callback !== l.callback)){return true;}
+            removeEvent(l.listeningToObj, l.event, l.callback);
+            return false;
+        });
     }
 
     //0.6.5
