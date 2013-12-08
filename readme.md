@@ -4,7 +4,7 @@ A Simple HTML5/ES5 MVC Micro Library.
 ### API Reference and Guide
 [http://coccyxjs.nodejitsu.com](http://coccyxjs.nodejitsu.com)
 
-### Everything You Need To Create Amazing Web Apps In One Small Package
+### Everything You Need To Create Amazing Web Applications
 * Auto wired HTML5 History Push and Pop State.
 * REST Based Routing (get, post, put, delete).
 * Multiple Controllers for better modularization.
@@ -13,7 +13,7 @@ A Simple HTML5/ES5 MVC Micro Library.
 * Views that support attached and detached rendering.
 * Promise-based Ajax API for easy access to server-based resources.
 * Model, Collection and View Events for keeping models, collection and views in sync.
-* RequireJS/AMD compatible; its AMD module name is "coccyx".
+* RequireJS/AMD compatible.
 
 ### Open Source
 CoccyxJS Is Distributed Under The MIT Software License.
