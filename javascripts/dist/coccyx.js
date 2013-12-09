@@ -126,8 +126,9 @@ define('eventer', ['helpers', 'application'], function(){
     //0.6.5
     function addNamespaceToEvents(self, events){
         if(!events){return;}
-        var namespace = getNamespace(self), namespaced = '';
-        events.split(' ').forEach(function(event){if(namespaced.length){namespaced += ' ';} namespaced += event + '.' + namespace;});
+        var namespace = getNamespace(self), namespaced = '', n = events;
+        if(!Array.isArray(events)){n = events.split(' ');}
+        n.forEach(function(event){if(namespaced.length){namespaced += ' ';} namespaced += event + '.' + namespace;});
         return namespaced;
     }
 
@@ -175,7 +176,7 @@ define('eventer', ['helpers', 'application'], function(){
         },
         //Trigger an event for object optionally passing args if provided.
         trigger: function trigger(events, args){v.$(this._eventedObj).trigger(events, args);},
-        //0.6.5
+        //0.6.5 events can be either a string of space separated events or an array of events.
         listenTo: function(obj, events, callback){
             var namespacedEvents = '';
             if(!obj || !events || !callback || !isEventer(obj)){return;}
@@ -183,7 +184,7 @@ define('eventer', ['helpers', 'application'], function(){
             v.$(obj._eventedObj).on(namespacedEvents, v.$.proxy(callback, this));
             addListener(this, obj, namespacedEvents, callback);
         },
-        //0.6.5
+        //0.6.5 events can be either a string of space separated events or an array of events.
         listenToOnce: function(obj, event, callback){
             var namespacedEvent = '';
             if(!obj || !event || !callback || !isEventer(obj)){return;}
@@ -192,7 +193,8 @@ define('eventer', ['helpers', 'application'], function(){
             v.$(obj._eventedObj).one(namespacedEvent, v.$.proxy(proxyOnce(this, obj, namespacedEvent, callback), this));
             addListener(this, obj, namespacedEvent, callback);
         },
-        //0.6.5 obj is the object this object is listening to. options is a hash with properties events and callback.
+        //0.6.5 obj is the object this object is listening to. options is a hash with properties events (either a string of space separated
+        //events or an array of events) and callback.
         stopListeningTo: function(obj, options){
             var opts = options || {};
             opts.listeningToObj = obj;
