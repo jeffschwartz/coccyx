@@ -1,4 +1,4 @@
-define('controllers', function(){
+define('controllers', ['application', 'eventer'], function(){
     'use strict';
 
     var v = window.Coccyx = window.Coccyx || {}, controllers = {}, routes = {};

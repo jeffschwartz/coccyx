@@ -1,4 +1,4 @@
-define('history', ['controllers', 'application', 'router'], function() {
+define('history', ['application', 'controllers', 'router'], function() {
     'use strict';
 
     //Verify browser supports pushstate.

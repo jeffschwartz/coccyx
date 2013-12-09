@@ -8,11 +8,11 @@ module.exports = function ( grunt ) {
                 src  : [
                     'javascripts/banner.js',
                     'javascripts/amdshim.js',
-                    'javascripts/controller.js', //0.6.5
                     'javascripts/helpers.js',
                     // 'javascripts/pubsub.js', removed from main lib starting with v0.6.0
                     'javascripts/application.js',
                     'javascripts/eventer.js',
+                    'javascripts/controller.js', //0.6.5
                     'javascripts/ajax.js',
                     'javascripts/router.js',
                     'javascripts/history.js',

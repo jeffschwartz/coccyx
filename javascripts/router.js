@@ -1,4 +1,4 @@
-define('router', ['helpers', 'application'], function() {
+define('router', ['helpers', 'application', 'controllers'], function() {
     'use strict';
 
     var v = window.Coccyx = window.Coccyx || {}, contains = v.helpers.contains;

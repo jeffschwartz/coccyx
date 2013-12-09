@@ -5,50 +5,6 @@
 //http://coccyxjs.jitsu.com
 (function(){'use strict'; if(!(typeof define  === 'function' && define.amd)) {window.define =  function define(){(arguments[arguments.length - 1])();};} }());
 
-define('controllers', function(){
-    'use strict';
-
-    var v = window.Coccyx = window.Coccyx || {}, controllers = {}, routes = {};
-
-     function registerControllers(){
-        if(arguments.length !== 1 && !(arguments[0] instanceof Array) && !(arguments[0] instanceof Object)){console.log('registerControllers missing or invalid param. Expected an [] or {}.');}
-        //An array of hashes or a single hash.
-        if(arguments[0] instanceof Array){arguments[0].forEach(function(controller){loadRoutesFromController(controller);});}
-        else{loadRoutesFromController(arguments[0]);}
-    }
-
-    function loadRoutesFromController(controller){
-        var namedRoute;
-        console.log('Registering controller \'' + controller.name + '\'');
-        //controller's local $
-        controller.$ = v.$;
-        //0.6.5 Controllers are also eventers.
-        controller = v.eventer.extend(controller);
-        //Maintain list of controllers for when we need to bind them to route function callbacks.
-        controllers[controller.name] = controller;
-        //Build the routes array.
-        for(var route in controller.routes){
-            if(controller.routes.hasOwnProperty(route)){
-                //Verb + ' /'.
-                namedRoute = route.substring(0, route.indexOf(' ') + 1) + '/';
-                //Controller name (the root segment).
-                namedRoute += controller.name;
-                //Remaining path.
-                namedRoute += (route.substring(route.indexOf(' ') + 1) === '/' ? '' : controller.name === '' ? route.substring(route.indexOf(' ') + 1) : '/' + route.substring(route.indexOf(' ') + 1));
-                routes[namedRoute] = [controller.name,controller.routes[route]];
-                console.log('Registering route \'' + namedRoute + '\'');
-            }
-        }
-    }
-
-    function getRoutes(){return routes;}
-
-    function getController(name){return controllers[name];}
-
-    v.controllers = {registerControllers : registerControllers, getRoutes: getRoutes, getController: getController};
-
-});
-
 define('helpers', [], function(){
     'use strict';
 
@@ -223,6 +179,50 @@ define('eventer', ['helpers', 'application'], function(){
 
 });
 
+define('controllers', ['application', 'eventer'], function(){
+    'use strict';
+
+    var v = window.Coccyx = window.Coccyx || {}, controllers = {}, routes = {};
+
+     function registerControllers(){
+        if(arguments.length !== 1 && !(arguments[0] instanceof Array) && !(arguments[0] instanceof Object)){console.log('registerControllers missing or invalid param. Expected an [] or {}.');}
+        //An array of hashes or a single hash.
+        if(arguments[0] instanceof Array){arguments[0].forEach(function(controller){loadRoutesFromController(controller);});}
+        else{loadRoutesFromController(arguments[0]);}
+    }
+
+    function loadRoutesFromController(controller){
+        var namedRoute;
+        console.log('Registering controller \'' + controller.name + '\'');
+        //controller's local $
+        controller.$ = v.$;
+        //0.6.5 Controllers are also eventers.
+        controller = v.eventer.extend(controller);
+        //Maintain list of controllers for when we need to bind them to route function callbacks.
+        controllers[controller.name] = controller;
+        //Build the routes array.
+        for(var route in controller.routes){
+            if(controller.routes.hasOwnProperty(route)){
+                //Verb + ' /'.
+                namedRoute = route.substring(0, route.indexOf(' ') + 1) + '/';
+                //Controller name (the root segment).
+                namedRoute += controller.name;
+                //Remaining path.
+                namedRoute += (route.substring(route.indexOf(' ') + 1) === '/' ? '' : controller.name === '' ? route.substring(route.indexOf(' ') + 1) : '/' + route.substring(route.indexOf(' ') + 1));
+                routes[namedRoute] = [controller.name,controller.routes[route]];
+                console.log('Registering route \'' + namedRoute + '\'');
+            }
+        }
+    }
+
+    function getRoutes(){return routes;}
+
+    function getController(name){return controllers[name];}
+
+    v.controllers = {registerControllers : registerControllers, getRoutes: getRoutes, getController: getController};
+
+});
+
 define('ajax', ['helpers', 'application'], function(){
     'use strict';
 
@@ -246,7 +246,7 @@ define('ajax', ['helpers', 'application'], function(){
 
 });
 
-define('router', ['helpers', 'application'], function() {
+define('router', ['helpers', 'application', 'controllers'], function() {
     'use strict';
 
     var v = window.Coccyx = window.Coccyx || {}, contains = v.helpers.contains;
@@ -327,7 +327,7 @@ define('router', ['helpers', 'application'], function() {
     v.router = {route: route};
 });
 
-define('history', ['controllers', 'application', 'router'], function() {
+define('history', ['application', 'controllers', 'router'], function() {
     'use strict';
 
     //Verify browser supports pushstate.
@@ -417,7 +417,7 @@ define('history', ['controllers', 'application', 'router'], function() {
     v.history = {start: start, started: started, navigate: navigate};
 });
 
-define('models', ['helpers', 'ajax', 'application', 'eventer'], function(){
+define('models', ['helpers', 'application', 'eventer', 'ajax'], function(){
     'use strict';
 
     /**
@@ -601,7 +601,7 @@ define('models', ['helpers', 'ajax', 'application', 'eventer'], function(){
 });
 
 //0.6.0
-define('collections', ['helpers', 'ajax', 'application', 'eventer', 'models'], function(){
+define('collections', ['helpers', 'application', 'eventer', 'ajax', 'models'], function(){
     'use strict';
 
     //0.6.3 added isSilent

@@ -1,4 +1,4 @@
-define('models', ['helpers', 'ajax', 'application', 'eventer'], function(){
+define('models', ['helpers', 'application', 'eventer', 'ajax'], function(){
     'use strict';
 
     /**
