@@ -112,4 +112,9 @@ define('eventer', ['helpers', 'application'], function(){
     }
 
     v.eventer = {extend: extend};
+
+    //0.6.0 Renamed userspace to application - provides a bucket for application stuff. 0.6.5 application is also an eventer.
+    //0.6.5 Moved here from application.js
+    v.application = v.application || v.eventer.extend({});
+
 });

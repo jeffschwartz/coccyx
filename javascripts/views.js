@@ -1,4 +1,4 @@
-define('views', ['helpers', 'application'], function(){
+define('views', ['helpers', 'application', 'eventer'], function(){
     'use strict';
 
     var v = window.Coccyx = window.Coccyx || {}, domEventTopic = 'DOM_EVENT', uniqueNamespace = v.helpers.uniqueNamespace, proto;
@@ -26,22 +26,14 @@ define('views', ['helpers', 'application'], function(){
     //domTarget will be created for you from $domTarget.
     function setTarget(){
         /*jshint validthis:true*/
-        if(this.$domTarget && this.$domTarget instanceof v.$){
-            //Use $domTarget.
-            this.domTarget = this.$domTarget[0];
-        }else if(this.domTarget){
-            //Use domTarget.
-            this.domTarget = document.createElement(typeof this.domTarget === 'string' ? this.domTarget : this.domTarget());
-            this.$domTarget = v.$(this.domTarget);
-        }else if(this.domTargetAttrs){
-            //Use domTargetAttrs.
-            this.$domTarget = v.$(document.createElement(this.tagName ? this.tagName : 'div')).attr(this.domTargetAttrs);
-            this.domTarget = this.$domTarget[0];
-        }else{
-            //Default to 'div'.
-            this.domTarget = document.createElement('div');
-            this.$domTarget = v.$(this.domTarget);
-        }
+        //Use $domTarget.
+        if(this.$domTarget && this.$domTarget instanceof v.$){this.domTarget = this.$domTarget[0];}
+        //Use domTarget.
+        else if(this.domTarget){this.domTarget = document.createElement(typeof this.domTarget === 'string' ? this.domTarget : this.domTarget()); this.$domTarget = v.$(this.domTarget);}
+        //Use domTargetAttrs.
+        else if(this.domTargetAttrs){this.$domTarget = v.$(document.createElement(this.tagName ? this.tagName : 'div')).attr(this.domTargetAttrs); this.domTarget = this.$domTarget[0];}
+        //Default to 'div'.
+        else{this.domTarget = document.createElement('div'); this.$domTarget = v.$(this.domTarget);}
     }
 
     //0.5.0, 0.6.0, 0.6.5.
@@ -54,14 +46,11 @@ define('views', ['helpers', 'application'], function(){
         if(domEventsHash){
             obj2.namespace = '.view_' + uniqueNamespace();
             //0.6.5 domEventsHash can now also be an array.
-            if(Array.isArray(domEventsHash)){
-                domEventsHash.forEach(function(deh){
-                    wireDomEvents.call(obj2, typeof deh === 'function' ? deh() : deh);
-                });
-            }
-            wireDomEvents.call(obj2, typeof domEventsHash === 'function' ? domEventsHash() : domEventsHash);
+            if(Array.isArray(domEventsHash)){domEventsHash.forEach(function(deh){wireDomEvents.call(obj2, typeof deh === 'function' ? deh() : deh); });}
+            else{wireDomEvents.call(obj2, typeof domEventsHash === 'function' ? domEventsHash() : domEventsHash);}
         }
-        return obj2;
+        //0.6.5 Added eventer.
+        return v.eventer.extend(obj2);
     }
 
     proto = {remove: function remove(){this.$domTarget.off(this.namespace); this.$domTarget.empty(); }, $: v.$};

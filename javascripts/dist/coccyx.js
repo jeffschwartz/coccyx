@@ -5,6 +5,50 @@
 //http://coccyxjs.jitsu.com
 (function(){'use strict'; if(!(typeof define  === 'function' && define.amd)) {window.define =  function define(){(arguments[arguments.length - 1])();};} }());
 
+define('controllers', function(){
+    'use strict';
+
+    var v = window.Coccyx = window.Coccyx || {}, controllers = {}, routes = {};
+
+     function registerControllers(){
+        if(arguments.length !== 1 && !(arguments[0] instanceof Array) && !(arguments[0] instanceof Object)){console.log('registerControllers missing or invalid param. Expected an [] or {}.');}
+        //An array of hashes or a single hash.
+        if(arguments[0] instanceof Array){arguments[0].forEach(function(controller){loadRoutesFromController(controller);});}
+        else{loadRoutesFromController(arguments[0]);}
+    }
+
+    function loadRoutesFromController(controller){
+        var namedRoute;
+        console.log('Registering controller \'' + controller.name + '\'');
+        //controller's local $
+        controller.$ = v.$;
+        //0.6.5 Controllers are also eventers.
+        controller = v.eventer.extend(controller);
+        //Maintain list of controllers for when we need to bind them to route function callbacks.
+        controllers[controller.name] = controller;
+        //Build the routes array.
+        for(var route in controller.routes){
+            if(controller.routes.hasOwnProperty(route)){
+                //Verb + ' /'.
+                namedRoute = route.substring(0, route.indexOf(' ') + 1) + '/';
+                //Controller name (the root segment).
+                namedRoute += controller.name;
+                //Remaining path.
+                namedRoute += (route.substring(route.indexOf(' ') + 1) === '/' ? '' : controller.name === '' ? route.substring(route.indexOf(' ') + 1) : '/' + route.substring(route.indexOf(' ') + 1));
+                routes[namedRoute] = [controller.name,controller.routes[route]];
+                console.log('Registering route \'' + namedRoute + '\'');
+            }
+        }
+    }
+
+    function getRoutes(){return routes;}
+
+    function getController(name){return controllers[name];}
+
+    v.controllers = {registerControllers : registerControllers, getRoutes: getRoutes, getController: getController};
+
+});
+
 define('helpers', [], function(){
     'use strict';
 
@@ -38,54 +82,10 @@ define('helpers', [], function(){
 define('application', ['jquery'], function(){
     'use strict';
 
-    var v = window.Coccyx = window.Coccyx || {}, controllers = {}, routes = {}, VERSION = '0.6.4';
-
-     function registerControllers(){
-        if(arguments.length !== 1 && !(arguments[0] instanceof Array) && !(arguments[0] instanceof Object)){
-            console.log('registerControllers missing or invalid param. Expected an [] or {}.');
-        }
-        if(arguments[0] instanceof Array){
-            //An array of hashes.
-            arguments[0].forEach(function(controller){loadRoutesFromController(controller);});
-        }else{
-            //A single hash.
-            loadRoutesFromController(arguments[0]);
-        }
-    }
-
-    function loadRoutesFromController(controller){
-        var namedRoute;
-        console.log('Registering controller \'' + controller.name + '\'');
-        //controller's local $
-        controller.$ = v.$;
-        //Maintain list of controllers for when we need to bind them to route function callbacks.
-        controllers[controller.name] = controller;
-        //Build the routes array.
-        for(var route in controller.routes){
-            if(controller.routes.hasOwnProperty(route)){
-                //Verb + ' /'.
-                namedRoute = route.substring(0, route.indexOf(' ') + 1) + '/';
-                //Controller name (the root segment).
-                namedRoute += controller.name;
-                //Remaining path.
-                namedRoute += (route.substring(route.indexOf(' ') + 1) === '/' ?
-                    '' : controller.name === '' ? route.substring(route.indexOf(' ') + 1) :
-                    '/' + route.substring(route.indexOf(' ') + 1));
-                routes[namedRoute] = [controller.name,controller.routes[route]];
-                console.log('Registering route \'' + namedRoute + '\'');
-            }
-        }
-    }
-
-    function getRoutes(){return routes;}
-
-    function getController(name){return controllers[name];}
+    var v = window.Coccyx = window.Coccyx || {}, VERSION = '0.6.4';
 
     //Provide jQuery in the Coccyx name space.
     v.$ = jQuery;
-
-    //0.6.0 Renamed userspace to application - provides a bucket for application stuff.
-    v.application = v.application || {};
 
     //0.6.1 init will be called only once immediately before the first routing request
     //is handled by the router. Override init to provide application specific initialization,
@@ -97,31 +97,6 @@ define('application', ['jquery'], function(){
 
     //Version stamp.
     v.getVersion = function(){return VERSION;};
-
-    v.controllers = {registerControllers : registerControllers, getRoutes: getRoutes, getController: getController};
-
-});
-
-define('ajax', ['helpers', 'application'], function(){
-    'use strict';
-
-    //v0.6.4 added 'json' as default dataType.
-    var v = window.Coccyx = window.Coccyx || {}, defaultSettings = {dataType: 'json', cache: false, url: '/'}, extend = v.helpers.extend, ajax = v.$.ajax;
-
-    //Merge default setting with user's settings.
-    function mergeSettings(settings, type){settings.type = type; return extend({}, defaultSettings, settings);}
-
-    //A simple promise-based wrapper around jQuery Ajax. All methods return a Promise.
-    v.ajax = {
-        //http "GET"
-        ajaxGet: function ajaxGet(settings){return ajax(mergeSettings(settings, 'GET'));},
-        //http "POST"
-        ajaxPost: function ajaxPost(settings){return ajax(mergeSettings(settings, 'POST'));},
-        //http "PUT"
-        ajaxPut: function ajaxPut(settings){return ajax(mergeSettings(settings, 'PUT'));},
-        //http "DELETE"
-        ajaxDelete: function ajaxDelete(settings){return ajax(mergeSettings(settings, 'DELETE'));}
-    };
 
 });
 
@@ -239,6 +214,34 @@ define('eventer', ['helpers', 'application'], function(){
     }
 
     v.eventer = {extend: extend};
+
+    //0.6.0 Renamed userspace to application - provides a bucket for application stuff. 0.6.5 application is also an eventer.
+    //0.6.5 Moved here from application.js
+    v.application = v.application || v.eventer.extend({});
+
+});
+
+define('ajax', ['helpers', 'application'], function(){
+    'use strict';
+
+    //v0.6.4 added 'json' as default dataType.
+    var v = window.Coccyx = window.Coccyx || {}, defaultSettings = {dataType: 'json', cache: false, url: '/'}, extend = v.helpers.extend, ajax = v.$.ajax;
+
+    //Merge default setting with user's settings.
+    function mergeSettings(settings, type){settings.type = type; return extend({}, defaultSettings, settings);}
+
+    //A simple promise-based wrapper around jQuery Ajax. All methods return a Promise.
+    v.ajax = {
+        //http "GET"
+        ajaxGet: function ajaxGet(settings){return ajax(mergeSettings(settings, 'GET'));},
+        //http "POST"
+        ajaxPost: function ajaxPost(settings){return ajax(mergeSettings(settings, 'POST'));},
+        //http "PUT"
+        ajaxPut: function ajaxPut(settings){return ajax(mergeSettings(settings, 'PUT'));},
+        //http "DELETE"
+        ajaxDelete: function ajaxDelete(settings){return ajax(mergeSettings(settings, 'DELETE'));}
+    };
+
 });
 
 define('router', ['helpers', 'application'], function() {
@@ -322,7 +325,7 @@ define('router', ['helpers', 'application'], function() {
     v.router = {route: route};
 });
 
-define('history', ['application', 'router'], function() {
+define('history', ['controllers', 'application', 'router'], function() {
     'use strict';
 
     //Verify browser supports pushstate.
@@ -412,7 +415,7 @@ define('history', ['application', 'router'], function() {
     v.history = {start: start, started: started, navigate: navigate};
 });
 
-define('models', ['helpers', 'ajax', 'eventer', 'application'], function(){
+define('models', ['helpers', 'ajax', 'application', 'eventer'], function(){
     'use strict';
 
     /**
@@ -596,7 +599,7 @@ define('models', ['helpers', 'ajax', 'eventer', 'application'], function(){
 });
 
 //0.6.0
-define('collections', ['helpers', 'ajax', 'eventer', 'application', 'models'], function(){
+define('collections', ['helpers', 'ajax', 'application', 'eventer', 'models'], function(){
     'use strict';
 
     //0.6.3 added isSilent
@@ -894,7 +897,7 @@ define('collections', ['helpers', 'ajax', 'eventer', 'application', 'models'], f
 
 });
 
-define('views', ['helpers', 'application'], function(){
+define('views', ['helpers', 'application', 'eventer'], function(){
     'use strict';
 
     var v = window.Coccyx = window.Coccyx || {}, domEventTopic = 'DOM_EVENT', uniqueNamespace = v.helpers.uniqueNamespace, proto;
@@ -922,22 +925,14 @@ define('views', ['helpers', 'application'], function(){
     //domTarget will be created for you from $domTarget.
     function setTarget(){
         /*jshint validthis:true*/
-        if(this.$domTarget && this.$domTarget instanceof v.$){
-            //Use $domTarget.
-            this.domTarget = this.$domTarget[0];
-        }else if(this.domTarget){
-            //Use domTarget.
-            this.domTarget = document.createElement(typeof this.domTarget === 'string' ? this.domTarget : this.domTarget());
-            this.$domTarget = v.$(this.domTarget);
-        }else if(this.domTargetAttrs){
-            //Use domTargetAttrs.
-            this.$domTarget = v.$(document.createElement(this.tagName ? this.tagName : 'div')).attr(this.domTargetAttrs);
-            this.domTarget = this.$domTarget[0];
-        }else{
-            //Default to 'div'.
-            this.domTarget = document.createElement('div');
-            this.$domTarget = v.$(this.domTarget);
-        }
+        //Use $domTarget.
+        if(this.$domTarget && this.$domTarget instanceof v.$){this.domTarget = this.$domTarget[0];}
+        //Use domTarget.
+        else if(this.domTarget){this.domTarget = document.createElement(typeof this.domTarget === 'string' ? this.domTarget : this.domTarget()); this.$domTarget = v.$(this.domTarget);}
+        //Use domTargetAttrs.
+        else if(this.domTargetAttrs){this.$domTarget = v.$(document.createElement(this.tagName ? this.tagName : 'div')).attr(this.domTargetAttrs); this.domTarget = this.$domTarget[0];}
+        //Default to 'div'.
+        else{this.domTarget = document.createElement('div'); this.$domTarget = v.$(this.domTarget);}
     }
 
     //0.5.0, 0.6.0, 0.6.5.
@@ -950,14 +945,11 @@ define('views', ['helpers', 'application'], function(){
         if(domEventsHash){
             obj2.namespace = '.view_' + uniqueNamespace();
             //0.6.5 domEventsHash can now also be an array.
-            if(Array.isArray(domEventsHash)){
-                domEventsHash.forEach(function(deh){
-                    wireDomEvents.call(obj2, typeof deh === 'function' ? deh() : deh);
-                });
-            }
-            wireDomEvents.call(obj2, typeof domEventsHash === 'function' ? domEventsHash() : domEventsHash);
+            if(Array.isArray(domEventsHash)){domEventsHash.forEach(function(deh){wireDomEvents.call(obj2, typeof deh === 'function' ? deh() : deh); });}
+            else{wireDomEvents.call(obj2, typeof domEventsHash === 'function' ? domEventsHash() : domEventsHash);}
         }
-        return obj2;
+        //0.6.5 Added eventer.
+        return v.eventer.extend(obj2);
     }
 
     proto = {remove: function remove(){this.$domTarget.off(this.namespace); this.$domTarget.empty(); }, $: v.$};
@@ -965,4 +957,4 @@ define('views', ['helpers', 'application'], function(){
     v.views = {extend: extend, domEventTopic: domEventTopic};
 });
 
-define('coccyx', ['helpers', 'eventer', 'ajax', 'application', 'router', 'history', 'models', 'collections', 'views'], function () {'use strict'; return window.Coccyx;});
+define('coccyx', ['controllers','helpers', 'application', 'eventer', 'ajax', 'router', 'history', 'models', 'collections', 'views'], function () {'use strict'; return window.Coccyx;});

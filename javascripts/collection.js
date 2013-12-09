@@ -1,5 +1,5 @@
 //0.6.0
-define('collections', ['helpers', 'ajax', 'eventer', 'application', 'models'], function(){
+define('collections', ['helpers', 'ajax', 'application', 'eventer', 'models'], function(){
     'use strict';
 
     //0.6.3 added isSilent
